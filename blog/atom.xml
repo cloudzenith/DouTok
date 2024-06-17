@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https://doutok.zhengfei.xin/blog</id>
+    <id>https://cloudzneith.github.io/DouTok/blog</id>
     <title>DouTok Blog</title>
     <updated>2024-03-03T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="https://doutok.zhengfei.xin/blog"/>
+    <link rel="alternate" href="https://cloudzneith.github.io/DouTok/blog"/>
     <subtitle>DouTok Blog</subtitle>
-    <icon>https://doutok.zhengfei.xin/img/favicon.ico</icon>
+    <icon>https://cloudzneith.github.io/DouTok/img/favicon.ico</icon>
     <entry>
         <title type="html"><![CDATA[Welcome]]></title>
-        <id>https://doutok.zhengfei.xin/blog/welcome</id>
-        <link href="https://doutok.zhengfei.xin/blog/welcome"/>
+        <id>https://cloudzneith.github.io/DouTok/blog/welcome</id>
+        <link href="https://cloudzneith.github.io/DouTok/blog/welcome"/>
         <updated>2024-03-03T00:00:00.000Z</updated>
         <summary type="html"><![CDATA[Welcomet to DouTok]]></summary>
         <content type="html"><![CDATA[<p>Welcomet to DouTok</p>]]></content>
