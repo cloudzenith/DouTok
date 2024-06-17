@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://doutok.zhengfei.xin/blog</id>
+    <title>DouTok Blog</title>
+    <updated>2024-03-03T00:00:00.000Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://doutok.zhengfei.xin/blog"/>
+    <subtitle>DouTok Blog</subtitle>
+    <icon>https://doutok.zhengfei.xin/img/favicon.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[Welcome]]></title>
+        <id>https://doutok.zhengfei.xin/blog/welcome</id>
+        <link href="https://doutok.zhengfei.xin/blog/welcome"/>
+        <updated>2024-03-03T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Welcomet to DouTok]]></summary>
+        <content type="html"><![CDATA[<p>Welcomet to DouTok</p>]]></content>
+        <author>
+            <name>Baize</name>
+            <uri>https://github.com/BaiZe1998</uri>
+        </author>
+        <author>
+            <name>Trembling</name>
+            <uri>https://github.com/TremblingV5</uri>
+        </author>
+        <category label="welcome" term="welcome"/>
+    </entry>
+</feed>
