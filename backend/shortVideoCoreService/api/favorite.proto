@@ -1,0 +1,71 @@
+syntax = "proto3";
+package api;
+
+option go_package = "../api";
+
+import "base.proto";
+
+message favrorite_action_request {
+    int64 user_id = 1;
+    int64 video_id = 2;
+    int32 action_type = 3; // 1: 点赞 2: 取消点赞
+}
+
+message favorite_action_response {
+    api.Metadata meta = 1;
+    int64 user_id = 2;
+    int64 video_id = 3;
+}
+
+message FavoriteListVideo {
+    int64 id = 1;
+    FavoriteListVideoAuthor author = 2;
+    string play_url = 3;
+    string cover_url = 4;
+    int64 favorite_count = 5;
+    int64 comment_count = 6;
+    bool is_favorite = 7;
+    string title = 8;
+}
+
+message FavoriteListVideoAuthor {
+    int64 id = 1;
+    string name = 2;
+    string avatar = 3;
+    bool is_following = 4;
+}
+
+message list_favorite_request {
+    int64 user_id = 1;
+}
+
+message list_favorite_response {
+    api.Metadata meta = 1;
+    repeated FavoriteListVideo video_list = 2;
+}
+
+message is_favorite_request {
+    int64 user_id = 1;
+    repeated int64 video_id_list = 2;
+}
+
+message is_favorite_response {
+    api.Metadata meta = 1;
+    map<int64, bool> result = 2;
+}
+
+message count_favorite_request {
+    repeated int64 video_id_list = 1;
+}
+
+message count_favorite_response {
+    api.Metadata meta = 1;
+    map<int64, int64> result = 2;
+}
+
+service ShortVideoCoreFavoriteService {
+    rpc FavoriteAction(favrorite_action_request) returns (favorite_action_response);
+    rpc ListFavoriteList(list_favorite_request) returns (list_favorite_response);
+    rpc IsFavorite(is_favorite_request) returns (is_favorite_response);
+    rpc CountFavorite(count_favorite_request) returns (count_favorite_response);
+}

@@ -1,0 +1,11 @@
+syntax = "proto3";
+package api;
+
+option go_package = "../api";
+
+message Metadata {
+    int32 biz_code = 1;
+    string message = 2;
+    string domain = 3;
+    repeated string reason = 4;
+}

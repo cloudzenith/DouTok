@@ -1,0 +1,61 @@
+syntax = "proto3";
+package api;
+
+option go_package = "../api";
+
+import "base.proto";
+
+message Chat {
+    int64 id = 1;
+    int64 user_id = 2;
+    string user_name = 3;
+    string user_avatar = 4;
+    string latest_message = 5; // 最近一条消息
+}
+
+message Message {
+    int64 id = 1;
+    int64 from_user_id = 2;
+    int64 to_user_id = 3;
+    string content = 4;
+    int64 create_time = 5;
+    bool from_me = 6; // 是否是当前登录用户发送的消息
+}
+
+message list_chat_request {
+    string user_id = 1;
+}
+
+message list_chat_response {
+    api.Metadata meta = 1;
+    repeated Chat chat = 2;
+}
+
+message load_message_records_request {
+    string chat_id = 1;
+}
+
+message load_message_records_response {
+    api.Metadata meta = 1;
+    repeated Message message = 2;
+}
+
+message send_message_request {
+    int64 from_user_id = 1;
+    int64 to_user_id = 2;
+    string content = 3;
+}
+
+message send_message_response {
+    api.Metadata meta = 1;
+    Message message = 2;
+}
+
+service ShortVideoCoreMessageService {
+    // 列出所有的聊天
+    rpc ListChat(list_chat_request) returns (list_chat_response);
+    // 加载聊天记录
+    rpc LoadMessageRecords(load_message_records_request) returns (load_message_records_response);
+    // 发送信息
+    rpc SendMessage(send_message_request) returns (send_message_response);
+}
