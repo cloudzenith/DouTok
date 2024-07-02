@@ -1,7 +1,7 @@
 syntax = "proto3";
 package api;
 
-option go_package = "../api";
+option go_package = "github.com/cloudzenith/DouTok/...;api";
 
 message get_guid_segment_request {
     string domain = 1;  // 业务域

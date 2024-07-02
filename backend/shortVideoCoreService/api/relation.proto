@@ -1,7 +1,7 @@
 syntax = "proto3";
 package api;
 
-option go_package = "../api";
+option go_package = "github.com/cloudzenith/DouTok/...;api";
 
 import "base.proto";
 
@@ -12,7 +12,7 @@ message relation_action_request {
 }
 
 message relation_action_response {
-    api.Metatdata meta = 1;
+    api.Metadata meta = 1;
 }
 
 message RelationListUser {

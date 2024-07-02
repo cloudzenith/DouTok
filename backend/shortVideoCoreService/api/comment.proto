@@ -1,7 +1,7 @@
 syntax = "proto3";
 package api;
 
-option go_package = "../api";
+option go_package = "github.com/cloudzenith/DouTok/...;api";
 
 import "base.proto";
 
@@ -37,11 +37,13 @@ message comment_action_response {
 
 message list_comment_request {
     int64 video_id = 1;
+    api.PaginationRequest pagination_request = 2;
 }
 
 message list_comment_response {
     api.Metadata meta = 1;
     repeated Comment comments = 2;
+    api.PaginationResponse pagination_response = 3;
 }
 
 message count_comment_request {
