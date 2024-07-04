@@ -1,0 +1,71 @@
+syntax = "proto3";
+package api;
+
+option go_package = "github.com/cloudzenith/DouTok/...;api";
+
+import "base.proto";
+
+message FavroriteActionRequest {
+    int64 user_id = 1;
+    int64 video_id = 2;
+    int32 action_type = 3; // 1: 点赞 2: 取消点赞
+}
+
+message FavoriteActionResponse {
+    api.Metadata meta = 1;
+}
+
+message FavoriteListVideo {
+    int64 id = 1;
+    FavoriteListVideoAuthor author = 2;
+    string play_url = 3;
+    string cover_url = 4;
+    int64 favorite_count = 5;
+    int64 comment_count = 6;
+    bool is_favorite = 7;
+    string title = 8;
+}
+
+message FavoriteListVideoAuthor {
+    int64 id = 1;
+    string name = 2;
+    string avatar = 3;
+    bool is_following = 4;
+}
+
+message ListFavoriteRequest {
+    int64 user_id = 1;
+    api.PaginationRequest pagination_request = 2;
+}
+
+message ListFavoriteResponse {
+    api.Metadata meta = 1;
+    repeated FavoriteListVideo video_list = 2;
+    api.PaginationResponse pagination_response = 3;
+}
+
+message IsFavoriteRequest {
+    int64 user_id = 1;
+    repeated int64 video_id_list = 2;
+}
+
+message IsFavoriteResponse {
+    api.Metadata meta = 1;
+    map<int64, bool> result = 2;
+}
+
+message CountFavoriteRequest {
+    repeated int64 video_id_list = 1;
+}
+
+message CountFavoriteResponse {
+    api.Metadata meta = 1;
+    map<int64, int64> result = 2;
+}
+
+service ShortVideoCoreFavoriteService {
+    rpc FavoriteAction(FavroriteActionRequest) returns (FavoriteActionResponse);
+    rpc ListFavoriteList(ListFavoriteRequest) returns (ListFavoriteResponse);
+    rpc IsFavorite(IsFavoriteRequest) returns (IsFavoriteResponse);
+    rpc CountFavorite(CountFavoriteRequest) returns (CountFavoriteResponse);
+}

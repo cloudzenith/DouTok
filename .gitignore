@@ -36,3 +36,5 @@ bin/
 .vscode/
 .idea/
 *.swp
+
+go.sum
