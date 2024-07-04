@@ -18,40 +18,40 @@ message User {
     int64 favorite_count = 11; // 点赞数量
 }
 
-message register_request {
+message RegisterRequest {
     string mobile = 1;
     string email = 2;
     string password = 3;
 }
 
-message register_response {
+message RegisterResponse {
     api.Metadata meta = 1;
     int64 user_id = 2;
 }
 
-message login_request {
+message LoginRequest {
     string mobile = 1;
     string email = 2;
     string password = 3;
 }
 
-message login_response {
+message LoginResponse {
     api.Metadata meta = 1;
     User user = 2;
 }
 
-message get_user_info_request {
+message GetUserInfoRequest {
     repeated int64 user_id_list = 1;
 }
 
-message get_user_info_response {
+message GetUserInfoResponse {
     api.Metadata meta = 1;
     repeated User user_list = 2;
 
 }
 
 service ShortVideoCoreUserService {
-    rpc Register(register_request) returns (register_response);
-    rpc Login(login_request) returns (login_response);
-    rpc GetUserInfo(get_user_info_request) returns (get_user_info_response);
+    rpc Register(RegisterRequest) returns (RegisterResponse);
+    rpc Login(LoginRequest) returns (LoginResponse);
+    rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse);
 }

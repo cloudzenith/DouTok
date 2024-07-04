@@ -23,48 +23,48 @@ message Video {
     string title = 8; // 视频标题
 }
 
-message feed_short_video_request {
+message FeedShortVideoRequest {
     int64 latest_time = 1;  // 可选参数，限制返回视频的最新投稿时间戳，精确到秒，不填表示当前时间
     int64 user_id = 2;
 }
 
-message feed_short_video_response {
+message FeedShortVideoResponse {
     api.Metadata meta = 1;
     repeated Video videos = 2;
     int64 next_time = 3; // 本次返回的视频中，发布最早的时间，作为下次请求时的latest_time
 }
 
-message get_video_by_id_request {
+message GetVideoByIdRequest {
     int64 video_id = 1;
 }
 
-message get_video_by_id_response {
+message GetVideoByIdResponse {
     api.Metadata meta = 1;
     Video video = 2;
 }
 
-message publish_video_request {
+message PublishVideoRequest {
     bytes data = 1; // 视频数据
     string title = 2; // 视频标题
     int64 user_id = 3; // 发布视频的user id
 }
 
-message publish_video_response {
+message PublishVideoResponse {
     api.Metadata meta = 1;
 }
 
-message list_publised_video_request {
+message ListPublisedVideoRequest {
     int64 user_id = 1;
 }
 
-message list_publised_video_response {
+message ListPublisedVideoResponse {
     api.Metadata meta = 1;
     repeated Video videos = 2;
 }
 
 service ShortVideoCoreVideoService {
-    rpc FeedShortVideo(feed_short_video_request) returns (feed_short_video_response);
-    rpc GetVideoById(get_video_by_id_request) returns (get_video_by_id_response);
-    rpc PublishVideo(publish_video_request) returns (publish_video_response);
-    rpc ListPublishedVideo(list_publised_video_request) returns (list_publised_video_response);
+    rpc FeedShortVideo(FeedShortVideoRequest) returns (FeedShortVideoResponse);
+    rpc GetVideoById(GetVideoByIdRequest) returns (GetVideoByIdResponse);
+    rpc PublishVideo(PublishVideoRequest) returns (PublishVideoResponse);
+    rpc ListPublishedVideo(ListPublisedVideoRequest) returns (ListPublisedVideoResponse);
 }

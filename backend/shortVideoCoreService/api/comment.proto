@@ -22,7 +22,7 @@ message CommentUser {
     bool is_following = 5;
 }
 
-message comment_action_request {
+message CommentActionRequest {
     int64 user_id = 1;
     int64 video_id = 2;
     int32 action_type = 3; // 1: 发布评论 2: 删除评论
@@ -30,33 +30,23 @@ message comment_action_request {
     int64 comment_id = 5; // 只有在删除评论时才生效
 }
 
-message comment_action_response {
+message CommentActionResponse {
     api.Metadata meta = 1;
     Comment comment = 2;
 }
 
-message list_comment_request {
+message ListCommentRequest {
     int64 video_id = 1;
     api.PaginationRequest pagination_request = 2;
 }
 
-message list_comment_response {
+message ListCommentResponse {
     api.Metadata meta = 1;
     repeated Comment comments = 2;
     api.PaginationResponse pagination_response = 3;
 }
 
-message count_comment_request {
-    repeated int64 video_id_list = 1;
-}
-
-message count_comment_response {
-    api.Metadata meta = 1;
-    map<int64, int64> comment_count = 2;
-}
-
 service ShortVideoCoreCommentService {
-    rpc CommentAction(comment_action_request) returns (comment_action_response);
-    rpc ListComment(list_comment_request) returns (list_comment_response);
-    rpc CountComment(count_comment_request) returns (count_comment_response);
+    rpc CommentAction(CommentActionRequest) returns (CommentActionResponse);
+    rpc ListComment(ListCommentRequest) returns (ListCommentResponse);
 }

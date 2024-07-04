@@ -22,44 +22,44 @@ message Message {
     bool from_me = 6; // 是否是当前登录用户发送的消息
 }
 
-message list_chat_request {
+message ListChatRequest {
     string user_id = 1;
     api.PaginationRequest pagination_request = 2;
 }
 
-message list_chat_response {
+message ListChatResponse {
     api.Metadata meta = 1;
     repeated Chat chat = 2;
     api.PaginationResponse pagination_response = 3;
 }
 
-message load_message_records_request {
+message LoadMessageRecordsRequest {
     string chat_id = 1;
     api.PaginationRequest pagination_request = 2;
 }
 
-message load_message_records_response {
+message LoadMessageRecordsResponse {
     api.Metadata meta = 1;
     repeated Message message = 2;
     api.PaginationResponse pagination_response = 3;
 }
 
-message send_message_request {
+message SendMessageRequest {
     int64 from_user_id = 1;
     int64 to_user_id = 2;
     string content = 3;
 }
 
-message send_message_response {
+message SendMessageResponse {
     api.Metadata meta = 1;
     Message message = 2;
 }
 
 service ShortVideoCoreMessageService {
     // 列出所有的聊天
-    rpc ListChat(list_chat_request) returns (list_chat_response);
+    rpc ListChat(ListChatRequest) returns (ListChatResponse);
     // 加载聊天记录
-    rpc LoadMessageRecords(load_message_records_request) returns (load_message_records_response);
+    rpc LoadMessageRecords(LoadMessageRecordsRequest) returns (LoadMessageRecordsResponse);
     // 发送信息
-    rpc SendMessage(send_message_request) returns (send_message_response);
+    rpc SendMessage(SendMessageRequest) returns (SendMessageResponse);
 }

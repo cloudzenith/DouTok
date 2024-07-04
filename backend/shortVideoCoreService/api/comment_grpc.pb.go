@@ -24,7 +24,6 @@ const _ = grpc.SupportPackageIsVersion7
 type ShortVideoCoreCommentServiceClient interface {
 	CommentAction(ctx context.Context, in *CommentActionRequest, opts ...grpc.CallOption) (*CommentActionResponse, error)
 	ListComment(ctx context.Context, in *ListCommentRequest, opts ...grpc.CallOption) (*ListCommentResponse, error)
-	CountComment(ctx context.Context, in *CountCommentRequest, opts ...grpc.CallOption) (*CountCommentResponse, error)
 }
 
 type shortVideoCoreCommentServiceClient struct {
@@ -53,22 +52,12 @@ func (c *shortVideoCoreCommentServiceClient) ListComment(ctx context.Context, in
 	return out, nil
 }
 
-func (c *shortVideoCoreCommentServiceClient) CountComment(ctx context.Context, in *CountCommentRequest, opts ...grpc.CallOption) (*CountCommentResponse, error) {
-	out := new(CountCommentResponse)
-	err := c.cc.Invoke(ctx, "/api.ShortVideoCoreCommentService/CountComment", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // ShortVideoCoreCommentServiceServer is the server API for ShortVideoCoreCommentService service.
 // All implementations must embed UnimplementedShortVideoCoreCommentServiceServer
 // for forward compatibility
 type ShortVideoCoreCommentServiceServer interface {
 	CommentAction(context.Context, *CommentActionRequest) (*CommentActionResponse, error)
 	ListComment(context.Context, *ListCommentRequest) (*ListCommentResponse, error)
-	CountComment(context.Context, *CountCommentRequest) (*CountCommentResponse, error)
 	mustEmbedUnimplementedShortVideoCoreCommentServiceServer()
 }
 
@@ -81,9 +70,6 @@ func (UnimplementedShortVideoCoreCommentServiceServer) CommentAction(context.Con
 }
 func (UnimplementedShortVideoCoreCommentServiceServer) ListComment(context.Context, *ListCommentRequest) (*ListCommentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListComment not implemented")
-}
-func (UnimplementedShortVideoCoreCommentServiceServer) CountComment(context.Context, *CountCommentRequest) (*CountCommentResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CountComment not implemented")
 }
 func (UnimplementedShortVideoCoreCommentServiceServer) mustEmbedUnimplementedShortVideoCoreCommentServiceServer() {
 }
@@ -135,24 +121,6 @@ func _ShortVideoCoreCommentService_ListComment_Handler(srv interface{}, ctx cont
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ShortVideoCoreCommentService_CountComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CountCommentRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ShortVideoCoreCommentServiceServer).CountComment(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/api.ShortVideoCoreCommentService/CountComment",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ShortVideoCoreCommentServiceServer).CountComment(ctx, req.(*CountCommentRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // ShortVideoCoreCommentService_ServiceDesc is the grpc.ServiceDesc for ShortVideoCoreCommentService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -167,10 +135,6 @@ var ShortVideoCoreCommentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListComment",
 			Handler:    _ShortVideoCoreCommentService_ListComment_Handler,
-		},
-		{
-			MethodName: "CountComment",
-			Handler:    _ShortVideoCoreCommentService_CountComment_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
