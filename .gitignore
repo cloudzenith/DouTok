@@ -38,3 +38,5 @@ bin/
 *.swp
 
 go.sum
+
+logs

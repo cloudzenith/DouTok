@@ -1,0 +1,43 @@
+syntax = "proto3";
+package api;
+
+option go_package = "github.com/cloudzenith/DouTok/...;api";
+
+import "base.proto";
+import "buf/validate/validate.proto";
+
+// 手机号和邮箱至少要存在一个
+message RegisterRequest {
+    string mobile = 1;
+    string email = 2[
+        (buf.validate.field).cel = {
+            id: "email",
+            message: "必须输入正确格式的邮箱",
+            expression: "this.isEmail()"
+        }
+    ];
+    string password = 3;
+}
+
+message RegisterResponse {
+    api.Metadata meta = 1;
+    int64 account_id = 2; // 账户id，通过此id绑定跨平台账号
+}
+
+// 手机号、邮箱、账户id三者至少要存在一个
+message CheckAccountRequest {
+    string mobile = 1;
+    string email = 2;
+    int64 account_id = 3;
+    string password = 4;
+}
+
+message CheckAccountResponse {
+    api.Metadata meta = 1;
+    int64 account_id = 2; // 账户id，通过此id绑定跨平台账号
+}
+
+service AccountService {
+    rpc Register(RegisterRequest) returns (RegisterResponse);
+    rpc CheckAccount(CheckAccountRequest) returns (CheckAccountResponse);
+}

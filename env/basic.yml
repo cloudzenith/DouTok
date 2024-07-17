@@ -1,0 +1,19 @@
+version: '3'
+
+networks:
+  total:
+    driver: bridge
+
+services:
+  mysql:
+    image: mysql:8.0
+    env_file:
+      - ./mysql/.env
+    networks:
+      - total
+    volumes:
+        - ./mysql_data:/var/lib/mysql:rw
+        - ./mysql/my.cnf:/etc/mysql/my.cnf
+    ports:
+        - "3306:3306"
+    restart: always

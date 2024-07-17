@@ -1,0 +1,38 @@
+syntax = "proto3";
+package api;
+
+option go_package = "github.com/cloudzenith/DouTok/...;api";
+
+import "base.proto";
+
+enum CaptchaType {
+    SMS = 0;
+    EMAIL = 1;
+}
+
+message SendCaptchaRequest {
+    string to = 1;
+    string template_id = 2;
+    map<string, string> data = 3;
+    CaptchaType captcha_type = 4;
+    int64 expire_seconds = 5;
+}
+
+message SendCaptchaResponse {
+    api.Metadata meta = 1;
+    int64 captcha_id = 2;
+}
+
+message ValidateCaptchaRequest {
+    int64 captcha_id = 1;
+    string captcha = 2;
+}
+
+message ValidateCaptchaResponse {
+    api.Metadata meta = 1;
+}
+
+service CaptchaService {
+    rpc SendCaptcha(SendCaptchaRequest) returns (SendCaptchaResponse);
+    rpc ValidateCaptcha(ValidateCaptchaRequest) returns (ValidateCaptchaResponse);
+}
