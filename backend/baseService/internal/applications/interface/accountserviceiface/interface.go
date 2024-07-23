@@ -1,10 +1,11 @@
-package accountapp
+package accountserviceiface
 
 import (
 	"context"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/service/accountservice"
 )
 
+//go:generate mockgen -source=interface.go -destination=interface_mock.go -package=accountserviceiface AccountService
 type AccountService interface {
 	Create(ctx context.Context, mobile, email, password string) (int64, error)
 	CheckPasswordById(ctx context.Context, id int64, password string) (int64, error)

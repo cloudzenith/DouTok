@@ -5,6 +5,7 @@ import (
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/dal/models"
 )
 
+//go:generate mockgen -source=account.go -destination=account_mock.go -package=repoiface AccountRepository
 type AccountRepository interface {
 	Create(ctx context.Context, account *models.Account) error
 	ModifyPassword(ctx context.Context, account *models.Account) error

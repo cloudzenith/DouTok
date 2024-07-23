@@ -4,14 +4,15 @@ import (
 	"context"
 	"errors"
 	"github.com/cloudzenith/DouTok/backend/baseService/api"
+	"github.com/cloudzenith/DouTok/backend/baseService/internal/applications/interface/accountserviceiface"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/utils"
 )
 
 type AccountApplication struct {
-	accountService AccountService
+	accountService accountserviceiface.AccountService
 }
 
-func New(accountService AccountService) *AccountApplication {
+func New(accountService accountserviceiface.AccountService) *AccountApplication {
 	return &AccountApplication{
 		accountService: accountService,
 	}
