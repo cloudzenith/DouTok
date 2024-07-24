@@ -1,0 +1,10 @@
+server:
+  grpc:
+    addr: 0.0.0.0:9000
+
+data:
+  database:
+    source: root:root@tcp(localhost:3306)/doutok?parseTime=true
+
+snowflake:
+  node: 1
