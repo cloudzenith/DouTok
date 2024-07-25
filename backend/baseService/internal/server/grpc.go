@@ -3,8 +3,6 @@ package server
 import (
 	"github.com/cloudzenith/DouTok/backend/baseService/api"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/middlewares"
-	"github.com/go-kratos/kratos/v2/log"
-	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/middleware/metadata"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
@@ -16,10 +14,10 @@ func NewGRPCServer(addr string) *grpc.Server {
 		grpc.Middleware(
 			recovery.Recovery(),
 			metadata.Server(),
-			logging.Server(log.GetLogger()),
 			tracing.Server(),
 			middlewares.TraceIdInjector(),
 			middlewares.SpanIdInjector(),
+			middlewares.RequestMonitor(),
 		),
 	}
 	opts = append(opts, grpc.Address(addr))

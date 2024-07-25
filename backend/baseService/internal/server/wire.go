@@ -5,6 +5,7 @@ package server
 
 import (
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/applications/accountapp"
+	"github.com/cloudzenith/DouTok/backend/baseService/internal/applications/interface/accountserviceiface"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/repoiface"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/service/accountservice"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/repositories/accountrepo"
@@ -18,7 +19,7 @@ var accountRepoProviders = wire.NewSet(
 
 var accountServiceProviders = wire.NewSet(
 	accountservice.New,
-	wire.Bind(new(accountapp.AccountService), new(*accountservice.Service)),
+	wire.Bind(new(accountserviceiface.AccountService), new(*accountservice.Service)),
 )
 
 var accountAppProviderSet = wire.NewSet(
