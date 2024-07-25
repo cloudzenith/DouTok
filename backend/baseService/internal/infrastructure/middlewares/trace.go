@@ -141,6 +141,7 @@ func RequestMonitor() middleware.Middleware {
 				"operation", operation,
 				"args", extractArgs(req),
 				"json", extractArgs2Json(req),
+				"result", extractArgs2Json(reply),
 				"code", code,
 				"reason", reason,
 				"stack", stack,
