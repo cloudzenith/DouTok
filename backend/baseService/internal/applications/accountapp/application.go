@@ -6,6 +6,7 @@ import (
 	"github.com/cloudzenith/DouTok/backend/baseService/api"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/applications/interface/accountserviceiface"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/utils"
+	"github.com/go-kratos/kratos/v2/log"
 )
 
 type AccountApplication struct {
@@ -77,6 +78,7 @@ func (a *AccountApplication) CheckAccount(ctx context.Context, request *api.Chec
 		})
 	}
 
+	log.Context(ctx).Error("unknown request type")
 	return &api.CheckAccountResponse{
 		Meta: utils.GetMetaWithError(errors.New("unknown request type")),
 	}, nil

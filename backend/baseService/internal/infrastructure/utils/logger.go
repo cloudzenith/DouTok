@@ -8,6 +8,7 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
+	"os"
 )
 
 const (
@@ -37,7 +38,10 @@ func getLogSyncWriter() zapcore.WriteSyncer {
 		MaxAge:     LogMaxAge,
 		Compress:   LogCompress,
 	}
-	return zapcore.AddSync(lumberJackLogger)
+	return zapcore.NewMultiWriteSyncer(
+		zapcore.AddSync(lumberJackLogger),
+		zapcore.AddSync(os.Stdout),
+	)
 }
 
 func SetJsonLogger() log.Logger {
