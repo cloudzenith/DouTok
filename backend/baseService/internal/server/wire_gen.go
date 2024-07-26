@@ -8,11 +8,12 @@ package server
 
 import (
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/applications/accountapp"
-	"github.com/cloudzenith/DouTok/backend/baseService/internal/applications/interface/accountserviceiface"
-	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/repoiface"
+	"github.com/cloudzenith/DouTok/backend/baseService/internal/applications/authapp"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/service/accountservice"
+	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/service/authservice"
+	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/redis/verificationcoderedis"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/repositories/accountrepo"
-	"github.com/google/wire"
+	"github.com/cloudzenith/DouTok/backend/baseService/internal/server/authappproviders"
 )
 
 // Injectors from wire.go:
@@ -24,12 +25,10 @@ func initAccountApplication() *accountapp.AccountApplication {
 	return accountApplication
 }
 
-// wire.go:
-
-var accountRepoProviders = wire.NewSet(accountrepo.New, wire.Bind(new(repoiface.AccountRepository), new(*accountrepo.PersistRepository)))
-
-var accountServiceProviders = wire.NewSet(accountservice.New, wire.Bind(new(accountserviceiface.AccountService), new(*accountservice.Service)))
-
-var accountAppProviderSet = wire.NewSet(accountapp.New, accountRepoProviders,
-	accountServiceProviders,
-)
+func initAuthApplication(dsn authappproviders.RedisDsn, password authappproviders.RedisPassword) *authapp.AuthApplication {
+	client := authappproviders.NewRedis(dsn, password)
+	redisRepository := verificationcoderedis.New(client)
+	authService := authservice.New(redisRepository)
+	authApplication := authapp.New(authService)
+	return authApplication
+}

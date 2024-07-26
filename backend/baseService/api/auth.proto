@@ -1,0 +1,32 @@
+syntax = "proto3";
+package api;
+
+option go_package = "github.com/cloudzenith/DouTok/...;api";
+
+import "base.proto";
+
+message CreateVerificationCodeRequest {
+    // 验证码的位数
+    int64 bits = 1;
+    // 过期时间戳，毫秒
+    int64 expire_time = 2;
+}
+
+message CreateVerificationCodeResponse {
+    api.Metadata meta = 1;
+    int64 verification_code_id = 2;
+}
+
+message ValidateVerificationCodeRequest {
+    int64 verification_code_id = 1;
+    string code = 2;
+}
+
+message ValidateVerificationCodeResponse {
+    api.Metadata meta = 1;
+}
+
+service AuthService {
+  rpc CreateVerificationCode(CreateVerificationCodeRequest) returns (CreateVerificationCodeResponse);
+  rpc ValidateVerificationCode(ValidateVerificationCodeRequest) returns (ValidateVerificationCodeResponse);
+}

@@ -71,7 +71,11 @@ func main() {
 
 	utils.InitDefaultSnowflakeNode(c.Snowflake.Node)
 
-	grpcServer := server.NewGRPCServer(c.Server.Grpc.Addr)
+	grpcServer := server.NewGRPCServer(
+		server.WithAddr(c.Server.Grpc.Addr),
+		server.WithRedisDsn(c.Data.Redis.Source),
+		server.WithRedisPassword(c.Data.Redis.Password),
+	)
 	app := newBaseService(logger, grpcServer)
 	if err := app.Run(); err != nil {
 		panic(err)
