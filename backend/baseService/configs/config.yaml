@@ -5,6 +5,9 @@ server:
 data:
   database:
     source: root:root@tcp(localhost:3306)/doutok?parseTime=true
+  redis:
+    source: localhost:6379
+    password: root
 
 snowflake:
   node: 1
