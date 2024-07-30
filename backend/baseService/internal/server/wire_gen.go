@@ -9,10 +9,14 @@ package server
 import (
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/applications/accountapp"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/applications/authapp"
+	"github.com/cloudzenith/DouTok/backend/baseService/internal/applications/postapp"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/service/accountservice"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/service/authservice"
+	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/service/postservice"
+	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/adapters/thirdmsgadapter"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/redis/verificationcoderedis"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/repositories/accountrepo"
+	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/repositories/templaterepo"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/server/authappproviders"
 )
 
@@ -31,4 +35,12 @@ func initAuthApplication(dsn authappproviders.RedisDsn, password authappprovider
 	authService := authservice.New(redisRepository)
 	authApplication := authapp.New(authService)
 	return authApplication
+}
+
+func initPostApplication() *postapp.PostApplication {
+	persistRepository := templaterepo.New()
+	thirdMsgAdapter := thirdmsgadapter.New()
+	postService := postservice.New(persistRepository, thirdMsgAdapter)
+	postApplication := postapp.New(postService)
+	return postApplication
 }

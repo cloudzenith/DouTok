@@ -6,6 +6,7 @@ database:
   outFile :  "gen.go"
   tables:
     - account
+    - template
   mode:
     - WithDefaultQuery
     - WithoutContext
