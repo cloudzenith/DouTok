@@ -31,5 +31,6 @@ func NewGRPCServer(options ...Option) *grpc.Server {
 
 	api.RegisterAccountServiceServer(srv, initAccountApplication())
 	api.RegisterAuthServiceServer(srv, initAuthApplication(authappproviders.RedisDsn(params.redisDsn), authappproviders.RedisPassword(params.redisPassword)))
+	api.RegisterPostServiceServer(srv, initPostApplication())
 	return srv
 }

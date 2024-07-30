@@ -20,7 +20,7 @@ func New(accountService accountserviceiface.AccountService) *AccountApplication 
 }
 
 func (a *AccountApplication) Register(ctx context.Context, request *api.RegisterRequest) (*api.RegisterResponse, error) {
-	if err := validate(request); err != nil {
+	if err := utils.Validate(request); err != nil {
 		return &api.RegisterResponse{
 			Meta: utils.GetMetaWithError(err),
 		}, nil
@@ -54,7 +54,7 @@ func (a *AccountApplication) checkPassword(ctx context.Context, checkFunc func()
 }
 
 func (a *AccountApplication) CheckAccount(ctx context.Context, request *api.CheckAccountRequest) (*api.CheckAccountResponse, error) {
-	if err := validate(request); err != nil {
+	if err := utils.Validate(request); err != nil {
 		return &api.CheckAccountResponse{
 			Meta: utils.GetMetaWithError(err),
 		}, nil

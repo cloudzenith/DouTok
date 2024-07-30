@@ -6,8 +6,10 @@ package server
 import (
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/applications/accountapp"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/applications/authapp"
+	"github.com/cloudzenith/DouTok/backend/baseService/internal/applications/postapp"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/server/accountproviders"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/server/authappproviders"
+	"github.com/cloudzenith/DouTok/backend/baseService/internal/server/postappproviders"
 	"github.com/google/wire"
 )
 
@@ -18,5 +20,10 @@ func initAccountApplication() *accountapp.AccountApplication {
 
 func initAuthApplication(dsn authappproviders.RedisDsn, password authappproviders.RedisPassword) *authapp.AuthApplication {
 	wire.Build(authappproviders.AuthAppProviderSet)
+	return nil
+}
+
+func initPostApplication() *postapp.PostApplication {
+	wire.Build(postappproviders.PostAppProviderSet)
 	return nil
 }

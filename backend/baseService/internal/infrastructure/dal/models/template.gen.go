@@ -8,21 +8,19 @@ import (
 	"time"
 )
 
-const TableNameAccount = "account"
+const TableNameTemplate = "template"
 
-// Account mapped from table <account>
-type Account struct {
+// Template mapped from table <template>
+type Template struct {
 	ID         int64     `gorm:"column:id;type:bigint(20);primaryKey" json:"id"`
-	Mobile     string    `gorm:"column:mobile;type:varchar(20);not null;index:account_mobile_idx,priority:1" json:"mobile"`
-	Email      string    `gorm:"column:email;type:varchar(100);not null;index:account_email_idx,priority:1" json:"email"`
-	Password   string    `gorm:"column:password;type:varchar(64);not null" json:"password"`
-	Salt       string    `gorm:"column:salt;type:varchar(64);not null" json:"salt"`
+	Title      string    `gorm:"column:title;type:varchar(255);not null;index:title_idx,priority:1" json:"title"`
+	Content    string    `gorm:"column:content;type:text;not null" json:"content"`
 	IsDeleted  bool      `gorm:"column:is_deleted;type:tinyint(1);not null" json:"is_deleted"`
 	CreateTime time.Time `gorm:"column:create_time;type:timestamp;not null;index:create_time_idx,priority:1;default:CURRENT_TIMESTAMP" json:"create_time"`
 	UpdateTime time.Time `gorm:"column:update_time;type:timestamp;not null;index:update_time_idx,priority:1;default:CURRENT_TIMESTAMP" json:"update_time"`
 }
 
-// TableName Account's table name
-func (*Account) TableName() string {
-	return TableNameAccount
+// TableName Template's table name
+func (*Template) TableName() string {
+	return TableNameTemplate
 }
