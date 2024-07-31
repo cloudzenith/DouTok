@@ -1,0 +1,358 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: ""
+    version: 0.0.1
+paths:
+    /v1/user/info:
+        get:
+            tags:
+                - UserService
+            operationId: UserService_GetUserInfo
+            parameters:
+                - name: userId
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/shortVideoCoreService.api.v1.GetUserInfoResponse'
+        put:
+            tags:
+                - UserService
+            operationId: UserService_UpdateUserInfo
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/shortVideoCoreService.api.v1.UpdateUserInfoRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/shortVideoCoreService.api.v1.UpdateUserInfoResponse'
+    /v1/user/login:
+        post:
+            tags:
+                - UserService
+            operationId: UserService_Login
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/shortVideoCoreService.api.v1.LoginRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/shortVideoCoreService.api.v1.LoginResponse'
+    /v1/user/register:
+        post:
+            tags:
+                - UserService
+            operationId: UserService_Register
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/shortVideoCoreService.api.v1.RegisterRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/shortVideoCoreService.api.v1.RegisterResponse'
+    /v1/videos:
+        post:
+            tags:
+                - ShortVideoCoreVideoService
+            operationId: ShortVideoCoreVideoService_ListPublishedVideo
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/shortVideoCoreService.api.v1.ListPublishedVideoRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/shortVideoCoreService.api.v1.ListPublishedVideoResponse'
+    /v1/videos/feed:
+        post:
+            tags:
+                - ShortVideoCoreVideoService
+            operationId: ShortVideoCoreVideoService_FeedShortVideo
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/shortVideoCoreService.api.v1.FeedShortVideoRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/shortVideoCoreService.api.v1.FeedShortVideoResponse'
+    /v1/videos/{videoId}:
+        get:
+            tags:
+                - ShortVideoCoreVideoService
+            operationId: ShortVideoCoreVideoService_GetVideoById
+            parameters:
+                - name: videoId
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/shortVideoCoreService.api.v1.GetVideoByIdResponse'
+components:
+    schemas:
+        shortVideoCoreService.api.v1.FeedShortVideoRequest:
+            type: object
+            properties:
+                latestTime:
+                    type: string
+                userId:
+                    type: string
+        shortVideoCoreService.api.v1.FeedShortVideoResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/shortVideoCoreService.api.v1.Metadata'
+                videos:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/shortVideoCoreService.api.v1.Video'
+                nextTime:
+                    type: string
+        shortVideoCoreService.api.v1.GetUserInfoResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/shortVideoCoreService.api.v1.Metadata'
+                user:
+                    $ref: '#/components/schemas/shortVideoCoreService.api.v1.User'
+        shortVideoCoreService.api.v1.GetVideoByIdResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/shortVideoCoreService.api.v1.Metadata'
+                video:
+                    $ref: '#/components/schemas/shortVideoCoreService.api.v1.Video'
+        shortVideoCoreService.api.v1.ListPublishedVideoRequest:
+            type: object
+            properties:
+                userId:
+                    type: string
+                pagination:
+                    $ref: '#/components/schemas/shortVideoCoreService.api.v1.PaginationRequest'
+        shortVideoCoreService.api.v1.ListPublishedVideoResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/shortVideoCoreService.api.v1.Metadata'
+                videos:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/shortVideoCoreService.api.v1.Video'
+                pagination:
+                    $ref: '#/components/schemas/shortVideoCoreService.api.v1.PaginationResponse'
+        shortVideoCoreService.api.v1.LoginRequest:
+            type: object
+            properties:
+                mobile:
+                    type: string
+                email:
+                    type: string
+                password:
+                    type: string
+        shortVideoCoreService.api.v1.LoginResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/shortVideoCoreService.api.v1.Metadata'
+                token:
+                    type: string
+        shortVideoCoreService.api.v1.Metadata:
+            type: object
+            properties:
+                bizCode:
+                    type: integer
+                    format: int32
+                message:
+                    type: string
+                domain:
+                    type: string
+                reason:
+                    type: array
+                    items:
+                        type: string
+        shortVideoCoreService.api.v1.PaginationRequest:
+            type: object
+            properties:
+                page:
+                    type: integer
+                    format: int32
+                size:
+                    type: integer
+                    format: int32
+                sort:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/shortVideoCoreService.api.v1.SortField'
+        shortVideoCoreService.api.v1.PaginationResponse:
+            type: object
+            properties:
+                page:
+                    type: integer
+                    format: int32
+                total:
+                    type: integer
+                    format: int32
+                count:
+                    type: integer
+                    format: int32
+        shortVideoCoreService.api.v1.PublishVideoRequest:
+            type: object
+            properties:
+                data:
+                    type: string
+                    format: bytes
+                title:
+                    type: string
+                coverUrl:
+                    type: string
+                userId:
+                    type: string
+        shortVideoCoreService.api.v1.PublishVideoResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/shortVideoCoreService.api.v1.Metadata'
+        shortVideoCoreService.api.v1.RegisterRequest:
+            type: object
+            properties:
+                mobile:
+                    type: string
+                email:
+                    type: string
+                password:
+                    type: string
+        shortVideoCoreService.api.v1.RegisterResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/shortVideoCoreService.api.v1.Metadata'
+                userId:
+                    type: string
+        shortVideoCoreService.api.v1.SortField:
+            type: object
+            properties:
+                field:
+                    type: string
+                order:
+                    type: integer
+                    format: enum
+        shortVideoCoreService.api.v1.UpdateUserInfoRequest:
+            type: object
+            properties:
+                userId:
+                    type: string
+                name:
+                    type: string
+                avatar:
+                    type: string
+                backgroundImage:
+                    type: string
+                signature:
+                    type: string
+        shortVideoCoreService.api.v1.UpdateUserInfoResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/shortVideoCoreService.api.v1.Metadata'
+        shortVideoCoreService.api.v1.User:
+            type: object
+            properties:
+                id:
+                    type: string
+                name:
+                    type: string
+                avatar:
+                    type: string
+                backgroundImage:
+                    type: string
+                signature:
+                    type: string
+                mobile:
+                    type: string
+                email:
+                    type: string
+                followCount:
+                    type: string
+                followerCount:
+                    type: string
+                totalFavorited:
+                    type: string
+                workCount:
+                    type: string
+                favoriteCount:
+                    type: string
+        shortVideoCoreService.api.v1.Video:
+            type: object
+            properties:
+                id:
+                    type: string
+                author:
+                    $ref: '#/components/schemas/shortVideoCoreService.api.v1.VideoAuthor'
+                playUrl:
+                    type: string
+                coverUrl:
+                    type: string
+                favoriteCount:
+                    type: string
+                commentCount:
+                    type: string
+                isFavorite:
+                    type: boolean
+                title:
+                    type: string
+        shortVideoCoreService.api.v1.VideoAuthor:
+            type: object
+            properties:
+                id:
+                    type: string
+                name:
+                    type: string
+                avatar:
+                    type: string
+                isFollowing:
+                    type: boolean
+tags:
+    - name: ShortVideoCoreVideoService
+    - name: UserService

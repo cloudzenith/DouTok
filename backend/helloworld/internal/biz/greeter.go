@@ -10,8 +10,8 @@ import (
 )
 
 var (
-	// ErrUserNotFound is user not found.
-	ErrUserNotFound = errors.NotFound(v1.ErrorReason_USER_NOT_FOUND.String(), "user not found")
+	// ErrUserNotFound is userdomain not found.
+	ErrUserNotFound = errors.NotFound(v1.ErrorReason_USER_NOT_FOUND.String(), "userdomain not found")
 )
 
 // Greeter is a Greeter model.
