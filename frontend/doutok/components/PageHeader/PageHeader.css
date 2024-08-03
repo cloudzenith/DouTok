@@ -1,0 +1,28 @@
+.header {
+  display: flex;
+  align-items: center;
+  min-height: 5vh;
+  min-width: 100vh;
+}
+
+#header-container {
+  background: linear-gradient(
+      1deg, #363741 60%, #E12056
+  );
+}
+
+.logo {
+  width: 12vh;
+  margin-left: 0;
+}
+
+.search {
+  display: block;
+  float: right;
+  margin-left: 15%;
+}
+
+.header-menu {
+  float: right;
+  margin-left: auto;
+}

@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - docs-site/**
 
 permissions:
   contents: write
