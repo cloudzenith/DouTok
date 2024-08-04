@@ -1,0 +1,350 @@
+name: Lint Frontend Code
+run-name: 'Lint Frontend Code ${{github.workflow}} #${{ github.event.pull_request.number }}'
+on:
+    pull_request:
+        types: [opened, synchronize, reopened]
+        paths:
+            - 'frontend/**'
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+    cancel-in-progress: true
+
+jobs:
+    replyChecking:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  ref: ${{github.head_ref}}
+                  lfs: true
+
+            - name: Get date time
+              id: getDateTime
+              run: echo "result=$(TZ=Asia/Shanghai date)" >> "$GITHUB_OUTPUT"
+
+            - name: Create or update a comment
+              uses: taoliujun/action-unique-comment@v1
+              with:
+                  uniqueIdentifier: ${{ github.workflow }}
+                  body: |
+                      **Checking...**
+
+                      ---
+
+                      Commented by Action [${{github.workflow}} #${{ github.event.pull_request.number }}](${{github.event.repository.html_url}}/actions/runs/${{github.run_id}}), last updated on ${{steps.getDateTime.outputs.result}}.
+
+    init:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Init repo
+              uses: actions/checkout@v4
+              with:
+                  ref: ${{github.head_ref}}
+                  lfs: true
+
+            - name: Init pnpm
+              uses: pnpm/action-setup@v2
+              with:
+                  version: 8
+
+            - name: Init node
+              id: node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: 'pnpm'
+
+            - name: Install dependencies
+              if: steps.node.outputs.cache-hit != 'true'
+              run: pnpm install
+
+    eslint:
+        runs-on: ubuntu-latest
+        needs: [init]
+        outputs:
+            result: ${{ steps.lint.outputs.result }}
+        steps:
+            - name: Init repo
+              uses: actions/checkout@v4
+              with:
+                  ref: ${{github.head_ref}}
+                  lfs: true
+                  fetch-depth: 0
+
+            - name: Init pnpm
+              uses: pnpm/action-setup@v2
+              with:
+                  version: 8
+
+            - name: Init node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: 'pnpm'
+
+            - name: Install dependencies
+              run: pnpm install
+
+            - name: Run lint
+              id: lint
+              uses: actions/github-script@v7
+              with:
+                  result-encoding: string
+                  script: |
+                      let output = '';
+                      let outerr = '';
+                      let diffFiles = '';
+
+                      await exec.exec(
+                        `git diff --name-only --diff-filter=d origin/${{github.base_ref}}`,
+                        [],
+                        {
+                          // silent: true,
+                          // ignoreReturnCode: true,
+                          listeners: {
+                            stdout: (data) => {
+                                diffFiles += data.toString();
+                            },
+                          },
+                        }
+                      );
+
+                      const lintFiles = diffFiles.split(`\n`).filter((file) => {
+                        return file.endsWith('.js') || file.endsWith('.ts') || file.endsWith('.tsx')
+                      }).join(' ');
+
+                      await exec.exec(
+                        // "pnpm run lint --format stylish",
+                        `pnpm eslint ${lintFiles}`,
+                        [],
+                        {
+                          // silent: true,
+                          ignoreReturnCode: true,
+                          listeners: {
+                            stdout: (data) => {
+                                output += data.toString();
+                            },
+                            stderr: (data) => {
+                                outerr += data.toString();
+                            },
+                          },
+                        }
+                      );
+
+                      if (outerr) {
+                        return `:x: Command execution failed.`;
+                      }
+
+                      const errorMatch = output.match(/(\d+) errors?/);
+                      const warnMatch = output.match(/(\d+) warnings?/);
+
+                      if (errorMatch && errorMatch?.[1] !== '0') {
+                        return `
+                        :x: ${errorMatch?.[0]} ${warnMatch?.[0]}.
+
+                        <details><summary>Details</summary>
+                        <p>
+
+                        \`\`\`shell
+                        ${output}
+                        \`\`\`
+
+                        </p>
+                        </details>
+                        `;
+                      }
+
+                      return `:white_check_mark: ${errorMatch?.[0] || '0 error'} ${warnMatch?.[0] || '0 warning'}.`;
+
+    typescript:
+        runs-on: ubuntu-latest
+        needs: [init]
+        outputs:
+            result: ${{ steps.lint.outputs.result }}
+        steps:
+            - name: Init repo
+              uses: actions/checkout@v4
+              with:
+                  ref: ${{github.head_ref}}
+                  lfs: true
+
+            - name: Init pnpm
+              uses: pnpm/action-setup@v2
+              with:
+                  version: 8
+
+            - name: Init node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: 'pnpm'
+
+            - name: Install dependencies
+              run: pnpm install
+
+            - name: Run lint
+              id: lint
+              uses: actions/github-script@v7
+              with:
+                  result-encoding: string
+                  script: |
+                      let output = '';
+                      let outerr = '';
+
+                      await exec.exec(
+                        `pnpm run -r lint:ts`,
+                        [],
+                        {
+                          // silent: true,
+                          ignoreReturnCode: true,
+                          listeners: {
+                            stdout: (data) => {
+                                output += data.toString();
+                            },
+                            stderr: (data) => {
+                                outerr += data.toString();
+                            },
+                          },
+                        }
+                      );
+
+                      if (outerr) {
+                        return `:x: Command execution failed.`;
+                      }
+
+                      const errorMatch = output.match(/error TS/g);
+
+                      if (errorMatch) {
+                        return `
+                        :x: ${errorMatch?.length} errors.
+                        
+                        <details><summary>Details</summary>
+                        <p>
+
+                        \`\`\`shell
+                        ${output}
+                        \`\`\`
+                        
+                        </p>
+                        </details>
+                        `;
+                      }
+
+                      return `:white_check_mark: ${'0 error'}.`;
+
+    unitTest:
+        runs-on: ubuntu-latest
+        needs: [init]
+        outputs:
+            result: ${{ steps.lint.outputs.result }}
+        steps:
+            - name: Init repo
+              uses: actions/checkout@v4
+              with:
+                  ref: ${{github.head_ref}}
+                  lfs: true
+
+            - name: Init pnpm
+              uses: pnpm/action-setup@v2
+              with:
+                  version: 8
+
+            - name: Init node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: 'pnpm'
+
+            - name: Install dependencies
+              run: pnpm install
+
+            - name: Run lint
+              id: lint
+              uses: actions/github-script@v7
+              with:
+                  result-encoding: string
+                  script: |
+                      let output = '';
+                      let outerr = '';
+
+                      await exec.exec(
+                        `pnpm run test`,
+                        [],
+                        {
+                          // silent: true,
+                          ignoreReturnCode: true,
+                          listeners: {
+                            stdout: (data) => {
+                                output += data.toString();
+                            },
+                            stderr: (data) => {
+                                outerr += data.toString();
+                            },
+                          },
+                        }
+                      );
+
+                      // why use outerr? https://github.com/jestjs/jest/issues/5064
+
+                      const failMatch = outerr.match(/Test Suites: \d+ failed/);
+
+                      if (failMatch) {
+                        return `
+                        :x: ${failMatch?.[0]}.
+                        
+                        <details><summary>Details</summary>
+                        <p>
+                        
+                        \`\`\`shell
+                        ${outerr.substring(outerr.indexOf('Summary of all failing tests'))}
+                        \`\`\`
+
+                        </p>
+                        </details>
+                        `;
+                      }
+
+                      const errorMatch = outerr.match(/Jest: "global" coverage threshold for lines \([0-9\.]+%\) not met: [0-9\.]+%/);
+
+                      if (errorMatch) {
+                        return `:x: ${errorMatch?.[0]}.`;
+                      }
+
+                      return `:white_check_mark: passed.`;
+
+    replyResult:
+        runs-on: ubuntu-latest
+        needs: [eslint, typescript, unitTest]
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  ref: ${{github.head_ref}}
+                  lfs: true
+
+            - name: Get date time
+              id: getDateTime
+              run: echo "result=$(TZ=Asia/Shanghai date)" >> "$GITHUB_OUTPUT"
+
+            - name: Create or update a comment
+              uses: taoliujun/action-unique-comment@v1
+              with:
+                  uniqueIdentifier: ${{ github.workflow }}
+                  body: |
+                      ## Eslint Check Result
+
+                      ${{needs.eslint.outputs.result}}
+
+                      ## Typescript Check Result
+
+                      ${{needs.typescript.outputs.result}}
+
+                      ## UnitTest Check Result
+
+                      ${{needs.unitTest.outputs.result}}
+
+                      ---
+
+                      Commented by Action [${{github.workflow}} #${{ github.event.pull_request.number }}](${{github.event.repository.html_url}}/actions/runs/${{github.run_id}}), last updated on ${{steps.getDateTime.outputs.result}}.

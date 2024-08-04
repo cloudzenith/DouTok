@@ -6,6 +6,7 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+  min-height: 100vh;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -17,6 +18,7 @@
 }
 
 body {
+  min-height: 100vh;
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,
@@ -26,8 +28,38 @@ body {
     rgb(var(--background-start-rgb));
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+.App {
+  min-height: 100vh;
+}
+
+Layout {
+  min-height: 100vh;
+}
+
+PageHeader {
+  min-height: 5vh;
+}
+
+Content {
+  min-height: 80px;
+  padding: 0 48px;
+}
+
+.content {
+  width: 100%;
+  height: 100%;
+}
+
+.content {
+  /*background: white;*/
+  min-height: 85vh;
+  padding-top: 2%;
+  padding-left: 5%;
+  padding-right: 5%;
+}
+
+#content {
+  background: linear-gradient(
+          160deg, #363741 90%, #14F1DA
+  );
 }
