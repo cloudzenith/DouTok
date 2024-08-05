@@ -41,8 +41,12 @@ func (s *AuthService) ValidateVerificationCode(ctx context.Context, code *verifi
 		return false, errors.New("failed to query verification code")
 	}
 
-	defer s.verificationCodeRedis.Remove(ctx, code.VerificationCodeId)
-
 	anotherCode := verificationcode.New(code.VerificationCodeId, codeString)
-	return code.Check(anotherCode)
+	ok, err := code.Check(anotherCode)
+	if err != nil {
+		return false, err
+	}
+
+	_ = s.verificationCodeRedis.Remove(ctx, code.VerificationCodeId)
+	return ok, nil
 }
