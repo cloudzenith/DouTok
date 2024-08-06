@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  # MySQL 8.0 服务
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: short_video_core
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  # MySQL 数据卷
+  mysql-data:
