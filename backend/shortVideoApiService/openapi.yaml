@@ -1,0 +1,358 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: ""
+    version: 0.0.1
+paths:
+    /user/info:
+        get:
+            tags:
+                - UserService
+            operationId: UserService_GetUserInfo
+            parameters:
+                - name: userId
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/userapi.GetUserInfoResponse'
+        put:
+            tags:
+                - UserService
+            operationId: UserService_UpdateUserInfo
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/userapi.UpdateUserInfoRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/userapi.UpdateUserInfoResponse'
+    /user/login:
+        post:
+            tags:
+                - UserService
+            operationId: UserService_Login
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/userapi.LoginRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/userapi.LoginResponse'
+    /user/register:
+        post:
+            tags:
+                - UserService
+            operationId: UserService_Register
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/userapi.RegisterRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/userapi.RegisterResponse'
+    /videos:
+        post:
+            tags:
+                - ShortVideoCoreVideoService
+            operationId: ShortVideoCoreVideoService_ListPublishedVideo
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.ListPublishedVideoRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.ListPublishedVideoResponse'
+    /videos/feed:
+        post:
+            tags:
+                - ShortVideoCoreVideoService
+            operationId: ShortVideoCoreVideoService_FeedShortVideo
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.FeedShortVideoRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.FeedShortVideoResponse'
+    /videos/{videoId}:
+        get:
+            tags:
+                - ShortVideoCoreVideoService
+            operationId: ShortVideoCoreVideoService_GetVideoById
+            parameters:
+                - name: videoId
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.GetVideoByIdResponse'
+components:
+    schemas:
+        api.FeedShortVideoRequest:
+            type: object
+            properties:
+                latestTime:
+                    type: string
+                userId:
+                    type: string
+        api.FeedShortVideoResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/api.Metadata'
+                videos:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/api.Video'
+                nextTime:
+                    type: string
+        api.GetVideoByIdResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/api.Metadata'
+                video:
+                    $ref: '#/components/schemas/api.Video'
+        api.ListPublishedVideoRequest:
+            type: object
+            properties:
+                userId:
+                    type: string
+                pagination:
+                    $ref: '#/components/schemas/api.PaginationRequest'
+        api.ListPublishedVideoResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/api.Metadata'
+                videos:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/api.Video'
+                pagination:
+                    $ref: '#/components/schemas/api.PaginationResponse'
+        api.Metadata:
+            type: object
+            properties:
+                bizCode:
+                    type: integer
+                    format: int32
+                message:
+                    type: string
+                domain:
+                    type: string
+                reason:
+                    type: array
+                    items:
+                        type: string
+        api.PaginationRequest:
+            type: object
+            properties:
+                page:
+                    type: integer
+                    format: int32
+                size:
+                    type: integer
+                    format: int32
+                sort:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/api.SortField'
+        api.PaginationResponse:
+            type: object
+            properties:
+                page:
+                    type: integer
+                    format: int32
+                total:
+                    type: integer
+                    format: int32
+                count:
+                    type: integer
+                    format: int32
+        api.PublishVideoRequest:
+            type: object
+            properties:
+                data:
+                    type: string
+                    format: bytes
+                title:
+                    type: string
+                coverUrl:
+                    type: string
+                userId:
+                    type: string
+        api.PublishVideoResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/api.Metadata'
+        api.SortField:
+            type: object
+            properties:
+                field:
+                    type: string
+                order:
+                    type: integer
+                    format: enum
+        api.Video:
+            type: object
+            properties:
+                id:
+                    type: string
+                author:
+                    $ref: '#/components/schemas/api.VideoAuthor'
+                playUrl:
+                    type: string
+                coverUrl:
+                    type: string
+                favoriteCount:
+                    type: string
+                commentCount:
+                    type: string
+                isFavorite:
+                    type: boolean
+                title:
+                    type: string
+        api.VideoAuthor:
+            type: object
+            properties:
+                id:
+                    type: string
+                name:
+                    type: string
+                avatar:
+                    type: string
+                isFollowing:
+                    type: boolean
+        userapi.GetUserInfoResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/api.Metadata'
+                user:
+                    $ref: '#/components/schemas/userapi.User'
+        userapi.LoginRequest:
+            type: object
+            properties:
+                mobile:
+                    type: string
+                email:
+                    type: string
+                password:
+                    type: string
+        userapi.LoginResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/api.Metadata'
+                token:
+                    type: string
+        userapi.RegisterRequest:
+            type: object
+            properties:
+                mobile:
+                    type: string
+                email:
+                    type: string
+                password:
+                    type: string
+        userapi.RegisterResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/api.Metadata'
+                userId:
+                    type: string
+        userapi.UpdateUserInfoRequest:
+            type: object
+            properties:
+                userId:
+                    type: string
+                name:
+                    type: string
+                avatar:
+                    type: string
+                backgroundImage:
+                    type: string
+                signature:
+                    type: string
+        userapi.UpdateUserInfoResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/api.Metadata'
+        userapi.User:
+            type: object
+            properties:
+                id:
+                    type: string
+                name:
+                    type: string
+                avatar:
+                    type: string
+                backgroundImage:
+                    type: string
+                signature:
+                    type: string
+                mobile:
+                    type: string
+                email:
+                    type: string
+                followCount:
+                    type: string
+                followerCount:
+                    type: string
+                totalFavorited:
+                    type: string
+                workCount:
+                    type: string
+                favoriteCount:
+                    type: string
+tags:
+    - name: ShortVideoCoreVideoService
+    - name: UserService
