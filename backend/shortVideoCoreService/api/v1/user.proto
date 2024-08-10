@@ -1,0 +1,102 @@
+syntax = "proto3";
+
+package shortVideoCoreService.api.v1;
+
+option go_package = "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1;v1";
+
+import "google/api/annotations.proto";
+import "validate/validate.proto";
+import "v1/base.proto";
+
+service UserService {
+    rpc Register(RegisterRequest) returns (RegisterResponse) {
+        option (google.api.http) = {
+            post: "/v1/user/register"
+            body: "*"
+        };
+    };
+    rpc Login(LoginRequest) returns (LoginResponse) {
+        option (google.api.http) = {
+            post: "/v1/user/login"
+            body: "*"
+        };
+    }
+    rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse) {
+        option (google.api.http) = {
+            get: "/v1/user/info"
+        };
+    };
+    rpc UpdateUserInfo(UpdateUserInfoRequest) returns (UpdateUserInfoResponse) {
+        option (google.api.http) = {
+            put: "/v1/user/info"
+            body: "*"
+        };
+    };
+}
+
+message User {
+    int64 id = 1; // 用户id
+    string name = 2; // 用户名称
+    string avatar = 3; // 用户头像Url
+    string background_image = 4; // 用户个人页顶部大图
+    string signature = 5; // 个人简介
+    string mobile = 6; // 手机号
+    string email = 7; // 邮箱
+    int64 follow_count = 8; // 关注总数
+    int64 follower_count = 9; // 粉丝总数
+    int64 total_favorited = 10; // 获赞数量
+    int64 work_count = 11; // 作品数量
+    int64 favorite_count = 12; // 点赞数量
+}
+
+message RegisterRequest {
+    string mobile = 1 [(validate.rules).string.pattern = "^\\+?[1-9]\\d{1,14}$"];
+    string email = 2 [(validate.rules).string.email = true];
+    string password = 3 [
+        (validate.rules).string.min_len = 8,
+        (validate.rules).string.max_len = 50
+    ];
+}
+
+message RegisterResponse {
+    Metadata meta = 1;
+    int64 user_id = 2;
+}
+
+message LoginRequest {
+    string mobile = 1 [(validate.rules).string.pattern = "^\\+?[1-9]\\d{1,14}$"];
+    string email = 2 [(validate.rules).string.email = true];
+    string password = 3 [
+        (validate.rules).string.min_len = 8,
+        (validate.rules).string.max_len = 50
+    ];
+}
+
+message LoginResponse {
+    Metadata meta = 1;
+    string token = 3;
+}
+
+message GetUserInfoRequest {
+    int64 user_id = 1 [(validate.rules).int64 = {gt: 0}];
+}
+
+message GetUserInfoResponse {
+    Metadata meta = 1;
+    User user = 2;
+}
+
+message UpdateUserInfoRequest {
+    int64 user_id = 1 [(validate.rules).int64 = {gt: 0}];
+    string name = 2 [
+        (validate.rules).string.min_len = 1,
+        (validate.rules).string.max_len = 50
+    ];
+    string avatar = 3;
+    string background_image = 4;
+    string signature = 5;
+}
+
+message UpdateUserInfoResponse {
+    Metadata meta = 1;
+}

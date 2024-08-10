@@ -1,0 +1,22 @@
+server:
+  http:
+    addr: 0.0.0.0:8001
+    timeout: 3s
+  grpc:
+    addr: 0.0.0.0:9001
+    timeout: 3s
+database:
+  driver: mysql
+  source: root:root@tcp(127.0.0.1:3306)/doutok?parseTime=True&loc=Local
+redis:
+  addr: 127.0.0.1:6379
+  read_timeout: 0.2s
+  write_timeout: 0.2s
+third_party:
+  base_service:
+    address: localhost:9000
+common:
+  node: 2
+  auth:
+    secret: "secret-key"
+    expire: 720
