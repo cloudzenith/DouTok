@@ -3,6 +3,8 @@ package verificationcoderedis
 import (
 	"context"
 	"fmt"
+	"github.com/cloudzenith/DouTok/backend/gopkgs/components/redisx"
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/redis/go-redis/v9"
 	"time"
 )
@@ -11,8 +13,8 @@ type RedisRepository struct {
 	db *redis.Client
 }
 
-func New(db *redis.Client) *RedisRepository {
-	return &RedisRepository{db: db}
+func New() *RedisRepository {
+	return &RedisRepository{db: redisx.GetClient(context.Background())}
 }
 
 func (r *RedisRepository) formatVerificationCodeKey(verificationCodeId int64) string {
@@ -21,7 +23,8 @@ func (r *RedisRepository) formatVerificationCodeKey(verificationCodeId int64) st
 
 func (r *RedisRepository) Insert(ctx context.Context, verificationCodeId, expireTime int64, code string) error {
 	key := r.formatVerificationCodeKey(verificationCodeId)
-	_, err := r.db.Set(ctx, key, code, time.Duration(expireTime)).Result()
+	_, err := r.db.Set(ctx, key, code, time.Duration(expireTime)*time.Millisecond).Result()
+	log.Context(ctx).Infof("insert verification key: %s, code: %s, seconds: %v", key, code, time.Duration(expireTime)*time.Second)
 	if err != nil {
 		return err
 	}

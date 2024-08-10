@@ -7,6 +7,7 @@ networks:
 services:
   mysql:
     image: mysql:8.0
+    container_name: mysql
     env_file:
       - ./mysql/.env
     networks:
@@ -20,6 +21,7 @@ services:
 
   redis:
     image: redis:latest
+    container_name: redis
     command: redis-server /etc/redis/redis.conf
     networks:
       - total
@@ -59,5 +61,16 @@ services:
     volumes:
       - ./minio_data:/data
       - ./minio:/root/.minio
+    networks:
+      - total
     privileged: true
     restart: always
+
+  consul:
+    container_name: consul
+    image: hashicorp/consul:1.15.4
+    networks:
+      - total
+    ports:
+      - "8500:8500"
+    command: ["consul","agent","-server","-bootstrap","-data-dir","/consul","-ui","-client","0.0.0.0"]

@@ -1,0 +1,12 @@
+app:
+  name: short-video-api
+  version: v0.0.1
+
+components:
+  etcd:
+    default:
+      host: localhost
+      port: 2379
+  consul:
+    default:
+      address: localhost:8500

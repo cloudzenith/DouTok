@@ -1,8 +1,13 @@
 package server
 
-import "github.com/cloudzenith/DouTok/backend/baseService/internal/server/warmup"
+import (
+	"context"
+	"github.com/cloudzenith/DouTok/backend/baseService/internal/server/warmup"
+	"github.com/cloudzenith/DouTok/backend/gopkgs/components/miniox"
+	"github.com/cloudzenith/DouTok/backend/gopkgs/components/mysqlx"
+)
 
 func warmUp(params *Params) {
-	warmup.CheckAndCreateFileRepoTables(params.db, params.fileTableShardingConfig, params.dbShardingTablesConfig)
-	warmup.CheckAndCreateMinioBucket(params.minioCore, params.dbShardingTablesConfig)
+	warmup.CheckAndCreateFileRepoTables(mysqlx.GetDBClient(context.Background()), params.fileTableShardingConfig, params.dbShardingTablesConfig)
+	warmup.CheckAndCreateMinioBucket(miniox.GetClient(context.Background()), params.dbShardingTablesConfig)
 }

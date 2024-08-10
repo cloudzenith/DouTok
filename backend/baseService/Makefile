@@ -8,3 +8,6 @@ gen-proto:
 
 gen-db:
 	gentool -c "gen.yml"
+
+build:
+	docker build -t base-service .
