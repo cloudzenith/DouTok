@@ -16,6 +16,8 @@ func NewGRPCServer(options ...Option) *grpc.Server {
 		option(params)
 	}
 
+	warmUp(params)
+
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),
@@ -32,5 +34,6 @@ func NewGRPCServer(options ...Option) *grpc.Server {
 	api.RegisterAccountServiceServer(srv, initAccountApplication())
 	api.RegisterAuthServiceServer(srv, initAuthApplication(authappproviders.RedisDsn(params.redisDsn), authappproviders.RedisPassword(params.redisPassword)))
 	api.RegisterPostServiceServer(srv, initPostApplication())
+	api.RegisterFileServiceServer(srv, initFileApplication(params.db, params.minioCore, params.fileTableShardingConfig))
 	return srv
 }

@@ -10,6 +10,8 @@ import (
 	"github.com/go-kratos/kratos/v2/config/file"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -39,7 +41,7 @@ func loadConfig() (config.Config, func()) {
 	}
 }
 
-func newDb(cfg conf.Config) {
+func newDb(cfg conf.Config) *gorm.DB {
 	db, err := gorm.Open(
 		mysql.Open(cfg.Data.Database.Source),
 		&gorm.Config{
@@ -52,6 +54,25 @@ func newDb(cfg conf.Config) {
 	}
 
 	query.SetDefault(db)
+	return db
+}
+
+func newMinioCore(cfg conf.Config) *minio.Core {
+	core, err := minio.NewCore(
+		cfg.Data.Minio.Endpoint,
+		&minio.Options{
+			Creds: credentials.NewStaticV4(
+				cfg.Data.Minio.AccessKey,
+				cfg.Data.Minio.SecretKey,
+				"",
+			),
+		},
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	return core
 }
 
 func init() {
@@ -67,14 +88,17 @@ func main() {
 		panic(err)
 	}
 
-	newDb(c)
-
+	db := newDb(c)
+	core := newMinioCore(c)
 	utils.InitDefaultSnowflakeNode(c.Snowflake.Node)
 
 	grpcServer := server.NewGRPCServer(
 		server.WithAddr(c.Server.Grpc.Addr),
 		server.WithRedisDsn(c.Data.Redis.Source),
 		server.WithRedisPassword(c.Data.Redis.Password),
+		server.WithDB(db),
+		server.WithMinioCore(core),
+		server.WithFileTableShardingConfig(c.Data.DBShardingConfig),
 	)
 	app := newBaseService(logger, grpcServer)
 	if err := app.Run(); err != nil {

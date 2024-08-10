@@ -40,3 +40,7 @@ bin/
 go.sum
 
 logs
+
+env/redis_data/
+env/mysql_data/
+env/minio_data/

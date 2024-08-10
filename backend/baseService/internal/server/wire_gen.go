@@ -9,15 +9,21 @@ package server
 import (
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/applications/accountapp"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/applications/authapp"
+	"github.com/cloudzenith/DouTok/backend/baseService/internal/applications/fileapp"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/applications/postapp"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/service/accountservice"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/service/authservice"
+	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/service/fileservice"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/service/postservice"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/adapters/thirdmsgadapter"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/redis/verificationcoderedis"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/repositories/accountrepo"
+	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/repositories/filerepo"
+	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/repositories/miniorepo"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/repositories/templaterepo"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/server/authappproviders"
+	"github.com/minio/minio-go/v7"
+	"gorm.io/gorm"
 )
 
 // Injectors from wire.go:
@@ -43,4 +49,12 @@ func initPostApplication() *postapp.PostApplication {
 	postService := postservice.New(persistRepository, thirdMsgAdapter)
 	postApplication := postapp.New(postService)
 	return postApplication
+}
+
+func initFileApplication(db *gorm.DB, core *minio.Core, fileTableShardingConfig fileservice.FileTableShardingConfig) *fileapp.FileApplication {
+	persistRepository := filerepo.New(db)
+	miniorepoPersistRepository := miniorepo.New(core)
+	fileService := fileservice.New(persistRepository, miniorepoPersistRepository, fileTableShardingConfig)
+	fileApplication := fileapp.New(fileService)
+	return fileApplication
 }

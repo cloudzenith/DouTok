@@ -1,6 +1,6 @@
 server:
   grpc:
-    addr: 0.0.0.0:9000
+    addr: 0.0.0.0:8888
 
 data:
   database:
@@ -8,6 +8,10 @@ data:
   redis:
     source: localhost:6379
     password: root
+  minio:
+    endpoint: localhost:9000
+    accessKey: root
+    secretKey: rootroot
 
 snowflake:
   node: 1
