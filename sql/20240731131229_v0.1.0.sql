@@ -31,6 +31,54 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB AUTO_INCREMENT=7240204103809514232 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 -- +goose StatementEnd
 
+-- +goose StatementBegin
+CREATE TABLE IF NOT EXISTS account (
+                                       id BIGINT PRIMARY KEY,
+                                       mobile VARCHAR(20) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    password VARCHAR(64) NOT NULL,
+    salt VARCHAR(64) NOT NULL,
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+    create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    update_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX `account_mobile_idx` (`mobile`),
+    INDEX `account_email_idx` (`email`),
+    INDEX `create_time_idx` (`create_time`),
+    INDEX `update_time_idx` (`update_time`)
+    );
+-- +goose StatementEnd
+
+-- +goose StatementBegin
+CREATE TABLE IF NOT EXISTS template (
+    id BIGINT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+    create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    update_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX `create_time_idx` (`create_time`),
+    INDEX `update_time_idx` (`update_time`),
+    INDEX `title_idx` (`title`)
+);
+-- +goose StatementEnd
+
+-- +goose StatementBegin
+CREATE TABLE IF NOT EXISTS file (
+    id BIGINT PRIMARY KEY,
+    domain_name VARCHAR(100) NOT NULL,
+    biz_name VARCHAR(100) NOT NULL,
+    hash VARCHAR(255) NOT NULL,
+    file_size BIGINT NOT NULL DEFAULT 0,
+    file_type VARCHAR(255) NOT NULL,
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+    create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    update_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX `create_time_idx` (`create_time`),
+    INDEX `update_time_idx` (`update_time`),
+    INDEX `hash_idx` (`hash`)
+);
+-- +goose StatementEnd
+
 -- +goose Down
 -- +goose StatementBegin
 DROP TABLE IF EXISTS account;
@@ -38,4 +86,12 @@ DROP TABLE IF EXISTS account;
 
 -- +goose StatementBegin
 DROP TABLE IF EXISTS users;
+-- +goose StatementEnd
+
+-- +goose StatementBegin
+DROP TABLE IF EXISTS template;
+-- +goose StatementEnd
+
+-- +goose StatementBegin
+DROP TABLE IF EXISTS file;
 -- +goose StatementEnd
