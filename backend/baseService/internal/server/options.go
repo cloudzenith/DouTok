@@ -1,7 +1,8 @@
 package server
 
 import (
-	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/service/fileservice"
+	"github.com/cloudzenith/DouTok/backend/baseService/internal/conf"
+	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/innerservice/filerepohelper"
 	"github.com/minio/minio-go/v7"
 	"gorm.io/gorm"
 )
@@ -12,7 +13,8 @@ type Params struct {
 	redisPassword           string
 	db                      *gorm.DB
 	minioCore               *minio.Core
-	fileTableShardingConfig fileservice.FileTableShardingConfig
+	fileTableShardingConfig filerepohelper.FileTableShardingConfig
+	dbShardingTablesConfig  map[string]conf.DomainShardingConfig
 }
 
 type Option func(*Params)
@@ -47,8 +49,14 @@ func WithMinioCore(core *minio.Core) Option {
 	}
 }
 
-func WithFileTableShardingConfig(config fileservice.FileTableShardingConfig) Option {
+func WithFileTableShardingConfig(config filerepohelper.FileTableShardingConfig) Option {
 	return func(p *Params) {
 		p.fileTableShardingConfig = config
+	}
+}
+
+func WithDBShardingTablesConfig(config map[string]conf.DomainShardingConfig) Option {
+	return func(p *Params) {
+		p.dbShardingTablesConfig = config
 	}
 }

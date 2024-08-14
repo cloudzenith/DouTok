@@ -20,12 +20,6 @@ func New(accountService accountserviceiface.AccountService) *AccountApplication 
 }
 
 func (a *AccountApplication) Register(ctx context.Context, request *api.RegisterRequest) (*api.RegisterResponse, error) {
-	if err := utils.Validate(request); err != nil {
-		return &api.RegisterResponse{
-			Meta: utils.GetMetaWithError(err),
-		}, nil
-	}
-
 	accountId, err := a.accountService.Create(ctx, request.GetMobile(), request.GetEmail(), request.GetPassword())
 	if err != nil {
 		return &api.RegisterResponse{
@@ -54,12 +48,6 @@ func (a *AccountApplication) checkPassword(ctx context.Context, checkFunc func()
 }
 
 func (a *AccountApplication) CheckAccount(ctx context.Context, request *api.CheckAccountRequest) (*api.CheckAccountResponse, error) {
-	if err := utils.Validate(request); err != nil {
-		return &api.CheckAccountResponse{
-			Meta: utils.GetMetaWithError(err),
-		}, nil
-	}
-
 	if request.GetAccountId() != 0 {
 		return a.checkPassword(ctx, func() (int64, error) {
 			return a.accountService.CheckPasswordById(ctx, request.GetAccountId(), request.GetPassword())

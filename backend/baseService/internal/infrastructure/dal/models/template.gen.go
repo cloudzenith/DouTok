@@ -12,7 +12,7 @@ const TableNameTemplate = "template"
 
 // Template mapped from table <template>
 type Template struct {
-	ID         int64     `gorm:"column:id;type:bigint(20);primaryKey" json:"id"`
+	ID         int64     `gorm:"column:id;type:bigint;primaryKey" json:"id"`
 	Title      string    `gorm:"column:title;type:varchar(255);not null;index:title_idx,priority:1" json:"title"`
 	Content    string    `gorm:"column:content;type:text;not null" json:"content"`
 	IsDeleted  bool      `gorm:"column:is_deleted;type:tinyint(1);not null" json:"is_deleted"`

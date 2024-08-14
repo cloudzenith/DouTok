@@ -26,6 +26,7 @@ func NewGRPCServer(options ...Option) *grpc.Server {
 			middlewares.TraceIdInjector(),
 			middlewares.SpanIdInjector(),
 			middlewares.RequestMonitor(),
+			middlewares.ProtobufValidator(),
 		),
 	}
 	opts = append(opts, grpc.Address(params.addr))

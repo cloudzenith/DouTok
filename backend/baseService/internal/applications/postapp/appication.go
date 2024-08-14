@@ -20,13 +20,6 @@ func New(postService postserviceiface.PostService) *PostApplication {
 }
 
 func (p *PostApplication) CreateTemplate(ctx context.Context, request *api.CreateTemplateRequest) (*api.CreateTemplateResponse, error) {
-	if err := utils.Validate(request); err != nil {
-		log.Context(ctx).Errorf("validate request failed: %v", err)
-		return &api.CreateTemplateResponse{
-			Meta: utils.GetMetaWithError(err),
-		}, nil
-	}
-
 	template := template.New(
 		template.WithTitle(request.Title),
 		template.WithContent(request.Content),
@@ -46,13 +39,6 @@ func (p *PostApplication) CreateTemplate(ctx context.Context, request *api.Creat
 }
 
 func (p *PostApplication) UpdateTemplate(ctx context.Context, request *api.UpdateTemplateRequest) (*api.UpdateTemplateResponse, error) {
-	if err := utils.Validate(request); err != nil {
-		log.Context(ctx).Errorf("validate request failed: %v", err)
-		return &api.UpdateTemplateResponse{
-			Meta: utils.GetMetaWithError(err),
-		}, nil
-	}
-
 	t, err := p.postService.GetTemplateById(ctx, request.TemplateId)
 	if err != nil {
 		log.Context(ctx).Errorf("get template failed: %v", err)
@@ -80,13 +66,6 @@ func (p *PostApplication) UpdateTemplate(ctx context.Context, request *api.Updat
 }
 
 func (p *PostApplication) ListTemplate(ctx context.Context, request *api.ListTemplateRequest) (*api.ListTemplateResponse, error) {
-	if err := utils.Validate(request); err != nil {
-		log.Context(ctx).Errorf("validate request failed: %v", err)
-		return &api.ListTemplateResponse{
-			Meta: utils.GetMetaWithError(err),
-		}, nil
-	}
-
 	templates, err := p.postService.ListTemplate(ctx, request.GetPaginationRequest(), request.GetSearchFields()...)
 	if err != nil {
 		log.Context(ctx).Errorf("list template failed: %v", err)
@@ -107,13 +86,6 @@ func (p *PostApplication) ListTemplate(ctx context.Context, request *api.ListTem
 }
 
 func (p *PostApplication) GetTemplate(ctx context.Context, request *api.GetTemplateRequest) (*api.GetTemplateResponse, error) {
-	if err := utils.Validate(request); err != nil {
-		log.Context(ctx).Errorf("validate request failed: %v", err)
-		return &api.GetTemplateResponse{
-			Meta: utils.GetMetaWithError(err),
-		}, nil
-	}
-
 	t, err := p.postService.GetTemplateById(ctx, request.TemplateId)
 	if err != nil {
 		log.Context(ctx).Errorf("get template failed: %v", err)
@@ -129,13 +101,6 @@ func (p *PostApplication) GetTemplate(ctx context.Context, request *api.GetTempl
 }
 
 func (p *PostApplication) RemoveTemplate(ctx context.Context, request *api.RemoveTemplateRequest) (*api.RemoveTemplateResponse, error) {
-	if err := utils.Validate(request); err != nil {
-		log.Context(ctx).Errorf("validate request failed: %v", err)
-		return &api.RemoveTemplateResponse{
-			Meta: utils.GetMetaWithError(err),
-		}, nil
-	}
-
 	err := p.postService.RemoveTemplate(ctx, request.TemplateId)
 	if err != nil {
 		log.Context(ctx).Errorf("remove template failed: %v", err)
@@ -150,13 +115,6 @@ func (p *PostApplication) RemoveTemplate(ctx context.Context, request *api.Remov
 }
 
 func (p *PostApplication) SendSms(ctx context.Context, request *api.SendSmsRequest) (*api.SendSmsResponse, error) {
-	if err := utils.Validate(request); err != nil {
-		log.Context(ctx).Errorf("validate request failed: %v", err)
-		return &api.SendSmsResponse{
-			Meta: utils.GetMetaWithError(err),
-		}, nil
-	}
-
 	t, err := p.postService.GetTemplateById(ctx, request.TemplateId)
 	if err != nil {
 		log.Context(ctx).Errorf("get template failed: %v", err)
@@ -179,13 +137,6 @@ func (p *PostApplication) SendSms(ctx context.Context, request *api.SendSmsReque
 }
 
 func (p *PostApplication) SendEmail(ctx context.Context, request *api.SendEmailRequest) (*api.SendEmailResponse, error) {
-	if err := utils.Validate(request); err != nil {
-		log.Context(ctx).Errorf("validate request failed: %v", err)
-		return &api.SendEmailResponse{
-			Meta: utils.GetMetaWithError(err),
-		}, nil
-	}
-
 	t, err := p.postService.GetTemplateById(ctx, request.TemplateId)
 	if err != nil {
 		log.Context(ctx).Errorf("get template failed: %v", err)
@@ -208,13 +159,6 @@ func (p *PostApplication) SendEmail(ctx context.Context, request *api.SendEmailR
 }
 
 func (p *PostApplication) Send(ctx context.Context, request *api.SendRequest) (*api.SendResponse, error) {
-	if err := utils.Validate(request); err != nil {
-		log.Context(ctx).Errorf("validate request failed: %v", err)
-		return &api.SendResponse{
-			Meta: utils.GetMetaWithError(err),
-		}, nil
-	}
-
 	err := p.postService.Send(ctx, request.PostType, request.To, request.Title, request.Content)
 	if err != nil {
 		log.Context(ctx).Errorf("send failed: %v", err)

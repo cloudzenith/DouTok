@@ -11,9 +11,10 @@ import (
 type FileService interface {
 	PreSignGet(ctx context.Context, fileCtx *api.FileContext) (string, error)
 	PreSignPut(ctx context.Context, fileCtx *api.FileContext) (string, error)
+	CheckFileExistedAndGetFile(ctx context.Context, fileCtx *api.FileContext) (int64, bool, error)
+	ReportUploaded(ctx context.Context, fileId int64) error
 	PreSignSlicingPut(ctx context.Context, fileCtx *api.FileContext) (*slicingfile.SlicingFile, error)
 	GetProgressRate4SlicingPut(ctx context.Context, uploadId string, fileCtx *api.FileContext) (map[string]bool, error)
-	ReportUploadedFileParts(ctx context.Context, uploadId string, fileId, partNumber int64) error
 	MergeFileParts(ctx context.Context, uploadId string, fileCtx *api.FileContext) error
 	RemoveFile(ctx context.Context, fileCtx *api.FileContext) error
 }

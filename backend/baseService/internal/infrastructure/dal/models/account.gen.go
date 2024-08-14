@@ -4,22 +4,16 @@
 
 package models
 
-import (
-	"time"
-)
-
 const TableNameAccount = "account"
 
 // Account mapped from table <account>
 type Account struct {
-	ID         int64     `gorm:"column:id;type:bigint(20);primaryKey" json:"id"`
-	Mobile     string    `gorm:"column:mobile;type:varchar(20);not null;index:account_mobile_idx,priority:1" json:"mobile"`
-	Email      string    `gorm:"column:email;type:varchar(100);not null;index:account_email_idx,priority:1" json:"email"`
-	Password   string    `gorm:"column:password;type:varchar(64);not null" json:"password"`
-	Salt       string    `gorm:"column:salt;type:varchar(64);not null" json:"salt"`
-	IsDeleted  bool      `gorm:"column:is_deleted;type:tinyint(1);not null" json:"is_deleted"`
-	CreateTime time.Time `gorm:"column:create_time;type:timestamp;not null;index:create_time_idx,priority:1;default:CURRENT_TIMESTAMP" json:"create_time"`
-	UpdateTime time.Time `gorm:"column:update_time;type:timestamp;not null;index:update_time_idx,priority:1;default:CURRENT_TIMESTAMP" json:"update_time"`
+	ID        int64  `gorm:"column:id;type:bigint;primaryKey" json:"id"`
+	Mobile    string `gorm:"column:mobile;type:varchar(20);not null;index:account_mobile_idx,priority:1" json:"mobile"`
+	Email     string `gorm:"column:email;type:varchar(100);not null;index:account_email_idx,priority:1" json:"email"`
+	Password  string `gorm:"column:password;type:varchar(64);not null" json:"password"`
+	Salt      string `gorm:"column:salt;type:varchar(64);not null" json:"salt"`
+	IsDeleted bool   `gorm:"column:is_deleted;type:tinyint(1);not null" json:"is_deleted"`
 }
 
 // TableName Account's table name

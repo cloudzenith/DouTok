@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -74,4 +75,13 @@ func (r *PersistRepository) PreSignSlicingPutUrl(ctx context.Context, bucketName
 func (r *PersistRepository) MergeSlices(ctx context.Context, bucketName, objectName, uploadId string, parts []minio.CompletePart) error {
 	_, err := r.core.CompleteMultipartUpload(ctx, bucketName, objectName, uploadId, parts, minio.PutObjectOptions{})
 	return err
+}
+
+func (r *PersistRepository) GetObjectHash(ctx context.Context, bucketName, objectName string) (string, error) {
+	stats, err := r.core.StatObject(ctx, bucketName, objectName, minio.StatObjectOptions{})
+	if err != nil {
+		return "", err
+	}
+
+	return strings.ToUpper(stats.ChecksumSHA256), nil
 }

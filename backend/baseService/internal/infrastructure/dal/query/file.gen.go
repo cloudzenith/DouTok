@@ -33,6 +33,7 @@ func newFile(db *gorm.DB, opts ...gen.DOOption) file {
 	_file.Hash = field.NewString(tableName, "hash")
 	_file.FileSize = field.NewInt64(tableName, "file_size")
 	_file.FileType = field.NewString(tableName, "file_type")
+	_file.Uploaded = field.NewBool(tableName, "uploaded")
 	_file.IsDeleted = field.NewBool(tableName, "is_deleted")
 	_file.CreateTime = field.NewTime(tableName, "create_time")
 	_file.UpdateTime = field.NewTime(tableName, "update_time")
@@ -52,6 +53,7 @@ type file struct {
 	Hash       field.String
 	FileSize   field.Int64
 	FileType   field.String
+	Uploaded   field.Bool
 	IsDeleted  field.Bool
 	CreateTime field.Time
 	UpdateTime field.Time
@@ -77,6 +79,7 @@ func (f *file) updateTableName(table string) *file {
 	f.Hash = field.NewString(table, "hash")
 	f.FileSize = field.NewInt64(table, "file_size")
 	f.FileType = field.NewString(table, "file_type")
+	f.Uploaded = field.NewBool(table, "uploaded")
 	f.IsDeleted = field.NewBool(table, "is_deleted")
 	f.CreateTime = field.NewTime(table, "create_time")
 	f.UpdateTime = field.NewTime(table, "update_time")
@@ -104,13 +107,14 @@ func (f *file) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (f *file) fillFieldMap() {
-	f.fieldMap = make(map[string]field.Expr, 9)
+	f.fieldMap = make(map[string]field.Expr, 10)
 	f.fieldMap["id"] = f.ID
 	f.fieldMap["domain_name"] = f.DomainName
 	f.fieldMap["biz_name"] = f.BizName
 	f.fieldMap["hash"] = f.Hash
 	f.fieldMap["file_size"] = f.FileSize
 	f.fieldMap["file_type"] = f.FileType
+	f.fieldMap["uploaded"] = f.Uploaded
 	f.fieldMap["is_deleted"] = f.IsDeleted
 	f.fieldMap["create_time"] = f.CreateTime
 	f.fieldMap["update_time"] = f.UpdateTime

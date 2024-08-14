@@ -98,7 +98,8 @@ func main() {
 		server.WithRedisPassword(c.Data.Redis.Password),
 		server.WithDB(db),
 		server.WithMinioCore(core),
-		server.WithFileTableShardingConfig(c.Data.DBShardingConfig),
+		server.WithFileTableShardingConfig(c.Data),
+		server.WithDBShardingTablesConfig(c.Data.DbShardingTables),
 	)
 	app := newBaseService(logger, grpcServer)
 	if err := app.Run(); err != nil {

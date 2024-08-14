@@ -15,6 +15,7 @@ type File struct {
 	Hash       string
 	FileType   string
 	FileSize   int64
+	Uploaded   bool
 	CreateTime time.Time
 	UpdateTime time.Time
 }
@@ -36,6 +37,7 @@ func NewWithModel(m *models.File) *File {
 		Hash:       m.Hash,
 		FileType:   m.FileType,
 		FileSize:   m.FileSize,
+		Uploaded:   m.Uploaded,
 		CreateTime: m.CreateTime,
 		UpdateTime: m.UpdateTime,
 	}
@@ -60,6 +62,7 @@ func (f *File) ToModel() *models.File {
 		Hash:       f.Hash,
 		FileType:   f.FileType,
 		FileSize:   f.FileSize,
+		Uploaded:   f.Uploaded,
 		CreateTime: f.CreateTime,
 		UpdateTime: f.UpdateTime,
 	}
@@ -71,4 +74,13 @@ func (f *File) SetId() {
 
 func (f *File) GetObjectName() string {
 	return fmt.Sprintf("%s/%d", f.BizName, f.ID)
+}
+
+func (f *File) CheckHash(hash string) bool {
+	return f.Hash == hash
+}
+
+func (f *File) SetUploaded() *File {
+	f.Uploaded = true
+	return f
 }

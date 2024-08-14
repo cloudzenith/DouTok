@@ -12,6 +12,18 @@ data:
     endpoint: localhost:9000
     accessKey: root
     secretKey: rootroot
+  db_sharding_config:
+    file_shortvideo_short_video:
+      sharding: file_shortvideo_short_video
+      sharding_number: 5
+  db_sharding_tables:
+    file:
+      domain_name: shortvideo
+      biz_sharding_field_config:
+        short_video:
+          fields:
+            - id
+            - hash
 
 snowflake:
   node: 1

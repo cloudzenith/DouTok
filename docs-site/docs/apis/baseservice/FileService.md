@@ -14,7 +14,7 @@ message FileContext {
   string biz_name = 2;
   // 文件id
   int64 file_id = 3;
-  // 文件md5
+  // 文件sha256 hash
   string hash = 4;
   // 文件类型
   string file_type = 5;
@@ -33,7 +33,7 @@ message FileContext {
 
 `FileService.PreSignPut`提供了最基础的上传能力。该接口需要额外上传的参数包括：
 
-- hash: 文件的md5值
+- hash: 文件的sha256值
 - file_type: 文件类型
 - size：文件大小（字节数）
 - expire_seconds：文件上传链接的过期时间
@@ -108,6 +108,14 @@ def slicing(filename):
 - upload_id
 
 该接口的返回值中包含一个名为`parts`的map，key为分片号，value为该分片是否上传完成，上游服务或服务端可以根据该信息来决定哪些分片需要重新上传
+
+## 上传确认
+
+在上传完成时（分片上传除外，分片上传结束时调用`FileService.MergeFileParts`会自动进行上传确认），都需要调用`FileService.ReportUploaded`来进行上报，该接口必传参数为:
+
+- file_id
+
+这一接口主要完成这样一件事：检查文件的hash，检查通过后将文件标记为“上传成功状态”，否则文件将不可被查询到。
 
 ## 下载文件
 

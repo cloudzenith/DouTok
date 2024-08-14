@@ -18,12 +18,6 @@ func New(fileService fileserviceiface.FileService) *FileApplication {
 }
 
 func (a *FileApplication) PreSignGet(ctx context.Context, request *api.PreSignGetRequest) (*api.PreSignGetResponse, error) {
-	if err := utils.Validate(request); err != nil {
-		return &api.PreSignGetResponse{
-			Meta: utils.GetMetaWithError(err),
-		}, nil
-	}
-
 	url, err := a.fileService.PreSignGet(ctx, request.FileContext)
 	if err != nil {
 		return &api.PreSignGetResponse{
@@ -38,9 +32,17 @@ func (a *FileApplication) PreSignGet(ctx context.Context, request *api.PreSignGe
 }
 
 func (a *FileApplication) PreSignPut(ctx context.Context, request *api.PreSignPutRequest) (*api.PreSignPutResponse, error) {
-	if err := utils.Validate(request); err != nil {
+	fileId, existed, err := a.fileService.CheckFileExistedAndGetFile(ctx, request.FileContext)
+	if err != nil {
 		return &api.PreSignPutResponse{
 			Meta: utils.GetMetaWithError(err),
+		}, nil
+	}
+
+	if existed {
+		return &api.PreSignPutResponse{
+			Meta:   utils.GetSuccessMeta(),
+			FileId: fileId,
 		}, nil
 	}
 
@@ -57,10 +59,31 @@ func (a *FileApplication) PreSignPut(ctx context.Context, request *api.PreSignPu
 	}, nil
 }
 
+func (a *FileApplication) ReportUploaded(ctx context.Context, request *api.ReportUploadedRequest) (*api.ReportUploadedResponse, error) {
+	if err := a.fileService.ReportUploaded(ctx, request.FileId); err != nil {
+		return &api.ReportUploadedResponse{
+			Meta: utils.GetMetaWithError(err),
+		}, nil
+	}
+
+	return &api.ReportUploadedResponse{
+		Meta: utils.GetSuccessMeta(),
+	}, nil
+}
+
 func (a *FileApplication) PreSignSlicingPut(ctx context.Context, request *api.PreSignSlicingPutRequest) (*api.PreSignSlicingPutResponse, error) {
-	if err := utils.Validate(request); err != nil {
+	fileId, existed, err := a.fileService.CheckFileExistedAndGetFile(ctx, request.FileContext)
+	if err != nil {
 		return &api.PreSignSlicingPutResponse{
 			Meta: utils.GetMetaWithError(err),
+		}, nil
+	}
+
+	if existed {
+		return &api.PreSignSlicingPutResponse{
+			Meta:     utils.GetSuccessMeta(),
+			FileId:   fileId,
+			Uploaded: true,
 		}, nil
 	}
 
@@ -81,12 +104,6 @@ func (a *FileApplication) PreSignSlicingPut(ctx context.Context, request *api.Pr
 }
 
 func (a *FileApplication) GetProgressRate4SlicingPut(ctx context.Context, request *api.GetProgressRate4SlicingPutRequest) (*api.GetProgressRate4SlicingPutResponse, error) {
-	if err := utils.Validate(request); err != nil {
-		return &api.GetProgressRate4SlicingPutResponse{
-			Meta: utils.GetMetaWithError(err),
-		}, nil
-	}
-
 	result, err := a.fileService.GetProgressRate4SlicingPut(ctx, request.UploadId, request.FileContext)
 	if err != nil {
 		return &api.GetProgressRate4SlicingPutResponse{
@@ -101,12 +118,6 @@ func (a *FileApplication) GetProgressRate4SlicingPut(ctx context.Context, reques
 }
 
 func (a *FileApplication) RemoveFile(ctx context.Context, request *api.RemoveFileRequest) (*api.RemoveFileResponse, error) {
-	if err := utils.Validate(request); err != nil {
-		return &api.RemoveFileResponse{
-			Meta: utils.GetMetaWithError(err),
-		}, nil
-	}
-
 	if err := a.fileService.RemoveFile(ctx, request.FileContext); err != nil {
 		return &api.RemoveFileResponse{
 			Meta: utils.GetMetaWithError(err),
@@ -118,32 +129,14 @@ func (a *FileApplication) RemoveFile(ctx context.Context, request *api.RemoveFil
 	}, nil
 }
 
-func (a *FileApplication) ReportUploadedFileParts(ctx context.Context, request *api.ReportUploadedFilePartsRequest) (*api.ReportUploadedFilePartsResponse, error) {
-	if err := utils.Validate(request); err != nil {
-		return &api.ReportUploadedFilePartsResponse{
-			Meta: utils.GetMetaWithError(err),
-		}, nil
-	}
-
-	if err := a.fileService.ReportUploadedFileParts(ctx, request.UploadId, request.FileId, request.PartNumber); err != nil {
-		return &api.ReportUploadedFilePartsResponse{
-			Meta: utils.GetMetaWithError(err),
-		}, nil
-	}
-
-	return &api.ReportUploadedFilePartsResponse{
-		Meta: utils.GetSuccessMeta(),
-	}, nil
-}
-
 func (a *FileApplication) MergeFileParts(ctx context.Context, request *api.MergeFilePartsRequest) (*api.MergeFilePartsResponse, error) {
-	if err := utils.Validate(request); err != nil {
+	if err := a.fileService.MergeFileParts(ctx, request.UploadId, request.FileContext); err != nil {
 		return &api.MergeFilePartsResponse{
 			Meta: utils.GetMetaWithError(err),
 		}, nil
 	}
 
-	if err := a.fileService.MergeFileParts(ctx, request.UploadId, request.FileContext); err != nil {
+	if err := a.fileService.ReportUploaded(ctx, request.FileContext.FileId); err != nil {
 		return &api.MergeFilePartsResponse{
 			Meta: utils.GetMetaWithError(err),
 		}, nil

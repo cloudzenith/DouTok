@@ -11,6 +11,7 @@ import (
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/applications/authapp"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/applications/fileapp"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/applications/postapp"
+	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/innerservice/filerepohelper"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/service/accountservice"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/service/authservice"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/service/fileservice"
@@ -51,7 +52,7 @@ func initPostApplication() *postapp.PostApplication {
 	return postApplication
 }
 
-func initFileApplication(db *gorm.DB, core *minio.Core, fileTableShardingConfig fileservice.FileTableShardingConfig) *fileapp.FileApplication {
+func initFileApplication(db *gorm.DB, core *minio.Core, fileTableShardingConfig filerepohelper.FileTableShardingConfig) *fileapp.FileApplication {
 	persistRepository := filerepo.New(db)
 	miniorepoPersistRepository := miniorepo.New(core)
 	fileService := fileservice.New(persistRepository, miniorepoPersistRepository, fileTableShardingConfig)

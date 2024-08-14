@@ -26,10 +26,13 @@ type FileServiceClient interface {
 	PreSignGet(ctx context.Context, in *PreSignGetRequest, opts ...grpc.CallOption) (*PreSignGetResponse, error)
 	// pre sign a file url for user put it
 	PreSignPut(ctx context.Context, in *PreSignPutRequest, opts ...grpc.CallOption) (*PreSignPutResponse, error)
+	// report a file has been uploaded
+	ReportUploaded(ctx context.Context, in *ReportUploadedRequest, opts ...grpc.CallOption) (*ReportUploadedResponse, error)
 	// pre sign a file url for user put it with slicing
 	PreSignSlicingPut(ctx context.Context, in *PreSignSlicingPutRequest, opts ...grpc.CallOption) (*PreSignSlicingPutResponse, error)
+	// get upload progress rate for slicing put
 	GetProgressRate4SlicingPut(ctx context.Context, in *GetProgressRate4SlicingPutRequest, opts ...grpc.CallOption) (*GetProgressRate4SlicingPutResponse, error)
-	ReportUploadedFileParts(ctx context.Context, in *ReportUploadedFilePartsRequest, opts ...grpc.CallOption) (*ReportUploadedFilePartsResponse, error)
+	// merge a slicing uploading file
 	MergeFileParts(ctx context.Context, in *MergeFilePartsRequest, opts ...grpc.CallOption) (*MergeFilePartsResponse, error)
 	// remove a file
 	RemoveFile(ctx context.Context, in *RemoveFileRequest, opts ...grpc.CallOption) (*RemoveFileResponse, error)
@@ -61,6 +64,15 @@ func (c *fileServiceClient) PreSignPut(ctx context.Context, in *PreSignPutReques
 	return out, nil
 }
 
+func (c *fileServiceClient) ReportUploaded(ctx context.Context, in *ReportUploadedRequest, opts ...grpc.CallOption) (*ReportUploadedResponse, error) {
+	out := new(ReportUploadedResponse)
+	err := c.cc.Invoke(ctx, "/api.FileService/ReportUploaded", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *fileServiceClient) PreSignSlicingPut(ctx context.Context, in *PreSignSlicingPutRequest, opts ...grpc.CallOption) (*PreSignSlicingPutResponse, error) {
 	out := new(PreSignSlicingPutResponse)
 	err := c.cc.Invoke(ctx, "/api.FileService/PreSignSlicingPut", in, out, opts...)
@@ -73,15 +85,6 @@ func (c *fileServiceClient) PreSignSlicingPut(ctx context.Context, in *PreSignSl
 func (c *fileServiceClient) GetProgressRate4SlicingPut(ctx context.Context, in *GetProgressRate4SlicingPutRequest, opts ...grpc.CallOption) (*GetProgressRate4SlicingPutResponse, error) {
 	out := new(GetProgressRate4SlicingPutResponse)
 	err := c.cc.Invoke(ctx, "/api.FileService/GetProgressRate4SlicingPut", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *fileServiceClient) ReportUploadedFileParts(ctx context.Context, in *ReportUploadedFilePartsRequest, opts ...grpc.CallOption) (*ReportUploadedFilePartsResponse, error) {
-	out := new(ReportUploadedFilePartsResponse)
-	err := c.cc.Invoke(ctx, "/api.FileService/ReportUploadedFileParts", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -114,10 +117,13 @@ type FileServiceServer interface {
 	PreSignGet(context.Context, *PreSignGetRequest) (*PreSignGetResponse, error)
 	// pre sign a file url for user put it
 	PreSignPut(context.Context, *PreSignPutRequest) (*PreSignPutResponse, error)
+	// report a file has been uploaded
+	ReportUploaded(context.Context, *ReportUploadedRequest) (*ReportUploadedResponse, error)
 	// pre sign a file url for user put it with slicing
 	PreSignSlicingPut(context.Context, *PreSignSlicingPutRequest) (*PreSignSlicingPutResponse, error)
+	// get upload progress rate for slicing put
 	GetProgressRate4SlicingPut(context.Context, *GetProgressRate4SlicingPutRequest) (*GetProgressRate4SlicingPutResponse, error)
-	ReportUploadedFileParts(context.Context, *ReportUploadedFilePartsRequest) (*ReportUploadedFilePartsResponse, error)
+	// merge a slicing uploading file
 	MergeFileParts(context.Context, *MergeFilePartsRequest) (*MergeFilePartsResponse, error)
 	// remove a file
 	RemoveFile(context.Context, *RemoveFileRequest) (*RemoveFileResponse, error)
@@ -133,14 +139,14 @@ func (UnimplementedFileServiceServer) PreSignGet(context.Context, *PreSignGetReq
 func (UnimplementedFileServiceServer) PreSignPut(context.Context, *PreSignPutRequest) (*PreSignPutResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PreSignPut not implemented")
 }
+func (UnimplementedFileServiceServer) ReportUploaded(context.Context, *ReportUploadedRequest) (*ReportUploadedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReportUploaded not implemented")
+}
 func (UnimplementedFileServiceServer) PreSignSlicingPut(context.Context, *PreSignSlicingPutRequest) (*PreSignSlicingPutResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PreSignSlicingPut not implemented")
 }
 func (UnimplementedFileServiceServer) GetProgressRate4SlicingPut(context.Context, *GetProgressRate4SlicingPutRequest) (*GetProgressRate4SlicingPutResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProgressRate4SlicingPut not implemented")
-}
-func (UnimplementedFileServiceServer) ReportUploadedFileParts(context.Context, *ReportUploadedFilePartsRequest) (*ReportUploadedFilePartsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ReportUploadedFileParts not implemented")
 }
 func (UnimplementedFileServiceServer) MergeFileParts(context.Context, *MergeFilePartsRequest) (*MergeFilePartsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MergeFileParts not implemented")
@@ -196,6 +202,24 @@ func _FileService_PreSignPut_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FileService_ReportUploaded_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReportUploadedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FileServiceServer).ReportUploaded(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.FileService/ReportUploaded",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FileServiceServer).ReportUploaded(ctx, req.(*ReportUploadedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _FileService_PreSignSlicingPut_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PreSignSlicingPutRequest)
 	if err := dec(in); err != nil {
@@ -228,24 +252,6 @@ func _FileService_GetProgressRate4SlicingPut_Handler(srv interface{}, ctx contex
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(FileServiceServer).GetProgressRate4SlicingPut(ctx, req.(*GetProgressRate4SlicingPutRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _FileService_ReportUploadedFileParts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ReportUploadedFilePartsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(FileServiceServer).ReportUploadedFileParts(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/api.FileService/ReportUploadedFileParts",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FileServiceServer).ReportUploadedFileParts(ctx, req.(*ReportUploadedFilePartsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -302,16 +308,16 @@ var FileService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _FileService_PreSignPut_Handler,
 		},
 		{
+			MethodName: "ReportUploaded",
+			Handler:    _FileService_ReportUploaded_Handler,
+		},
+		{
 			MethodName: "PreSignSlicingPut",
 			Handler:    _FileService_PreSignSlicingPut_Handler,
 		},
 		{
 			MethodName: "GetProgressRate4SlicingPut",
 			Handler:    _FileService_GetProgressRate4SlicingPut_Handler,
-		},
-		{
-			MethodName: "ReportUploadedFileParts",
-			Handler:    _FileService_ReportUploadedFileParts_Handler,
 		},
 		{
 			MethodName: "MergeFileParts",

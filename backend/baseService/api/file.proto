@@ -11,10 +11,13 @@ service FileService {
   rpc PreSignGet(PreSignGetRequest) returns (PreSignGetResponse);
   // pre sign a file url for user put it
   rpc PreSignPut(PreSignPutRequest) returns (PreSignPutResponse);
+  // report a file has been uploaded
+  rpc ReportUploaded(ReportUploadedRequest) returns (ReportUploadedResponse);
   // pre sign a file url for user put it with slicing
   rpc PreSignSlicingPut(PreSignSlicingPutRequest) returns (PreSignSlicingPutResponse);
+  // get upload progress rate for slicing put
   rpc GetProgressRate4SlicingPut(GetProgressRate4SlicingPutRequest) returns (GetProgressRate4SlicingPutResponse);
-  rpc ReportUploadedFileParts(ReportUploadedFilePartsRequest) returns (ReportUploadedFilePartsResponse);
+  // merge a slicing uploading file
   rpc MergeFileParts(MergeFilePartsRequest) returns (MergeFilePartsResponse);
   // remove a file
   rpc RemoveFile(RemoveFileRequest) returns (RemoveFileResponse);
@@ -39,7 +42,7 @@ message FileContext {
 }
 
 message PreSignGetRequest {
-  FileContext file_context = 1;
+  FileContext file_context = 1[(buf.validate.field).required = true];
 }
 
 message PreSignGetResponse {
@@ -48,16 +51,26 @@ message PreSignGetResponse {
 }
 
 message PreSignPutRequest {
-  FileContext file_context = 1;
+  FileContext file_context = 1[(buf.validate.field).required = true];
 }
 
 message PreSignPutResponse {
   api.Metadata meta = 1;
   string url = 2;
+  // file_id will be not null if the put request file hash has been uploaded
+  int64 file_id = 3;
+}
+
+message ReportUploadedRequest {
+  int64 file_id = 1;
+}
+
+message ReportUploadedResponse {
+  api.Metadata meta = 1;
 }
 
 message PreSignSlicingPutRequest {
-  FileContext file_context = 1;
+  FileContext file_context = 1[(buf.validate.field).required = true];
 }
 
 message PreSignSlicingPutResponse {
@@ -66,10 +79,12 @@ message PreSignSlicingPutResponse {
   string upload_id = 3;
   int64 parts = 4;
   int64 file_id = 5;
+  // if a file has been uploaded, this field will be true
+  bool uploaded = 6;
 }
 
 message GetProgressRate4SlicingPutRequest {
-  FileContext file_context = 1;
+  FileContext file_context = 1[(buf.validate.field).required = true];
   string upload_id = 2;
 }
 
@@ -92,7 +107,7 @@ message ReportUploadedFilePartsResponse {
 }
 
 message MergeFilePartsRequest {
-  FileContext file_context = 1;
+  FileContext file_context = 1[(buf.validate.field).required = true];
   string upload_id = 2;
 }
 
@@ -101,7 +116,7 @@ message MergeFilePartsResponse {
 }
 
 message RemoveFileRequest {
-  FileContext file_context = 1;
+  FileContext file_context = 1[(buf.validate.field).required = true];
 }
 
 message RemoveFileResponse {

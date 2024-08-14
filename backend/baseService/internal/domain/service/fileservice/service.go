@@ -7,47 +7,49 @@ import (
 	"github.com/cloudzenith/DouTok/backend/baseService/api"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/entity/file"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/entity/slicingfile"
+	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/innerservice/filerepohelper"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/repoiface"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/dal/models"
-	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/repositories/filerepo"
 	"github.com/minio/minio-go/v7"
+	"gorm.io/gorm"
 	"strconv"
 )
 
-type FileTableShardingConfig interface {
-	GetShardingNumber(domainName, bizName string) int64
-}
-
 type FileService struct {
-	fileRepo repoiface.FileRepository
-	minio    repoiface.MinioRepository
-	config   FileTableShardingConfig
+	fileRepo       repoiface.FileRepository
+	minio          repoiface.MinioRepository
+	config         filerepohelper.FileTableShardingConfig
+	fileRepoHelper *filerepohelper.FileRepoHelper
 }
 
-func New(fileRepo repoiface.FileRepository, minio repoiface.MinioRepository, config FileTableShardingConfig) *FileService {
+func New(fileRepo repoiface.FileRepository, minio repoiface.MinioRepository, config filerepohelper.FileTableShardingConfig) *FileService {
 	return &FileService{
-		fileRepo: fileRepo,
-		minio:    minio,
-		config:   config,
+		fileRepo:       fileRepo,
+		minio:          minio,
+		config:         config,
+		fileRepoHelper: filerepohelper.New(fileRepo, config),
 	}
 }
 
-func (s *FileService) getTableName() filerepo.GetTableNameFunc {
-	return func(f *models.File) string {
-		shardingNum := s.config.GetShardingNumber(f.DomainName, f.BizName)
-
-		if shardingNum > 0 {
-			return fmt.Sprintf("%s_%s_%d", f.DomainName, f.BizName, f.ID%shardingNum)
-		}
-
-		return fmt.Sprintf("%s_%s", f.DomainName, f.BizName)
+func (s *FileService) CheckFileExistedAndGetFile(ctx context.Context, fileCtx *api.FileContext) (int64, bool, error) {
+	f := file.NewWithFileContext(fileCtx)
+	fm := f.ToModel()
+	err := s.fileRepo.LoadByHash(ctx, fm, s.fileRepoHelper.GetTableNameByHash())
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return -1, false, err
 	}
+
+	if err != nil {
+		return -1, false, nil
+	}
+
+	return fm.ID, true, nil
 }
 
 func (s *FileService) PreSignGet(ctx context.Context, fileCtx *api.FileContext) (string, error) {
 	f := file.NewWithFileContext(fileCtx)
 	fm := f.ToModel()
-	if err := s.fileRepo.Load(ctx, fm, s.getTableName()); err != nil {
+	if err := s.fileRepo.Load(ctx, fm, s.fileRepoHelper.GetTableNameById()); err != nil {
 		return "", err
 	}
 
@@ -59,7 +61,7 @@ func (s *FileService) PreSignPut(ctx context.Context, fileCtx *api.FileContext) 
 	f := file.NewWithFileContext(fileCtx)
 	f.SetId()
 	fm := f.ToModel()
-	if err := s.fileRepo.Add(ctx, fm, s.getTableName()); err != nil {
+	if err := s.fileRepoHelper.Add(ctx, fm); err != nil {
 		return "", err
 	}
 
@@ -76,7 +78,7 @@ func (s *FileService) PreSignSlicingPut(ctx context.Context, fileCtx *api.FileCo
 	)
 	f.SetId()
 	fm := f.ToModel()
-	if err := s.fileRepo.Add(ctx, fm, s.getTableName()); err != nil {
+	if err := s.fileRepoHelper.Add(ctx, fm); err != nil {
 		return nil, err
 	}
 
@@ -120,7 +122,7 @@ func (s *FileService) GetProgressRate4SlicingPut(ctx context.Context, uploadId s
 	fm.ID = fileCtx.FileId
 	fm.DomainName = fileCtx.Domain
 	fm.BizName = fileCtx.BizName
-	if err := s.fileRepo.Load(ctx, fm, s.getTableName()); err != nil {
+	if err := s.fileRepo.Load(ctx, fm, s.fileRepoHelper.GetTableNameById()); err != nil {
 		return nil, err
 	}
 
@@ -144,8 +146,25 @@ func (s *FileService) GetProgressRate4SlicingPut(ctx context.Context, uploadId s
 	return res, nil
 }
 
-func (s *FileService) ReportUploadedFileParts(ctx context.Context, uploadId string, fileId, partNumber int64) error {
-	return nil
+func (s *FileService) ReportUploaded(ctx context.Context, fileId int64) error {
+	fm := &models.File{}
+	fm.ID = fileId
+	if err := s.fileRepo.Load(ctx, fm, s.fileRepoHelper.GetTableNameById()); err != nil {
+		return err
+	}
+
+	f := file.NewWithModel(fm)
+	hash, err := s.minio.GetObjectHash(ctx, fm.DomainName, f.GetObjectName())
+	if err != nil {
+		return err
+	}
+
+	equals := f.CheckHash(hash)
+	if !equals {
+		return errors.New("failed to validate hash of uploaded file")
+	}
+
+	return s.fileRepoHelper.Update(ctx, f.SetUploaded().ToModel())
 }
 
 func (s *FileService) MergeFileParts(ctx context.Context, uploadId string, fileCtx *api.FileContext) error {
@@ -162,7 +181,7 @@ func (s *FileService) MergeFileParts(ctx context.Context, uploadId string, fileC
 	fm.ID = fileCtx.FileId
 	fm.DomainName = fileCtx.Domain
 	fm.BizName = fileCtx.BizName
-	if err := s.fileRepo.Load(ctx, fm, s.getTableName()); err != nil {
+	if err := s.fileRepo.Load(ctx, fm, s.fileRepoHelper.GetTableNameById()); err != nil {
 		return err
 	}
 
@@ -188,7 +207,7 @@ func (s *FileService) MergeFileParts(ctx context.Context, uploadId string, fileC
 func (s *FileService) RemoveFile(ctx context.Context, fileCtx *api.FileContext) error {
 	f := file.NewWithFileContext(fileCtx)
 	fm := f.ToModel()
-	if err := s.fileRepo.Remove(ctx, fm, s.getTableName()); err != nil {
+	if err := s.fileRepoHelper.Remove(ctx, fm); err != nil {
 		return err
 	}
 

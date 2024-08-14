@@ -33,8 +33,8 @@ CREATE TABLE `user` (
 
 -- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS account (
-                                       id BIGINT PRIMARY KEY,
-                                       mobile VARCHAR(20) NOT NULL,
+    id BIGINT PRIMARY KEY,
+    mobile VARCHAR(20) NOT NULL,
     email VARCHAR(100) NOT NULL,
     password VARCHAR(64) NOT NULL,
     salt VARCHAR(64) NOT NULL,
@@ -70,6 +70,7 @@ CREATE TABLE IF NOT EXISTS file (
     hash VARCHAR(255) NOT NULL,
     file_size BIGINT NOT NULL DEFAULT 0,
     file_type VARCHAR(255) NOT NULL,
+    uploaded BOOLEAN NOT NULL DEFAULT FALSE,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
     create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     update_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
