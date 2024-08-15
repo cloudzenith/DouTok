@@ -46,7 +46,7 @@ func (a *FileApplication) PreSignPut(ctx context.Context, request *api.PreSignPu
 		}, nil
 	}
 
-	url, err := a.fileService.PreSignPut(ctx, request.FileContext)
+	url, id, err := a.fileService.PreSignPut(ctx, request.FileContext)
 	if err != nil {
 		return &api.PreSignPutResponse{
 			Meta: utils.GetMetaWithError(err),
@@ -54,13 +54,14 @@ func (a *FileApplication) PreSignPut(ctx context.Context, request *api.PreSignPu
 	}
 
 	return &api.PreSignPutResponse{
-		Meta: utils.GetSuccessMeta(),
-		Url:  url,
+		Meta:   utils.GetSuccessMeta(),
+		Url:    url,
+		FileId: id,
 	}, nil
 }
 
 func (a *FileApplication) ReportUploaded(ctx context.Context, request *api.ReportUploadedRequest) (*api.ReportUploadedResponse, error) {
-	if err := a.fileService.ReportUploaded(ctx, request.FileId); err != nil {
+	if err := a.fileService.ReportUploaded(ctx, request.FileContext); err != nil {
 		return &api.ReportUploadedResponse{
 			Meta: utils.GetMetaWithError(err),
 		}, nil
@@ -111,9 +112,20 @@ func (a *FileApplication) GetProgressRate4SlicingPut(ctx context.Context, reques
 		}, nil
 	}
 
+	total := 0
+	finished := 0
+	for _, uploaded := range result {
+		if uploaded {
+			finished++
+		}
+
+		total++
+	}
+
 	return &api.GetProgressRate4SlicingPutResponse{
-		Meta:  utils.GetSuccessMeta(),
-		Parts: result,
+		Meta:         utils.GetSuccessMeta(),
+		Parts:        result,
+		ProgressRate: float32(finished*100) / float32(total),
 	}, nil
 }
 
@@ -136,7 +148,7 @@ func (a *FileApplication) MergeFileParts(ctx context.Context, request *api.Merge
 		}, nil
 	}
 
-	if err := a.fileService.ReportUploaded(ctx, request.FileContext.FileId); err != nil {
+	if err := a.fileService.ReportUploaded(ctx, request.FileContext); err != nil {
 		return &api.MergeFilePartsResponse{
 			Meta: utils.GetMetaWithError(err),
 		}, nil

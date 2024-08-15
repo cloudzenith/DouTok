@@ -10,9 +10,11 @@ import (
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/innerservice/filerepohelper"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/repoiface"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/dal/models"
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/minio/minio-go/v7"
 	"gorm.io/gorm"
 	"strconv"
+	"strings"
 )
 
 type FileService struct {
@@ -49,7 +51,7 @@ func (s *FileService) CheckFileExistedAndGetFile(ctx context.Context, fileCtx *a
 func (s *FileService) PreSignGet(ctx context.Context, fileCtx *api.FileContext) (string, error) {
 	f := file.NewWithFileContext(fileCtx)
 	fm := f.ToModel()
-	if err := s.fileRepo.Load(ctx, fm, s.fileRepoHelper.GetTableNameById()); err != nil {
+	if err := s.fileRepo.LoadUploaded(ctx, fm, s.fileRepoHelper.GetTableNameById()); err != nil {
 		return "", err
 	}
 
@@ -57,18 +59,32 @@ func (s *FileService) PreSignGet(ctx context.Context, fileCtx *api.FileContext) 
 	return s.minio.PreSignGetUrl(ctx, f.DomainName, f.GetObjectName(), fileCtx.Filename, fileCtx.ExpireSeconds)
 }
 
-func (s *FileService) PreSignPut(ctx context.Context, fileCtx *api.FileContext) (string, error) {
+func (s *FileService) PreSignPut(ctx context.Context, fileCtx *api.FileContext) (string, int64, error) {
 	f := file.NewWithFileContext(fileCtx)
 	f.SetId()
 	fm := f.ToModel()
 	if err := s.fileRepoHelper.Add(ctx, fm); err != nil {
-		return "", err
+		return "", 0, err
 	}
 
-	return s.minio.PreSignPutUrl(ctx, f.DomainName, f.GetObjectName(), fileCtx.ExpireSeconds)
+	url, err := s.minio.PreSignPutUrl(ctx, f.DomainName, f.GetObjectName(), fileCtx.ExpireSeconds)
+	if err != nil {
+		return "", 0, err
+	}
+
+	return url, f.ID, nil
 }
 
 func (s *FileService) PreSignSlicingPut(ctx context.Context, fileCtx *api.FileContext) (*slicingfile.SlicingFile, error) {
+	id, ok, err := s.CheckFileExistedAndGetFile(ctx, fileCtx)
+	if err != nil {
+		log.Context(ctx).Warnf("failed to check file existed, err: %v", err)
+	}
+
+	if ok {
+		return slicingfile.New(file.NewFile(file.WithID(id))), nil
+	}
+
 	f := file.NewFile(
 		file.WithDomain(fileCtx.Domain),
 		file.WithBizName(fileCtx.BizName),
@@ -146,9 +162,11 @@ func (s *FileService) GetProgressRate4SlicingPut(ctx context.Context, uploadId s
 	return res, nil
 }
 
-func (s *FileService) ReportUploaded(ctx context.Context, fileId int64) error {
+func (s *FileService) ReportUploaded(ctx context.Context, fileCtx *api.FileContext) error {
 	fm := &models.File{}
-	fm.ID = fileId
+	fm.ID = fileCtx.FileId
+	fm.DomainName = fileCtx.Domain
+	fm.BizName = fileCtx.BizName
 	if err := s.fileRepo.Load(ctx, fm, s.fileRepoHelper.GetTableNameById()); err != nil {
 		return err
 	}
@@ -160,7 +178,8 @@ func (s *FileService) ReportUploaded(ctx context.Context, fileId int64) error {
 	}
 
 	equals := f.CheckHash(hash)
-	if !equals {
+	if !equals && !strings.Contains(hash, "-") {
+		log.Context(ctx).Errorf("failed to validate hash of uploaded file, hash: %s, expected: %s", hash, f.Hash)
 		return errors.New("failed to validate hash of uploaded file")
 	}
 

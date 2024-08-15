@@ -6,6 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// GetTableNameFunc is a function that returns the table name for a file
 type GetTableNameFunc func(f *models.File) string
 
 type PersistRepository struct {
@@ -44,7 +45,13 @@ func (r *PersistRepository) Add(ctx context.Context, tx *gorm.DB, file *models.F
 
 func (r *PersistRepository) Load(ctx context.Context, file *models.File, method GetTableNameFunc) error {
 	return r.handle(ctx, nil, file, method, func(f *gorm.DB) error {
-		return f.First(file, file.ID).Error
+		return f.First(file, "id = ?", file.ID).Error
+	})
+}
+
+func (r *PersistRepository) LoadUploaded(ctx context.Context, file *models.File, method GetTableNameFunc) error {
+	return r.handle(ctx, nil, file, method, func(f *gorm.DB) error {
+		return f.First(file, "id = ? and uploaded = true", file.ID).Error
 	})
 }
 
@@ -62,6 +69,6 @@ func (r *PersistRepository) Update(ctx context.Context, tx *gorm.DB, file *model
 
 func (r *PersistRepository) LoadByHash(ctx context.Context, file *models.File, method GetTableNameFunc) error {
 	return r.handle(ctx, nil, file, method, func(f *gorm.DB) error {
-		return f.First(file, "hash = ?", file.Hash).Error
+		return f.First(file, "hash = ? and uploaded = true", file.Hash).Error
 	})
 }

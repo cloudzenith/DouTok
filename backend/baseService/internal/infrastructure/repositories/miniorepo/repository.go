@@ -83,5 +83,5 @@ func (r *PersistRepository) GetObjectHash(ctx context.Context, bucketName, objec
 		return "", err
 	}
 
-	return strings.ToUpper(stats.ChecksumSHA256), nil
+	return strings.ToUpper(stats.ETag), nil
 }

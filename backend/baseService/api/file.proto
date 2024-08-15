@@ -62,7 +62,7 @@ message PreSignPutResponse {
 }
 
 message ReportUploadedRequest {
-  int64 file_id = 1;
+  FileContext file_context = 1;
 }
 
 message ReportUploadedResponse {
