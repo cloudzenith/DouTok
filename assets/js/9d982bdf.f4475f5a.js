@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocs_stie=self.webpackChunkdocs_stie||[]).push([[3513],{4119:e=>{e.exports=JSON.parse('[{"label":"welcome","permalink":"/DouTok/blog/tags/welcome","count":1}]')}}]);
