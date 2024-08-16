@@ -17,3 +17,42 @@ services:
     ports:
         - "3306:3306"
     restart: always
+
+  redis:
+    image: redis:latest
+    command: redis-server /etc/redis/redis.conf
+    networks:
+      - total
+    volumes:
+      - ./redis_data:/data
+      - ./redis/redis.conf:/etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+    restart: always
+
+  etcd:
+    image: bitnami/etcd
+    container_name: etcd
+    networks:
+      - total
+    command: etcd -name etcd -advertise-client-urls http://0.0.0.0:2379 -listen-client-urls http://0.0.0.0:2379 -listen-peer-urls http://0.0.0.0:2380
+    ports:
+      - "2379:2379"
+      - "2380:2380"
+    restart: always
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    command: server --console-address ':9001' /data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ACCESS_KEY: root
+      MINIO_SECRET_KEY: rootroot
+    volumes:
+      - ./minio_data:/data
+      - ./minio:/root/.minio
+    privileged: true
+    restart: always

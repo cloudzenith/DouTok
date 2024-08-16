@@ -1,0 +1,124 @@
+syntax = "proto3";
+package api;
+
+option go_package = "github.com/cloudzenith/DouTok/...;api";
+
+import "base.proto";
+import "buf/validate/validate.proto";
+
+service FileService {
+  // pre sign a file url for user get it
+  rpc PreSignGet(PreSignGetRequest) returns (PreSignGetResponse);
+  // pre sign a file url for user put it
+  rpc PreSignPut(PreSignPutRequest) returns (PreSignPutResponse);
+  // report a file has been uploaded
+  rpc ReportUploaded(ReportUploadedRequest) returns (ReportUploadedResponse);
+  // pre sign a file url for user put it with slicing
+  rpc PreSignSlicingPut(PreSignSlicingPutRequest) returns (PreSignSlicingPutResponse);
+  // get upload progress rate for slicing put
+  rpc GetProgressRate4SlicingPut(GetProgressRate4SlicingPutRequest) returns (GetProgressRate4SlicingPutResponse);
+  // merge a slicing uploading file
+  rpc MergeFileParts(MergeFilePartsRequest) returns (MergeFilePartsResponse);
+  // remove a file
+  rpc RemoveFile(RemoveFileRequest) returns (RemoveFileResponse);
+}
+
+message FileContext {
+  // 所属业务领域，用于创建bucket
+  string domain = 1;
+  // 所属业务名称
+  string biz_name = 2;
+  int64 file_id = 3;
+  // 文件md5
+  string hash = 4;
+  // 文件类型
+  string file_type = 5;
+  // 文件大小，单位byte
+  int64 size = 6;
+  // 文件访问链接的过期时间
+  int64 expire_seconds = 7;
+  // 文件名
+  string filename = 8;
+}
+
+message PreSignGetRequest {
+  FileContext file_context = 1[(buf.validate.field).required = true];
+}
+
+message PreSignGetResponse {
+  api.Metadata meta = 1;
+  string url = 2;
+}
+
+message PreSignPutRequest {
+  FileContext file_context = 1[(buf.validate.field).required = true];
+}
+
+message PreSignPutResponse {
+  api.Metadata meta = 1;
+  string url = 2;
+  // file_id will be not null if the put request file hash has been uploaded
+  int64 file_id = 3;
+}
+
+message ReportUploadedRequest {
+  FileContext file_context = 1;
+}
+
+message ReportUploadedResponse {
+  api.Metadata meta = 1;
+}
+
+message PreSignSlicingPutRequest {
+  FileContext file_context = 1[(buf.validate.field).required = true];
+}
+
+message PreSignSlicingPutResponse {
+  api.Metadata meta = 1;
+  repeated string urls = 2;
+  string upload_id = 3;
+  int64 parts = 4;
+  int64 file_id = 5;
+  // if a file has been uploaded, this field will be true
+  bool uploaded = 6;
+}
+
+message GetProgressRate4SlicingPutRequest {
+  FileContext file_context = 1[(buf.validate.field).required = true];
+  string upload_id = 2;
+}
+
+message GetProgressRate4SlicingPutResponse {
+  api.Metadata meta = 1;
+  // 进度百分比
+  float progress_rate = 2;
+  // 分片上传情况
+  map<string, bool> parts = 3;
+}
+
+message ReportUploadedFilePartsRequest {
+  string upload_id = 1;
+  int64 file_id = 2;
+  int64 part_number = 3;
+}
+
+message ReportUploadedFilePartsResponse {
+  api.Metadata meta = 1;
+}
+
+message MergeFilePartsRequest {
+  FileContext file_context = 1[(buf.validate.field).required = true];
+  string upload_id = 2;
+}
+
+message MergeFilePartsResponse {
+  api.Metadata meta = 1;
+}
+
+message RemoveFileRequest {
+  FileContext file_context = 1[(buf.validate.field).required = true];
+}
+
+message RemoveFileResponse {
+  api.Metadata meta = 1;
+}

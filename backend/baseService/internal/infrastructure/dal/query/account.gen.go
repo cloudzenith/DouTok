@@ -33,8 +33,6 @@ func newAccount(db *gorm.DB, opts ...gen.DOOption) account {
 	_account.Password = field.NewString(tableName, "password")
 	_account.Salt = field.NewString(tableName, "salt")
 	_account.IsDeleted = field.NewBool(tableName, "is_deleted")
-	_account.CreateTime = field.NewTime(tableName, "create_time")
-	_account.UpdateTime = field.NewTime(tableName, "update_time")
 
 	_account.fillFieldMap()
 
@@ -44,15 +42,13 @@ func newAccount(db *gorm.DB, opts ...gen.DOOption) account {
 type account struct {
 	accountDo accountDo
 
-	ALL        field.Asterisk
-	ID         field.Int64
-	Mobile     field.String
-	Email      field.String
-	Password   field.String
-	Salt       field.String
-	IsDeleted  field.Bool
-	CreateTime field.Time
-	UpdateTime field.Time
+	ALL       field.Asterisk
+	ID        field.Int64
+	Mobile    field.String
+	Email     field.String
+	Password  field.String
+	Salt      field.String
+	IsDeleted field.Bool
 
 	fieldMap map[string]field.Expr
 }
@@ -75,8 +71,6 @@ func (a *account) updateTableName(table string) *account {
 	a.Password = field.NewString(table, "password")
 	a.Salt = field.NewString(table, "salt")
 	a.IsDeleted = field.NewBool(table, "is_deleted")
-	a.CreateTime = field.NewTime(table, "create_time")
-	a.UpdateTime = field.NewTime(table, "update_time")
 
 	a.fillFieldMap()
 
@@ -101,15 +95,13 @@ func (a *account) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (a *account) fillFieldMap() {
-	a.fieldMap = make(map[string]field.Expr, 8)
+	a.fieldMap = make(map[string]field.Expr, 6)
 	a.fieldMap["id"] = a.ID
 	a.fieldMap["mobile"] = a.Mobile
 	a.fieldMap["email"] = a.Email
 	a.fieldMap["password"] = a.Password
 	a.fieldMap["salt"] = a.Salt
 	a.fieldMap["is_deleted"] = a.IsDeleted
-	a.fieldMap["create_time"] = a.CreateTime
-	a.fieldMap["update_time"] = a.UpdateTime
 }
 
 func (a account) clone(db *gorm.DB) account {

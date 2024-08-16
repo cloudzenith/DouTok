@@ -1,6 +1,6 @@
 server:
   grpc:
-    addr: 0.0.0.0:9000
+    addr: 0.0.0.0:8888
 
 data:
   database:
@@ -8,6 +8,22 @@ data:
   redis:
     source: localhost:6379
     password: root
+  minio:
+    endpoint: localhost:9000
+    accessKey: root
+    secretKey: rootroot
+  db_sharding_config:
+    file_shortvideo_short_video:
+      sharding: file_shortvideo_short_video
+      sharding_number: 5
+  db_sharding_tables:
+    file:
+      domain_name: shortvideo
+      biz_sharding_field_config:
+        short_video:
+          fields:
+            - id
+            - hash
 
 snowflake:
   node: 1
