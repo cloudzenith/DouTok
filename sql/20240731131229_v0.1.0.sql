@@ -80,13 +80,33 @@ CREATE TABLE IF NOT EXISTS file (
 );
 -- +goose StatementEnd
 
+-- +goose StatementBegin
+CREATE TABLE `video` (
+     `id` bigint(20) NOT NULL AUTO_INCREMENT,
+     `user_id` bigint(20) DEFAULT NULL,
+     `title` varchar(20) DEFAULT NULL,
+     `description` varchar(50) DEFAULT NULL,
+     `video_url` varchar(255) DEFAULT NULL,
+     `cover_url` varchar(255) DEFAULT NULL,
+     `like_count` bigint(20) DEFAULT 0,
+     `comment_count` bigint(20) DEFAULT 0,
+     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+     `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+     PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+-- +goose StatementEnd
+
 -- +goose Down
 -- +goose StatementBegin
 DROP TABLE IF EXISTS account;
 -- +goose StatementEnd
 
 -- +goose StatementBegin
-DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS `user`;
+-- +goose StatementEnd
+
+-- +goose StatementBegin
+DROP TABLE IF EXISTS video;
 -- +goose StatementEnd
 
 -- +goose StatementBegin

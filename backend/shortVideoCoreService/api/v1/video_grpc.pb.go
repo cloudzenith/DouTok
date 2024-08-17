@@ -19,205 +19,204 @@ import (
 const _ = grpc.SupportPackageIsVersion8
 
 const (
-	ShortVideoCoreVideoService_FeedShortVideo_FullMethodName     = "/shortVideoCoreService.api.v1.ShortVideoCoreVideoService/FeedShortVideo"
-	ShortVideoCoreVideoService_GetVideoById_FullMethodName       = "/shortVideoCoreService.api.v1.ShortVideoCoreVideoService/GetVideoById"
-	ShortVideoCoreVideoService_PublishVideo_FullMethodName       = "/shortVideoCoreService.api.v1.ShortVideoCoreVideoService/PublishVideo"
-	ShortVideoCoreVideoService_ListPublishedVideo_FullMethodName = "/shortVideoCoreService.api.v1.ShortVideoCoreVideoService/ListPublishedVideo"
+	VideoService_FeedShortVideo_FullMethodName     = "/shortVideoCoreService.api.v1.VideoService/FeedShortVideo"
+	VideoService_GetVideoById_FullMethodName       = "/shortVideoCoreService.api.v1.VideoService/GetVideoById"
+	VideoService_PublishVideo_FullMethodName       = "/shortVideoCoreService.api.v1.VideoService/PublishVideo"
+	VideoService_ListPublishedVideo_FullMethodName = "/shortVideoCoreService.api.v1.VideoService/ListPublishedVideo"
 )
 
-// ShortVideoCoreVideoServiceClient is the client API for ShortVideoCoreVideoService service.
+// VideoServiceClient is the client API for VideoService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type ShortVideoCoreVideoServiceClient interface {
+type VideoServiceClient interface {
 	FeedShortVideo(ctx context.Context, in *FeedShortVideoRequest, opts ...grpc.CallOption) (*FeedShortVideoResponse, error)
 	GetVideoById(ctx context.Context, in *GetVideoByIdRequest, opts ...grpc.CallOption) (*GetVideoByIdResponse, error)
 	PublishVideo(ctx context.Context, in *PublishVideoRequest, opts ...grpc.CallOption) (*PublishVideoResponse, error)
 	ListPublishedVideo(ctx context.Context, in *ListPublishedVideoRequest, opts ...grpc.CallOption) (*ListPublishedVideoResponse, error)
 }
 
-type shortVideoCoreVideoServiceClient struct {
+type videoServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewShortVideoCoreVideoServiceClient(cc grpc.ClientConnInterface) ShortVideoCoreVideoServiceClient {
-	return &shortVideoCoreVideoServiceClient{cc}
+func NewVideoServiceClient(cc grpc.ClientConnInterface) VideoServiceClient {
+	return &videoServiceClient{cc}
 }
 
-func (c *shortVideoCoreVideoServiceClient) FeedShortVideo(ctx context.Context, in *FeedShortVideoRequest, opts ...grpc.CallOption) (*FeedShortVideoResponse, error) {
+func (c *videoServiceClient) FeedShortVideo(ctx context.Context, in *FeedShortVideoRequest, opts ...grpc.CallOption) (*FeedShortVideoResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(FeedShortVideoResponse)
-	err := c.cc.Invoke(ctx, ShortVideoCoreVideoService_FeedShortVideo_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, VideoService_FeedShortVideo_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *shortVideoCoreVideoServiceClient) GetVideoById(ctx context.Context, in *GetVideoByIdRequest, opts ...grpc.CallOption) (*GetVideoByIdResponse, error) {
+func (c *videoServiceClient) GetVideoById(ctx context.Context, in *GetVideoByIdRequest, opts ...grpc.CallOption) (*GetVideoByIdResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetVideoByIdResponse)
-	err := c.cc.Invoke(ctx, ShortVideoCoreVideoService_GetVideoById_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, VideoService_GetVideoById_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *shortVideoCoreVideoServiceClient) PublishVideo(ctx context.Context, in *PublishVideoRequest, opts ...grpc.CallOption) (*PublishVideoResponse, error) {
+func (c *videoServiceClient) PublishVideo(ctx context.Context, in *PublishVideoRequest, opts ...grpc.CallOption) (*PublishVideoResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PublishVideoResponse)
-	err := c.cc.Invoke(ctx, ShortVideoCoreVideoService_PublishVideo_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, VideoService_PublishVideo_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *shortVideoCoreVideoServiceClient) ListPublishedVideo(ctx context.Context, in *ListPublishedVideoRequest, opts ...grpc.CallOption) (*ListPublishedVideoResponse, error) {
+func (c *videoServiceClient) ListPublishedVideo(ctx context.Context, in *ListPublishedVideoRequest, opts ...grpc.CallOption) (*ListPublishedVideoResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListPublishedVideoResponse)
-	err := c.cc.Invoke(ctx, ShortVideoCoreVideoService_ListPublishedVideo_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, VideoService_ListPublishedVideo_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// ShortVideoCoreVideoServiceServer is the server API for ShortVideoCoreVideoService service.
-// All implementations must embed UnimplementedShortVideoCoreVideoServiceServer
+// VideoServiceServer is the server API for VideoService service.
+// All implementations must embed UnimplementedVideoServiceServer
 // for forward compatibility
-type ShortVideoCoreVideoServiceServer interface {
+type VideoServiceServer interface {
 	FeedShortVideo(context.Context, *FeedShortVideoRequest) (*FeedShortVideoResponse, error)
 	GetVideoById(context.Context, *GetVideoByIdRequest) (*GetVideoByIdResponse, error)
 	PublishVideo(context.Context, *PublishVideoRequest) (*PublishVideoResponse, error)
 	ListPublishedVideo(context.Context, *ListPublishedVideoRequest) (*ListPublishedVideoResponse, error)
-	mustEmbedUnimplementedShortVideoCoreVideoServiceServer()
+	mustEmbedUnimplementedVideoServiceServer()
 }
 
-// UnimplementedShortVideoCoreVideoServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedShortVideoCoreVideoServiceServer struct {
+// UnimplementedVideoServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedVideoServiceServer struct {
 }
 
-func (UnimplementedShortVideoCoreVideoServiceServer) FeedShortVideo(context.Context, *FeedShortVideoRequest) (*FeedShortVideoResponse, error) {
+func (UnimplementedVideoServiceServer) FeedShortVideo(context.Context, *FeedShortVideoRequest) (*FeedShortVideoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FeedShortVideo not implemented")
 }
-func (UnimplementedShortVideoCoreVideoServiceServer) GetVideoById(context.Context, *GetVideoByIdRequest) (*GetVideoByIdResponse, error) {
+func (UnimplementedVideoServiceServer) GetVideoById(context.Context, *GetVideoByIdRequest) (*GetVideoByIdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetVideoById not implemented")
 }
-func (UnimplementedShortVideoCoreVideoServiceServer) PublishVideo(context.Context, *PublishVideoRequest) (*PublishVideoResponse, error) {
+func (UnimplementedVideoServiceServer) PublishVideo(context.Context, *PublishVideoRequest) (*PublishVideoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PublishVideo not implemented")
 }
-func (UnimplementedShortVideoCoreVideoServiceServer) ListPublishedVideo(context.Context, *ListPublishedVideoRequest) (*ListPublishedVideoResponse, error) {
+func (UnimplementedVideoServiceServer) ListPublishedVideo(context.Context, *ListPublishedVideoRequest) (*ListPublishedVideoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListPublishedVideo not implemented")
 }
-func (UnimplementedShortVideoCoreVideoServiceServer) mustEmbedUnimplementedShortVideoCoreVideoServiceServer() {
-}
+func (UnimplementedVideoServiceServer) mustEmbedUnimplementedVideoServiceServer() {}
 
-// UnsafeShortVideoCoreVideoServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to ShortVideoCoreVideoServiceServer will
+// UnsafeVideoServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to VideoServiceServer will
 // result in compilation errors.
-type UnsafeShortVideoCoreVideoServiceServer interface {
-	mustEmbedUnimplementedShortVideoCoreVideoServiceServer()
+type UnsafeVideoServiceServer interface {
+	mustEmbedUnimplementedVideoServiceServer()
 }
 
-func RegisterShortVideoCoreVideoServiceServer(s grpc.ServiceRegistrar, srv ShortVideoCoreVideoServiceServer) {
-	s.RegisterService(&ShortVideoCoreVideoService_ServiceDesc, srv)
+func RegisterVideoServiceServer(s grpc.ServiceRegistrar, srv VideoServiceServer) {
+	s.RegisterService(&VideoService_ServiceDesc, srv)
 }
 
-func _ShortVideoCoreVideoService_FeedShortVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _VideoService_FeedShortVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(FeedShortVideoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ShortVideoCoreVideoServiceServer).FeedShortVideo(ctx, in)
+		return srv.(VideoServiceServer).FeedShortVideo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ShortVideoCoreVideoService_FeedShortVideo_FullMethodName,
+		FullMethod: VideoService_FeedShortVideo_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ShortVideoCoreVideoServiceServer).FeedShortVideo(ctx, req.(*FeedShortVideoRequest))
+		return srv.(VideoServiceServer).FeedShortVideo(ctx, req.(*FeedShortVideoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ShortVideoCoreVideoService_GetVideoById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _VideoService_GetVideoById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetVideoByIdRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ShortVideoCoreVideoServiceServer).GetVideoById(ctx, in)
+		return srv.(VideoServiceServer).GetVideoById(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ShortVideoCoreVideoService_GetVideoById_FullMethodName,
+		FullMethod: VideoService_GetVideoById_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ShortVideoCoreVideoServiceServer).GetVideoById(ctx, req.(*GetVideoByIdRequest))
+		return srv.(VideoServiceServer).GetVideoById(ctx, req.(*GetVideoByIdRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ShortVideoCoreVideoService_PublishVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _VideoService_PublishVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PublishVideoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ShortVideoCoreVideoServiceServer).PublishVideo(ctx, in)
+		return srv.(VideoServiceServer).PublishVideo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ShortVideoCoreVideoService_PublishVideo_FullMethodName,
+		FullMethod: VideoService_PublishVideo_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ShortVideoCoreVideoServiceServer).PublishVideo(ctx, req.(*PublishVideoRequest))
+		return srv.(VideoServiceServer).PublishVideo(ctx, req.(*PublishVideoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ShortVideoCoreVideoService_ListPublishedVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _VideoService_ListPublishedVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListPublishedVideoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ShortVideoCoreVideoServiceServer).ListPublishedVideo(ctx, in)
+		return srv.(VideoServiceServer).ListPublishedVideo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ShortVideoCoreVideoService_ListPublishedVideo_FullMethodName,
+		FullMethod: VideoService_ListPublishedVideo_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ShortVideoCoreVideoServiceServer).ListPublishedVideo(ctx, req.(*ListPublishedVideoRequest))
+		return srv.(VideoServiceServer).ListPublishedVideo(ctx, req.(*ListPublishedVideoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// ShortVideoCoreVideoService_ServiceDesc is the grpc.ServiceDesc for ShortVideoCoreVideoService service.
+// VideoService_ServiceDesc is the grpc.ServiceDesc for VideoService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var ShortVideoCoreVideoService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "shortVideoCoreService.api.v1.ShortVideoCoreVideoService",
-	HandlerType: (*ShortVideoCoreVideoServiceServer)(nil),
+var VideoService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "shortVideoCoreService.api.v1.VideoService",
+	HandlerType: (*VideoServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "FeedShortVideo",
-			Handler:    _ShortVideoCoreVideoService_FeedShortVideo_Handler,
+			Handler:    _VideoService_FeedShortVideo_Handler,
 		},
 		{
 			MethodName: "GetVideoById",
-			Handler:    _ShortVideoCoreVideoService_GetVideoById_Handler,
+			Handler:    _VideoService_GetVideoById_Handler,
 		},
 		{
 			MethodName: "PublishVideo",
-			Handler:    _ShortVideoCoreVideoService_PublishVideo_Handler,
+			Handler:    _VideoService_PublishVideo_Handler,
 		},
 		{
 			MethodName: "ListPublishedVideo",
-			Handler:    _ShortVideoCoreVideoService_ListPublishedVideo_Handler,
+			Handler:    _VideoService_ListPublishedVideo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

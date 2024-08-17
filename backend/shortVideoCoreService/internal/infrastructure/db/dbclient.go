@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/conf"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/dto"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -49,4 +50,18 @@ func (c *DBClient) DB(ctx context.Context) *gorm.DB {
 		return tx
 	}
 	return c.db
+}
+
+type WhereConditionFn func(db *gorm.DB) *gorm.DB
+
+func (c *DBClient) WhereWithPaginateAndSort(
+	ctx context.Context,
+	fn WhereConditionFn,
+	value interface{},
+	sort string,
+	request *dto.PaginationRequest,
+) *gorm.DB {
+	offset := (request.PageNum - 1) * request.PageSize
+	db := fn(c.DB(ctx)).Offset(int(offset)).Limit(int(request.PageSize)).Order(sort).Find(value)
+	return db
 }

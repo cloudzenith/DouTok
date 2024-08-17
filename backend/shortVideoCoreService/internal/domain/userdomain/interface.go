@@ -2,8 +2,8 @@ package userdomain
 
 import (
 	"context"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/data"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/data/model"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/data/userdata"
 )
 
 type UserRepo interface {
@@ -13,4 +13,4 @@ type UserRepo interface {
 	FindByAccountID(ctx context.Context, accountID int64) (*model.User, error)
 }
 
-var _ UserRepo = (*data.UserRepo)(nil)
+var _ UserRepo = (*userdata.UserRepo)(nil)

@@ -76,29 +76,11 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/shortVideoCoreService.api.v1.RegisterResponse'
-    /v1/videos:
+    /v1/video/feed:
         post:
             tags:
-                - ShortVideoCoreVideoService
-            operationId: ShortVideoCoreVideoService_ListPublishedVideo
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/shortVideoCoreService.api.v1.ListPublishedVideoRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/shortVideoCoreService.api.v1.ListPublishedVideoResponse'
-    /v1/videos/feed:
-        post:
-            tags:
-                - ShortVideoCoreVideoService
-            operationId: ShortVideoCoreVideoService_FeedShortVideo
+                - VideoService
+            operationId: VideoService_FeedShortVideo
             requestBody:
                 content:
                     application/json:
@@ -112,11 +94,47 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/shortVideoCoreService.api.v1.FeedShortVideoResponse'
-    /v1/videos/{videoId}:
+    /v1/video/list:
+        post:
+            tags:
+                - VideoService
+            operationId: VideoService_ListPublishedVideo
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/shortVideoCoreService.api.v1.ListPublishedVideoRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/shortVideoCoreService.api.v1.ListPublishedVideoResponse'
+    /v1/video/publish:
+        post:
+            tags:
+                - VideoService
+            operationId: VideoService_PublishVideo
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/shortVideoCoreService.api.v1.PublishVideoRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/shortVideoCoreService.api.v1.PublishVideoResponse'
+    /v1/video/{videoId}:
         get:
             tags:
-                - ShortVideoCoreVideoService
-            operationId: ShortVideoCoreVideoService_GetVideoById
+                - VideoService
+            operationId: VideoService_GetVideoById
             parameters:
                 - name: videoId
                   in: path
@@ -132,12 +150,25 @@ paths:
                                 $ref: '#/components/schemas/shortVideoCoreService.api.v1.GetVideoByIdResponse'
 components:
     schemas:
+        shortVideoCoreService.api.v1.Author:
+            type: object
+            properties:
+                id:
+                    type: string
+                name:
+                    type: string
+                avatar:
+                    type: string
+                isFollowing:
+                    type: string
         shortVideoCoreService.api.v1.FeedShortVideoRequest:
             type: object
             properties:
                 latestTime:
                     type: string
                 userId:
+                    type: string
+                feedNum:
                     type: string
         shortVideoCoreService.api.v1.FeedShortVideoResponse:
             type: object
@@ -148,8 +179,6 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/shortVideoCoreService.api.v1.Video'
-                nextTime:
-                    type: string
         shortVideoCoreService.api.v1.GetUserInfoResponse:
             type: object
             properties:
@@ -168,6 +197,8 @@ components:
             type: object
             properties:
                 userId:
+                    type: string
+                latestTime:
                     type: string
                 pagination:
                     $ref: '#/components/schemas/shortVideoCoreService.api.v1.PaginationRequest'
@@ -240,20 +271,21 @@ components:
         shortVideoCoreService.api.v1.PublishVideoRequest:
             type: object
             properties:
-                data:
-                    type: string
-                    format: bytes
                 title:
                     type: string
                 coverUrl:
                     type: string
-                userId:
+                playUrl:
+                    type: string
+                description:
                     type: string
         shortVideoCoreService.api.v1.PublishVideoResponse:
             type: object
             properties:
                 meta:
                     $ref: '#/components/schemas/shortVideoCoreService.api.v1.Metadata'
+                videoId:
+                    type: string
         shortVideoCoreService.api.v1.RegisterRequest:
             type: object
             properties:
@@ -328,8 +360,10 @@ components:
             properties:
                 id:
                     type: string
+                title:
+                    type: string
                 author:
-                    $ref: '#/components/schemas/shortVideoCoreService.api.v1.VideoAuthor'
+                    $ref: '#/components/schemas/shortVideoCoreService.api.v1.Author'
                 playUrl:
                     type: string
                 coverUrl:
@@ -339,20 +373,11 @@ components:
                 commentCount:
                     type: string
                 isFavorite:
-                    type: boolean
-                title:
                     type: string
-        shortVideoCoreService.api.v1.VideoAuthor:
-            type: object
-            properties:
-                id:
+                uploadTime:
                     type: string
-                name:
+                description:
                     type: string
-                avatar:
-                    type: string
-                isFollowing:
-                    type: boolean
 tags:
-    - name: ShortVideoCoreVideoService
     - name: UserService
+    - name: VideoService

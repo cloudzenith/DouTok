@@ -3,13 +3,16 @@ package main
 import (
 	"flag"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/conf"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/data"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/data/userdata"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/data/videodata"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/userdomain"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/pkg/db"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/videodomain"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/db"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/thirdparty"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/pkg/utils"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/server"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/service/thirdparty"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/service/userservice"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/service/videoservice"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/file"
@@ -59,17 +62,28 @@ func InitApp(config *conf.Config, logger log.Logger) (*kratos.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	userRepo := data.NewUserRepo(dbClient, logger)
+
+	userRepo := userdata.NewUserRepo(dbClient, logger)
+	videoRepo := videodata.NewVideoRepo(dbClient, logger)
+
 	baseService, err := thirdparty.NewBaseService(config.ThirdParty, logger)
 	if err != nil {
 		return nil, err
 	}
+
 	userUsecase := userdomain.NewUserUsecase(
 		config, snowflake, baseService.AccountServiceClient, userRepo, dbClient, logger,
 	)
+	videoUsecase := videodomain.NewVideoUseCase(
+		config, snowflake, userRepo, videoRepo, dbClient, logger,
+	)
+
 	userService := userservice.NewUserService(config, logger, userUsecase)
-	grpcServer := server.NewGRPCServer(config, userService, logger)
-	httpServer := server.NewHTTPServer(config, userService, logger)
+	videoService := videoservice.NewVideoService(config, logger, videoUsecase)
+
+	grpcServer := server.NewGRPCServer(config, userService, videoService, logger)
+	httpServer := server.NewHTTPServer(config, userService, videoService, logger)
+
 	return newApp(logger, grpcServer, httpServer), err
 }
 

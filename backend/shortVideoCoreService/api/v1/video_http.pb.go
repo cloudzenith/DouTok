@@ -19,27 +19,27 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-const OperationShortVideoCoreVideoServiceFeedShortVideo = "/shortVideoCoreService.api.v1.ShortVideoCoreVideoService/FeedShortVideo"
-const OperationShortVideoCoreVideoServiceGetVideoById = "/shortVideoCoreService.api.v1.ShortVideoCoreVideoService/GetVideoById"
-const OperationShortVideoCoreVideoServiceListPublishedVideo = "/shortVideoCoreService.api.v1.ShortVideoCoreVideoService/ListPublishedVideo"
-const OperationShortVideoCoreVideoServicePublishVideo = "/shortVideoCoreService.api.v1.ShortVideoCoreVideoService/PublishVideo"
+const OperationVideoServiceFeedShortVideo = "/shortVideoCoreService.api.v1.VideoService/FeedShortVideo"
+const OperationVideoServiceGetVideoById = "/shortVideoCoreService.api.v1.VideoService/GetVideoById"
+const OperationVideoServiceListPublishedVideo = "/shortVideoCoreService.api.v1.VideoService/ListPublishedVideo"
+const OperationVideoServicePublishVideo = "/shortVideoCoreService.api.v1.VideoService/PublishVideo"
 
-type ShortVideoCoreVideoServiceHTTPServer interface {
+type VideoServiceHTTPServer interface {
 	FeedShortVideo(context.Context, *FeedShortVideoRequest) (*FeedShortVideoResponse, error)
 	GetVideoById(context.Context, *GetVideoByIdRequest) (*GetVideoByIdResponse, error)
 	ListPublishedVideo(context.Context, *ListPublishedVideoRequest) (*ListPublishedVideoResponse, error)
 	PublishVideo(context.Context, *PublishVideoRequest) (*PublishVideoResponse, error)
 }
 
-func RegisterShortVideoCoreVideoServiceHTTPServer(s *http.Server, srv ShortVideoCoreVideoServiceHTTPServer) {
+func RegisterVideoServiceHTTPServer(s *http.Server, srv VideoServiceHTTPServer) {
 	r := s.Route("/")
-	r.POST("/v1/videos/feed", _ShortVideoCoreVideoService_FeedShortVideo0_HTTP_Handler(srv))
-	r.GET("/v1/videos/{video_id}", _ShortVideoCoreVideoService_GetVideoById0_HTTP_Handler(srv))
-	r.POST("/v1/videos", _ShortVideoCoreVideoService_PublishVideo0_HTTP_Handler(srv))
-	r.POST("/v1/videos", _ShortVideoCoreVideoService_ListPublishedVideo0_HTTP_Handler(srv))
+	r.POST("/v1/video/feed", _VideoService_FeedShortVideo0_HTTP_Handler(srv))
+	r.GET("/v1/video/{video_id}", _VideoService_GetVideoById0_HTTP_Handler(srv))
+	r.POST("/v1/video/publish", _VideoService_PublishVideo0_HTTP_Handler(srv))
+	r.POST("/v1/video/list", _VideoService_ListPublishedVideo0_HTTP_Handler(srv))
 }
 
-func _ShortVideoCoreVideoService_FeedShortVideo0_HTTP_Handler(srv ShortVideoCoreVideoServiceHTTPServer) func(ctx http.Context) error {
+func _VideoService_FeedShortVideo0_HTTP_Handler(srv VideoServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in FeedShortVideoRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -48,7 +48,7 @@ func _ShortVideoCoreVideoService_FeedShortVideo0_HTTP_Handler(srv ShortVideoCore
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationShortVideoCoreVideoServiceFeedShortVideo)
+		http.SetOperation(ctx, OperationVideoServiceFeedShortVideo)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.FeedShortVideo(ctx, req.(*FeedShortVideoRequest))
 		})
@@ -61,7 +61,7 @@ func _ShortVideoCoreVideoService_FeedShortVideo0_HTTP_Handler(srv ShortVideoCore
 	}
 }
 
-func _ShortVideoCoreVideoService_GetVideoById0_HTTP_Handler(srv ShortVideoCoreVideoServiceHTTPServer) func(ctx http.Context) error {
+func _VideoService_GetVideoById0_HTTP_Handler(srv VideoServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in GetVideoByIdRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -70,7 +70,7 @@ func _ShortVideoCoreVideoService_GetVideoById0_HTTP_Handler(srv ShortVideoCoreVi
 		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationShortVideoCoreVideoServiceGetVideoById)
+		http.SetOperation(ctx, OperationVideoServiceGetVideoById)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.GetVideoById(ctx, req.(*GetVideoByIdRequest))
 		})
@@ -83,7 +83,7 @@ func _ShortVideoCoreVideoService_GetVideoById0_HTTP_Handler(srv ShortVideoCoreVi
 	}
 }
 
-func _ShortVideoCoreVideoService_PublishVideo0_HTTP_Handler(srv ShortVideoCoreVideoServiceHTTPServer) func(ctx http.Context) error {
+func _VideoService_PublishVideo0_HTTP_Handler(srv VideoServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in PublishVideoRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -92,7 +92,7 @@ func _ShortVideoCoreVideoService_PublishVideo0_HTTP_Handler(srv ShortVideoCoreVi
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationShortVideoCoreVideoServicePublishVideo)
+		http.SetOperation(ctx, OperationVideoServicePublishVideo)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.PublishVideo(ctx, req.(*PublishVideoRequest))
 		})
@@ -105,7 +105,7 @@ func _ShortVideoCoreVideoService_PublishVideo0_HTTP_Handler(srv ShortVideoCoreVi
 	}
 }
 
-func _ShortVideoCoreVideoService_ListPublishedVideo0_HTTP_Handler(srv ShortVideoCoreVideoServiceHTTPServer) func(ctx http.Context) error {
+func _VideoService_ListPublishedVideo0_HTTP_Handler(srv VideoServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in ListPublishedVideoRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -114,7 +114,7 @@ func _ShortVideoCoreVideoService_ListPublishedVideo0_HTTP_Handler(srv ShortVideo
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationShortVideoCoreVideoServiceListPublishedVideo)
+		http.SetOperation(ctx, OperationVideoServiceListPublishedVideo)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.ListPublishedVideo(ctx, req.(*ListPublishedVideoRequest))
 		})
@@ -127,26 +127,26 @@ func _ShortVideoCoreVideoService_ListPublishedVideo0_HTTP_Handler(srv ShortVideo
 	}
 }
 
-type ShortVideoCoreVideoServiceHTTPClient interface {
+type VideoServiceHTTPClient interface {
 	FeedShortVideo(ctx context.Context, req *FeedShortVideoRequest, opts ...http.CallOption) (rsp *FeedShortVideoResponse, err error)
 	GetVideoById(ctx context.Context, req *GetVideoByIdRequest, opts ...http.CallOption) (rsp *GetVideoByIdResponse, err error)
 	ListPublishedVideo(ctx context.Context, req *ListPublishedVideoRequest, opts ...http.CallOption) (rsp *ListPublishedVideoResponse, err error)
 	PublishVideo(ctx context.Context, req *PublishVideoRequest, opts ...http.CallOption) (rsp *PublishVideoResponse, err error)
 }
 
-type ShortVideoCoreVideoServiceHTTPClientImpl struct {
+type VideoServiceHTTPClientImpl struct {
 	cc *http.Client
 }
 
-func NewShortVideoCoreVideoServiceHTTPClient(client *http.Client) ShortVideoCoreVideoServiceHTTPClient {
-	return &ShortVideoCoreVideoServiceHTTPClientImpl{client}
+func NewVideoServiceHTTPClient(client *http.Client) VideoServiceHTTPClient {
+	return &VideoServiceHTTPClientImpl{client}
 }
 
-func (c *ShortVideoCoreVideoServiceHTTPClientImpl) FeedShortVideo(ctx context.Context, in *FeedShortVideoRequest, opts ...http.CallOption) (*FeedShortVideoResponse, error) {
+func (c *VideoServiceHTTPClientImpl) FeedShortVideo(ctx context.Context, in *FeedShortVideoRequest, opts ...http.CallOption) (*FeedShortVideoResponse, error) {
 	var out FeedShortVideoResponse
-	pattern := "/v1/videos/feed"
+	pattern := "/v1/video/feed"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationShortVideoCoreVideoServiceFeedShortVideo))
+	opts = append(opts, http.Operation(OperationVideoServiceFeedShortVideo))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
@@ -155,11 +155,11 @@ func (c *ShortVideoCoreVideoServiceHTTPClientImpl) FeedShortVideo(ctx context.Co
 	return &out, nil
 }
 
-func (c *ShortVideoCoreVideoServiceHTTPClientImpl) GetVideoById(ctx context.Context, in *GetVideoByIdRequest, opts ...http.CallOption) (*GetVideoByIdResponse, error) {
+func (c *VideoServiceHTTPClientImpl) GetVideoById(ctx context.Context, in *GetVideoByIdRequest, opts ...http.CallOption) (*GetVideoByIdResponse, error) {
 	var out GetVideoByIdResponse
-	pattern := "/v1/videos/{video_id}"
+	pattern := "/v1/video/{video_id}"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationShortVideoCoreVideoServiceGetVideoById))
+	opts = append(opts, http.Operation(OperationVideoServiceGetVideoById))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
@@ -168,11 +168,11 @@ func (c *ShortVideoCoreVideoServiceHTTPClientImpl) GetVideoById(ctx context.Cont
 	return &out, nil
 }
 
-func (c *ShortVideoCoreVideoServiceHTTPClientImpl) ListPublishedVideo(ctx context.Context, in *ListPublishedVideoRequest, opts ...http.CallOption) (*ListPublishedVideoResponse, error) {
+func (c *VideoServiceHTTPClientImpl) ListPublishedVideo(ctx context.Context, in *ListPublishedVideoRequest, opts ...http.CallOption) (*ListPublishedVideoResponse, error) {
 	var out ListPublishedVideoResponse
-	pattern := "/v1/videos"
+	pattern := "/v1/video/list"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationShortVideoCoreVideoServiceListPublishedVideo))
+	opts = append(opts, http.Operation(OperationVideoServiceListPublishedVideo))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
@@ -181,11 +181,11 @@ func (c *ShortVideoCoreVideoServiceHTTPClientImpl) ListPublishedVideo(ctx contex
 	return &out, nil
 }
 
-func (c *ShortVideoCoreVideoServiceHTTPClientImpl) PublishVideo(ctx context.Context, in *PublishVideoRequest, opts ...http.CallOption) (*PublishVideoResponse, error) {
+func (c *VideoServiceHTTPClientImpl) PublishVideo(ctx context.Context, in *PublishVideoRequest, opts ...http.CallOption) (*PublishVideoResponse, error) {
 	var out PublishVideoResponse
-	pattern := "/v1/videos"
+	pattern := "/v1/video/publish"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationShortVideoCoreVideoServicePublishVideo))
+	opts = append(opts, http.Operation(OperationVideoServicePublishVideo))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

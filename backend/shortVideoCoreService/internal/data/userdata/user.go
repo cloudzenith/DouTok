@@ -1,9 +1,9 @@
-package data
+package userdata
 
 import (
 	"context"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/data/model"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/pkg/db"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/db"
 	"github.com/go-kratos/kratos/v2/log"
 )
 

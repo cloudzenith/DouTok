@@ -265,9 +265,27 @@ func (m *PaginationRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Page
+	if m.GetPage() <= 0 {
+		err := PaginationRequestValidationError{
+			field:  "Page",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Size
+	if m.GetSize() <= 0 {
+		err := PaginationRequestValidationError{
+			field:  "Size",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	for idx, item := range m.GetSort() {
 		_, _ = idx, item
