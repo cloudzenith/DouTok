@@ -35,22 +35,21 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on VideoAuthor with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
+// Validate checks the field values on Author with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *VideoAuthor) Validate() error {
+func (m *Author) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on VideoAuthor with the rules defined in
-// the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in VideoAuthorMultiError, or
-// nil if none found.
-func (m *VideoAuthor) ValidateAll() error {
+// ValidateAll checks the field values on Author with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in AuthorMultiError, or nil if none found.
+func (m *Author) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *VideoAuthor) validate(all bool) error {
+func (m *Author) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -66,18 +65,18 @@ func (m *VideoAuthor) validate(all bool) error {
 	// no validation rules for IsFollowing
 
 	if len(errors) > 0 {
-		return VideoAuthorMultiError(errors)
+		return AuthorMultiError(errors)
 	}
 
 	return nil
 }
 
-// VideoAuthorMultiError is an error wrapping multiple validation errors
-// returned by VideoAuthor.ValidateAll() if the designated constraints aren't met.
-type VideoAuthorMultiError []error
+// AuthorMultiError is an error wrapping multiple validation errors returned by
+// Author.ValidateAll() if the designated constraints aren't met.
+type AuthorMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m VideoAuthorMultiError) Error() string {
+func (m AuthorMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -86,11 +85,11 @@ func (m VideoAuthorMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m VideoAuthorMultiError) AllErrors() []error { return m }
+func (m AuthorMultiError) AllErrors() []error { return m }
 
-// VideoAuthorValidationError is the validation error returned by
-// VideoAuthor.Validate if the designated constraints aren't met.
-type VideoAuthorValidationError struct {
+// AuthorValidationError is the validation error returned by Author.Validate if
+// the designated constraints aren't met.
+type AuthorValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -98,22 +97,22 @@ type VideoAuthorValidationError struct {
 }
 
 // Field function returns field value.
-func (e VideoAuthorValidationError) Field() string { return e.field }
+func (e AuthorValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e VideoAuthorValidationError) Reason() string { return e.reason }
+func (e AuthorValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e VideoAuthorValidationError) Cause() error { return e.cause }
+func (e AuthorValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e VideoAuthorValidationError) Key() bool { return e.key }
+func (e AuthorValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e VideoAuthorValidationError) ErrorName() string { return "VideoAuthorValidationError" }
+func (e AuthorValidationError) ErrorName() string { return "AuthorValidationError" }
 
 // Error satisfies the builtin error interface
-func (e VideoAuthorValidationError) Error() string {
+func (e AuthorValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -125,14 +124,14 @@ func (e VideoAuthorValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sVideoAuthor.%s: %s%s",
+		"invalid %sAuthor.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = VideoAuthorValidationError{}
+var _ error = AuthorValidationError{}
 
 var _ interface {
 	Field() string
@@ -140,7 +139,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = VideoAuthorValidationError{}
+} = AuthorValidationError{}
 
 // Validate checks the field values on Video with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
@@ -164,6 +163,8 @@ func (m *Video) validate(all bool) error {
 	var errors []error
 
 	// no validation rules for Id
+
+	// no validation rules for Title
 
 	if all {
 		switch v := interface{}(m.GetAuthor()).(type) {
@@ -204,7 +205,9 @@ func (m *Video) validate(all bool) error {
 
 	// no validation rules for IsFavorite
 
-	// no validation rules for Title
+	// no validation rules for UploadTime
+
+	// no validation rules for Description
 
 	if len(errors) > 0 {
 		return VideoMultiError(errors)
@@ -310,6 +313,17 @@ func (m *FeedShortVideoRequest) validate(all bool) error {
 	if m.GetUserId() <= 0 {
 		err := FeedShortVideoRequestValidationError{
 			field:  "UserId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetFeedNum() <= 0 {
+		err := FeedShortVideoRequestValidationError{
+			field:  "FeedNum",
 			reason: "value must be greater than 0",
 		}
 		if !all {
@@ -482,8 +496,6 @@ func (m *FeedShortVideoResponse) validate(all bool) error {
 		}
 
 	}
-
-	// no validation rules for NextTime
 
 	if len(errors) > 0 {
 		return FeedShortVideoResponseMultiError(errors)
@@ -860,8 +872,6 @@ func (m *PublishVideoRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Data
-
 	if l := utf8.RuneCountInString(m.GetTitle()); l < 1 || l > 50 {
 		err := PublishVideoRequestValidationError{
 			field:  "Title",
@@ -873,12 +883,32 @@ func (m *PublishVideoRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for CoverUrl
-
-	if m.GetUserId() <= 0 {
+	if l := utf8.RuneCountInString(m.GetCoverUrl()); l < 1 || l > 500 {
 		err := PublishVideoRequestValidationError{
-			field:  "UserId",
-			reason: "value must be greater than 0",
+			field:  "CoverUrl",
+			reason: "value length must be between 1 and 500 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if l := utf8.RuneCountInString(m.GetPlayUrl()); l < 1 || l > 500 {
+		err := PublishVideoRequestValidationError{
+			field:  "PlayUrl",
+			reason: "value length must be between 1 and 500 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetDescription()) > 500 {
+		err := PublishVideoRequestValidationError{
+			field:  "Description",
+			reason: "value length must be at most 500 runes",
 		}
 		if !all {
 			return err
@@ -1017,6 +1047,8 @@ func (m *PublishVideoResponse) validate(all bool) error {
 		}
 	}
 
+	// no validation rules for VideoId
+
 	if len(errors) > 0 {
 		return PublishVideoResponseMultiError(errors)
 	}
@@ -1129,6 +1161,8 @@ func (m *ListPublishedVideoRequest) validate(all bool) error {
 		}
 		errors = append(errors, err)
 	}
+
+	// no validation rules for LatestTime
 
 	if all {
 		switch v := interface{}(m.GetPagination()).(type) {

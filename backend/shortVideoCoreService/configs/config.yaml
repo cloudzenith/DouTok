@@ -3,7 +3,7 @@ server:
     addr: 0.0.0.0:8001
     timeout: 3s
   grpc:
-    addr: 0.0.0.0:9001
+    addr: 0.0.0.0:9010
     timeout: 3s
 database:
   driver: mysql
@@ -14,7 +14,7 @@ redis:
   write_timeout: 0.2s
 third_party:
   base_service:
-    address: localhost:9000
+    address: localhost:8888
 common:
   node: 2
   auth:

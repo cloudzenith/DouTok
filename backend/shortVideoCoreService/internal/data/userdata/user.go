@@ -1,9 +1,9 @@
-package data
+package userdata
 
 import (
 	"context"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/data/model"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/pkg/db"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/db"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
@@ -46,4 +46,13 @@ func (r *UserRepo) FindByAccountID(ctx context.Context, accountID int64) (*model
 		return nil, result.Error
 	}
 	return user, nil
+}
+
+func (r *UserRepo) FindByIds(ctx context.Context, ids []int64) ([]*model.User, error) {
+	var users []*model.User
+	result := r.dbClient.DB(ctx).Where("id IN ?", ids).Find(&users)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return users, nil
 }

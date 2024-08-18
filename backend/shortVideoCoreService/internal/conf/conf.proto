@@ -55,3 +55,7 @@ message Common {
   Auth auth = 1;
   int64 node = 2;
 }
+
+message VideoService {
+  int32 batch_num = 10; // 每次 feed 拉取的视频数量
+}

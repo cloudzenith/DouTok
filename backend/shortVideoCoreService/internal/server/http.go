@@ -5,6 +5,7 @@ import (
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/conf"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/server/middleware"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/service/userservice"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/service/videoservice"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
@@ -13,7 +14,11 @@ import (
 )
 
 // NewHTTPServer new an HTTP server.
-func NewHTTPServer(c *conf.Config, userService *userservice.UserService, logger log.Logger) *http.Server {
+func NewHTTPServer(
+	c *conf.Config,
+	userService *userservice.UserService,
+	videoService *videoservice.VideoService,
+	logger log.Logger) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
 			logging.Server(logger),
@@ -33,5 +38,6 @@ func NewHTTPServer(c *conf.Config, userService *userservice.UserService, logger 
 	}
 	srv := http.NewServer(opts...)
 	v1.RegisterUserServiceHTTPServer(srv, userService)
+	v1.RegisterVideoServiceHTTPServer(srv, videoService)
 	return srv
 }

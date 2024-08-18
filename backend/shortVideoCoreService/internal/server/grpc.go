@@ -4,6 +4,7 @@ import (
 	v1 "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/conf"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/service/userservice"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/service/videoservice"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
@@ -12,7 +13,11 @@ import (
 )
 
 // NewGRPCServer new a gRPC server.
-func NewGRPCServer(c *conf.Config, userService *userservice.UserService, logger log.Logger) *grpc.Server {
+func NewGRPCServer(
+	c *conf.Config,
+	userService *userservice.UserService,
+	videoService *videoservice.VideoService,
+	logger log.Logger) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			logging.Server(logger),
@@ -31,5 +36,6 @@ func NewGRPCServer(c *conf.Config, userService *userservice.UserService, logger 
 	}
 	srv := grpc.NewServer(opts...)
 	v1.RegisterUserServiceServer(srv, userService)
+	v1.RegisterVideoServiceServer(srv, videoService)
 	return srv
 }

@@ -7,10 +7,10 @@ import (
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/conf"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/data/model"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/entity"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/db"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/thirdparty"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/pkg/auth"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/pkg/db"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/pkg/utils"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/service/thirdparty"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/uuid"
 )

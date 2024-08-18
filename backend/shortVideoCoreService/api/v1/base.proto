@@ -4,6 +4,8 @@ package shortVideoCoreService.api.v1;
 
 option go_package = "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1;v1";
 
+import "validate/validate.proto";
+
 message Metadata {
     int32 biz_code = 1;
     string message = 2;
@@ -22,8 +24,8 @@ message SortField {
 }
 
 message PaginationRequest {
-    int32 page = 1; // 页码 [1, +∞)
-    int32 size = 2; // 页面大小
+    int32 page = 1 [(validate.rules).int32 = {gt: 0}]; // 页码 [1, +∞)
+    int32 size = 2 [(validate.rules).int32 = {gt: 0}]; // 页面大小
     repeated SortField sort = 3; // 根据字段进行排序
 }
 
