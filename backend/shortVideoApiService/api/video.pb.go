@@ -8,7 +8,6 @@ package api
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	api "github.com/cloudzenith/DouTok/backend/shortVideoApiService/api"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -257,9 +256,9 @@ type FeedShortVideoResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Meta     *api.Metadata `protobuf:"bytes,1,opt,name=meta,proto3" json:"meta,omitempty"`
-	Videos   []*Video      `protobuf:"bytes,2,rep,name=videos,proto3" json:"videos,omitempty"`
-	NextTime int64         `protobuf:"varint,3,opt,name=next_time,json=nextTime,proto3" json:"next_time,omitempty"` // 本次返回的视频中，发布最早的时间，作为下次请求时的latest_time
+	Meta     *Metadata `protobuf:"bytes,1,opt,name=meta,proto3" json:"meta,omitempty"`
+	Videos   []*Video  `protobuf:"bytes,2,rep,name=videos,proto3" json:"videos,omitempty"`
+	NextTime int64     `protobuf:"varint,3,opt,name=next_time,json=nextTime,proto3" json:"next_time,omitempty"` // 本次返回的视频中，发布最早的时间，作为下次请求时的latest_time
 }
 
 func (x *FeedShortVideoResponse) Reset() {
@@ -294,7 +293,7 @@ func (*FeedShortVideoResponse) Descriptor() ([]byte, []int) {
 	return file_video_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *FeedShortVideoResponse) GetMeta() *api.Metadata {
+func (x *FeedShortVideoResponse) GetMeta() *Metadata {
 	if x != nil {
 		return x.Meta
 	}
@@ -367,8 +366,8 @@ type GetVideoByIdResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Meta  *api.Metadata `protobuf:"bytes,1,opt,name=meta,proto3" json:"meta,omitempty"`
-	Video *Video        `protobuf:"bytes,2,opt,name=video,proto3" json:"video,omitempty"`
+	Meta  *Metadata `protobuf:"bytes,1,opt,name=meta,proto3" json:"meta,omitempty"`
+	Video *Video    `protobuf:"bytes,2,opt,name=video,proto3" json:"video,omitempty"`
 }
 
 func (x *GetVideoByIdResponse) Reset() {
@@ -403,7 +402,7 @@ func (*GetVideoByIdResponse) Descriptor() ([]byte, []int) {
 	return file_video_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *GetVideoByIdResponse) GetMeta() *api.Metadata {
+func (x *GetVideoByIdResponse) GetMeta() *Metadata {
 	if x != nil {
 		return x.Meta
 	}
@@ -493,7 +492,7 @@ type PublishVideoResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Meta *api.Metadata `protobuf:"bytes,1,opt,name=meta,proto3" json:"meta,omitempty"`
+	Meta *Metadata `protobuf:"bytes,1,opt,name=meta,proto3" json:"meta,omitempty"`
 }
 
 func (x *PublishVideoResponse) Reset() {
@@ -528,7 +527,7 @@ func (*PublishVideoResponse) Descriptor() ([]byte, []int) {
 	return file_video_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *PublishVideoResponse) GetMeta() *api.Metadata {
+func (x *PublishVideoResponse) GetMeta() *Metadata {
 	if x != nil {
 		return x.Meta
 	}
@@ -540,8 +539,8 @@ type ListPublishedVideoRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	UserId     int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Pagination *api.PaginationRequest `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	UserId     int64              `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Pagination *PaginationRequest `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
 func (x *ListPublishedVideoRequest) Reset() {
@@ -583,7 +582,7 @@ func (x *ListPublishedVideoRequest) GetUserId() int64 {
 	return 0
 }
 
-func (x *ListPublishedVideoRequest) GetPagination() *api.PaginationRequest {
+func (x *ListPublishedVideoRequest) GetPagination() *PaginationRequest {
 	if x != nil {
 		return x.Pagination
 	}
@@ -595,9 +594,9 @@ type ListPublishedVideoResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Meta       *api.Metadata           `protobuf:"bytes,1,opt,name=meta,proto3" json:"meta,omitempty"`
-	Videos     []*Video                `protobuf:"bytes,2,rep,name=videos,proto3" json:"videos,omitempty"`
-	Pagination *api.PaginationResponse `protobuf:"bytes,3,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Meta       *Metadata           `protobuf:"bytes,1,opt,name=meta,proto3" json:"meta,omitempty"`
+	Videos     []*Video            `protobuf:"bytes,2,rep,name=videos,proto3" json:"videos,omitempty"`
+	Pagination *PaginationResponse `protobuf:"bytes,3,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
 func (x *ListPublishedVideoResponse) Reset() {
@@ -632,7 +631,7 @@ func (*ListPublishedVideoResponse) Descriptor() ([]byte, []int) {
 	return file_video_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *ListPublishedVideoResponse) GetMeta() *api.Metadata {
+func (x *ListPublishedVideoResponse) GetMeta() *Metadata {
 	if x != nil {
 		return x.Meta
 	}
@@ -646,7 +645,7 @@ func (x *ListPublishedVideoResponse) GetVideos() []*Video {
 	return nil
 }
 
-func (x *ListPublishedVideoResponse) GetPagination() *api.PaginationResponse {
+func (x *ListPublishedVideoResponse) GetPagination() *PaginationResponse {
 	if x != nil {
 		return x.Pagination
 	}
@@ -793,9 +792,9 @@ var file_video_proto_goTypes = []interface{}{
 	(*PublishVideoResponse)(nil),       // 7: api.PublishVideoResponse
 	(*ListPublishedVideoRequest)(nil),  // 8: api.ListPublishedVideoRequest
 	(*ListPublishedVideoResponse)(nil), // 9: api.ListPublishedVideoResponse
-	(*api.Metadata)(nil),               // 10: api.Metadata
-	(*api.PaginationRequest)(nil),      // 11: api.PaginationRequest
-	(*api.PaginationResponse)(nil),     // 12: api.PaginationResponse
+	(*Metadata)(nil),                   // 10: api.Metadata
+	(*PaginationRequest)(nil),          // 11: api.PaginationRequest
+	(*PaginationResponse)(nil),         // 12: api.PaginationResponse
 }
 var file_video_proto_depIdxs = []int32{
 	0,  // 0: api.Video.author:type_name -> api.VideoAuthor
@@ -828,6 +827,7 @@ func file_video_proto_init() {
 	if File_video_proto != nil {
 		return
 	}
+	file_base_proto_init()
 	if !protoimpl.UnsafeEnabled {
 		file_video_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*VideoAuthor); i {

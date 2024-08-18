@@ -56,8 +56,7 @@ func _ShortVideoCoreVideoService_FeedShortVideo0_HTTP_Handler(srv ShortVideoCore
 		if err != nil {
 			return err
 		}
-		reply := out.(*FeedShortVideoResponse)
-		return ctx.Result(200, reply)
+		return ctx.Result(200, out)
 	}
 }
 
@@ -78,8 +77,7 @@ func _ShortVideoCoreVideoService_GetVideoById0_HTTP_Handler(srv ShortVideoCoreVi
 		if err != nil {
 			return err
 		}
-		reply := out.(*GetVideoByIdResponse)
-		return ctx.Result(200, reply)
+		return ctx.Result(200, out)
 	}
 }
 
@@ -100,8 +98,7 @@ func _ShortVideoCoreVideoService_PublishVideo0_HTTP_Handler(srv ShortVideoCoreVi
 		if err != nil {
 			return err
 		}
-		reply := out.(*PublishVideoResponse)
-		return ctx.Result(200, reply)
+		return ctx.Result(200, out)
 	}
 }
 
@@ -122,8 +119,7 @@ func _ShortVideoCoreVideoService_ListPublishedVideo0_HTTP_Handler(srv ShortVideo
 		if err != nil {
 			return err
 		}
-		reply := out.(*ListPublishedVideoResponse)
-		return ctx.Result(200, reply)
+		return ctx.Result(200, out)
 	}
 }
 

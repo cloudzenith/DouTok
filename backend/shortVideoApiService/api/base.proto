@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package api;
 
-option go_package = "github.com/cloudzenith/DouTok/backend/shortVideoApiService/api;api";
+option go_package = "github.com/cloudzenith/DouTok/...;api";
 
 message Metadata {
   int32 biz_code = 1;
