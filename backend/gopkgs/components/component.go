@@ -8,25 +8,25 @@ type Component[T any] struct {
 	err         error
 	configValue map[string]config.Value
 	cfg         ConfigMap[T]
-	initMethod  func(cfg ConfigMap[T]) error
+	initMethod  func(cfg ConfigMap[T]) (func() error, error)
 }
 
-func Load[T any](configValue map[string]config.Value, initMethod func(cfg ConfigMap[T]) error) *Component[T] {
-	c := &Component[T]{
+func Load[T any](configValue map[string]config.Value, initMethod func(cfg ConfigMap[*T]) (func() error, error)) (t *T, components *Component[*T]) {
+	c := &Component[*T]{
 		initMethod:  initMethod,
 		configValue: configValue,
 	}
 
-	c.cfg = make(ConfigMap[T])
+	c.cfg = make(ConfigMap[*T])
 	for key, value := range configValue {
-		var v interface{}
-		if err := value.Scan(v); err != nil {
+		t = new(T)
+		if err := value.Scan(t); err != nil {
 			panic("scan component config error: " + err.Error())
 		}
-		c.cfg[key] = v.(T)
+		c.cfg[key] = t
 	}
 
-	return c
+	return t, c
 }
 
 func (s *Component[T]) Start() error {
@@ -34,7 +34,12 @@ func (s *Component[T]) Start() error {
 		return s.err
 	}
 
-	return s.initMethod(s.cfg)
+	healthCheckMethod, err := s.initMethod(s.cfg)
+	if err != nil {
+		return err
+	}
+
+	return healthCheckMethod()
 }
 
 func (s *Component[T]) GetConfig() ConfigMap[T] {

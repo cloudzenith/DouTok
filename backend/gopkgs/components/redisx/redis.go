@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/components"
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/redis/go-redis/v9"
 	"sync"
 )
@@ -17,14 +18,14 @@ func getGlobalClientMapKey(configKey, dbName string) string {
 	return fmt.Sprintf("%s.%s", configKey, dbName)
 }
 
-func Init(cm components.ConfigMap[*Config]) error {
+func Init(cm components.ConfigMap[*Config]) (func() error, error) {
 	globalConfigMap = cm
 
 	for k, v := range cm {
 		Connect(k, v)
 	}
 
-	return nil
+	return IsHealth, nil
 }
 
 func Connect(configKey string, c *Config) {
@@ -74,4 +75,20 @@ func GetClient(ctx context.Context, keys ...string) *redis.Client {
 	}
 
 	return v.(*redis.Client)
+}
+
+func IsHealth() (err error) {
+	globalClientMap.Range(func(key, value any) bool {
+		client := value.(*redis.Client)
+		err = client.Ping(context.Background()).Err()
+		if err != nil {
+			log.Errorf("redis health check failed, client key: %s", key)
+			return false
+		}
+
+		log.Infof("redis health check success, client key: %s", key)
+		return true
+	})
+
+	return err
 }

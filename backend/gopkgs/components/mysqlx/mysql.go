@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/components"
+	"github.com/go-kratos/kratos/v2/log"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
@@ -21,20 +22,20 @@ func GetConfig() components.ConfigMap[*Config] {
 	return globalConfigMap
 }
 
-func Init(cm components.ConfigMap[*Config]) error {
+func Init(cm components.ConfigMap[*Config]) (func() error, error) {
 	globalConfigMap = cm
 
 	for k, v := range cm {
 		db, err := Connect(v)
 
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		globalClientMap.Store(k, db)
 	}
 
-	return nil
+	return IsHealth, nil
 }
 
 func Connect(c *Config) (*gorm.DB, error) {
@@ -89,4 +90,25 @@ func GetDBClient(ctx context.Context, keys ...string) *gorm.DB {
 	}
 
 	return value.(*gorm.DB)
+}
+
+func IsHealth() (err error) {
+	globalClientMap.Range(func(key, value any) bool {
+		client := value.(*gorm.DB)
+		db, e := client.DB()
+		if e != nil {
+			err = e
+			return false
+		}
+
+		err = db.Ping()
+		if err != nil {
+			return false
+		}
+
+		log.Infof("mysql health check success, client key: %s", key)
+		return true
+	})
+
+	return err
 }

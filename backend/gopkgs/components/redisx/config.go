@@ -12,6 +12,7 @@ func (c *Config) SetDefault() {
 	}
 
 	if len(c.DBList) == 0 {
+		c.DBList = make(map[string]int)
 		c.DBList["default"] = 0
 	}
 }

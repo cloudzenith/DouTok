@@ -3,7 +3,9 @@ package launcher
 import (
 	"context"
 	"fmt"
+	"github.com/cloudzenith/DouTok/backend/gopkgs/components/etcdx"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/internal/shutdown"
+	"github.com/go-kratos/kratos/contrib/registry/etcd/v2"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/log"
@@ -112,6 +114,19 @@ func (l *Launcher) newKratosApp() {
 	if len(l.kratosOptions) > 0 {
 		options = append(options, l.kratosOptions...)
 	}
+
+	etcdClient := etcdx.GetClient(context.Background())
+	etcdReg := etcd.New(etcdClient)
+	options = append(options, kratos.Registrar(etcdReg))
+
+	value := l.config.Value("app")
+	appConfig := &App{}
+	if err := value.Scan(appConfig); err != nil {
+		panic(fmt.Errorf("failed to scan app config: %v", err))
+	}
+	options = append(
+		options, kratos.Name(appConfig.Name), kratos.Version(appConfig.Version),
+	)
 
 	l.app = kratos.New(options...)
 }

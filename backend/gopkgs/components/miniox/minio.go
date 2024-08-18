@@ -3,7 +3,8 @@ package miniox
 import (
 	"context"
 	"fmt"
-	"github.com/TremblingV5/box/components"
+	"github.com/cloudzenith/DouTok/backend/gopkgs/components"
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/minio/minio-go/v6"
 	"sync"
 )
@@ -17,20 +18,20 @@ func GetConfig() components.ConfigMap[*Config] {
 	return globalConfigMap
 }
 
-func Init(cm components.ConfigMap[*Config]) error {
+func Init(cm components.ConfigMap[*Config]) (func() error, error) {
 	globalConfigMap = cm
 
 	for k, v := range cm {
 		client, err := Connect(v)
 
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		globalClientMap.Store(k, client)
 	}
 
-	return nil
+	return IsHealth, nil
 }
 
 func Connect(c *Config) (*minio.Core, error) {
@@ -66,4 +67,20 @@ func GetClient(ctx context.Context, keys ...string) *minio.Core {
 	}
 
 	return value.(*minio.Core)
+}
+
+func IsHealth() (err error) {
+	globalClientMap.Range(func(key, value interface{}) bool {
+		client := value.(*minio.Core)
+		_, err = client.ListBuckets()
+		if err != nil {
+			log.Error("minio health check failed, client key: %s", key)
+			return false
+		}
+
+		log.Infof("minio health check success, client key: %s", key)
+		return true
+	})
+
+	return err
 }

@@ -3,9 +3,13 @@ package launcher
 import (
 	"context"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/components"
+	"github.com/cloudzenith/DouTok/backend/gopkgs/components/etcdx"
+	"github.com/cloudzenith/DouTok/backend/gopkgs/components/miniox"
+	"github.com/cloudzenith/DouTok/backend/gopkgs/components/mysqlx"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/components/redisx"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/gofer"
 	"github.com/go-kratos/kratos/v2/config"
+	"github.com/go-kratos/kratos/v2/log"
 )
 
 type ComponentsLauncher struct {
@@ -30,8 +34,35 @@ func NewComponentsLauncher(config config.Config) *ComponentsLauncher {
 	}
 }
 
+func launchWrapper(cfg config.Value, componentsName string) {
+	if componentsName == "mysql" {
+		launchComponent(cfg, mysqlx.Init)
+		return
+	}
+
+	if componentsName == "redis" {
+		launchComponent(cfg, redisx.Init)
+		return
+	}
+
+	if componentsName == "minio" {
+		launchComponent(cfg, miniox.Init)
+		return
+	}
+
+	if componentsName == "etcd" {
+		launchComponent(cfg, etcdx.Init)
+		return
+	}
+
+	panic("unknown components name: " + componentsName)
+}
+
 func (l *ComponentsLauncher) Launch() {
-	launchComponent(l.config, "redis", redisx.Init)
+	for componentsName, cfg := range l.config {
+		log.Infof("launch component: %s", componentsName)
+		launchWrapper(cfg, componentsName)
+	}
 
 	for _, fn := range l.components {
 		l.group.Run(fn)
@@ -42,18 +73,14 @@ func (l *ComponentsLauncher) Launch() {
 	}
 }
 
-func launchComponent[T any](cfg map[string]config.Value, name string, initMethod func(cfg components.ConfigMap[T]) error) {
-	componentConfigs, ok := cfg[name]
-	if !ok {
-		panic("component not found: " + name)
-	}
-
-	configs, err := componentConfigs.Map()
+func launchComponent[T any](cfg config.Value, initMethod func(cfg components.ConfigMap[*T]) (func() error, error)) {
+	configs, err := cfg.Map()
 	if err != nil {
 		panic("get component config error: " + err.Error())
 	}
 
-	if err := components.Load(configs, initMethod).Start(); err != nil {
+	_, component := components.Load(configs, initMethod)
+	if err := component.Start(); err != nil {
 		panic("launch component error: " + err.Error())
 	}
 }
