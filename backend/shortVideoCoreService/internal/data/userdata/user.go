@@ -47,3 +47,12 @@ func (r *UserRepo) FindByAccountID(ctx context.Context, accountID int64) (*model
 	}
 	return user, nil
 }
+
+func (r *UserRepo) FindByIds(ctx context.Context, ids []int64) ([]*model.User, error) {
+	var users []*model.User
+	result := r.dbClient.DB(ctx).Where("id IN ?", ids).Find(&users)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return users, nil
+}

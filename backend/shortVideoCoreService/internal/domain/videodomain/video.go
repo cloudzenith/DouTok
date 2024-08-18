@@ -58,15 +58,37 @@ func (uc *VideoUseCase) FeedShortVideo(ctx context.Context, request *service_dto
 	if err != nil {
 		return nil, err
 	}
-	user, err := uc.userRepo.FindByID(ctx, request.UserId)
+
+	// 去重并查询用户
+	uniqueUserIds := make(map[int64]struct{})
+	for _, video := range resp.Videos {
+		uniqueUserIds[video.UserID] = struct{}{}
+	}
+	userIds := make([]int64, 0, len(uniqueUserIds))
+	for id := range uniqueUserIds {
+		userIds = append(userIds, id)
+	}
+	users, err := uc.userRepo.FindByIds(ctx, userIds)
 	if err != nil {
 		return nil, err
 	}
 
-	videos := entity.FromVideoModelList(resp.Videos)
-	author := entity.ToAuthorEntity(user)
-	for _, video := range videos {
-		video.Author = author
+	// 构建用户映射
+	userMap := make(map[int64]*model.User, len(users))
+	for _, user := range users {
+		userMap[user.ID] = user
+	}
+
+	// 构建视频列表
+	videos := make([]*entity.Video, 0, len(resp.Videos))
+	for _, videoModel := range resp.Videos {
+		videoEntity := entity.FromVideoModel(videoModel)
+		authorModel, ok := userMap[videoModel.UserID]
+		if !ok {
+			uc.log.Warnf("user not found: %d", videoModel.UserID)
+		}
+		videoEntity.Author = entity.ToAuthorEntity(authorModel)
+		videos = append(videos, videoEntity)
 	}
 
 	return &service_dto.FeedShortVideoResponse{

@@ -1,0 +1,22 @@
+syntax = "proto3";
+package api;
+
+option go_package = "github.com/cloudzenith/DouTok/...;api";
+
+import "google/api/annotations.proto";
+
+service TestService {
+    rpc Test(TestRequest) returns (TestResponse) {
+        option (google.api.http) = {
+            get: "/test"
+        };
+    };
+}
+
+message TestRequest {
+    string test = 1;
+}
+
+message TestResponse {
+    string test = 1;
+}
