@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/cloudzenith/DouTok/backend/gopkgs/launcher"
+	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/errs"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/server"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/file"
@@ -13,5 +14,8 @@ func main() {
 			config.WithSource(file.NewSource("configs/")),
 		),
 		launcher.WithHttpServer(server.NewHttpServer),
+		launcher.WithBeforeServerStartHandler(func() {
+			errs.RegisterErrors()
+		}),
 	).Run()
 }

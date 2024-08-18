@@ -4,7 +4,7 @@ go 1.22.2
 
 require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.34.2-20240717164558-a6c49f84cc0f.2
-	github.com/cloudzenith/DouTok/backend/gopkgs v0.0.1
+	github.com/cloudzenith/DouTok/backend/gopkgs v0.0.2
 	github.com/go-kratos/kratos/v2 v2.8.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20240814211410-ddb44dafa142
 	google.golang.org/protobuf v1.34.2
