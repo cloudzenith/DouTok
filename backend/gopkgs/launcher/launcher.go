@@ -1,0 +1,174 @@
+package launcher
+
+import (
+	"context"
+	"fmt"
+	"github.com/cloudzenith/DouTok/backend/gopkgs/components/etcdx"
+	"github.com/cloudzenith/DouTok/backend/gopkgs/internal/shutdown"
+	"github.com/go-kratos/kratos/contrib/registry/etcd/v2"
+	"github.com/go-kratos/kratos/v2"
+	"github.com/go-kratos/kratos/v2/config"
+	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/transport/grpc"
+	"github.com/go-kratos/kratos/v2/transport/http"
+	"os"
+	"sync"
+	"time"
+)
+
+type Launcher struct {
+	app *kratos.App
+
+	configOptions  []config.Option
+	configWatchMap map[string]config.Observer
+	config         config.Config
+
+	logger        log.Logger
+	grpcServer    func() *grpc.Server
+	ginServer     func() *http.Server
+	kratosOptions []kratos.Option
+
+	componentsLauncher *ComponentsLauncher
+
+	beforeConfigInitHandlers  []func()
+	afterConfigInitHandlers   []func()
+	beforeServerStartHandlers []func()
+	afterServerStartHandlers  []func()
+	shutdownHandlers          []func()
+}
+
+func New(options ...Option) *Launcher {
+	launcher := &Launcher{
+		configWatchMap: make(map[string]config.Observer),
+	}
+	for _, option := range options {
+		option(launcher)
+	}
+
+	return launcher
+}
+
+func (l *Launcher) Run() {
+	dir, _ := os.Getwd()
+	log.Context(context.Background()).Info("current work directory: %s", dir)
+
+	l.runInitConfig()
+
+	l.runHandlers(l.beforeServerStartHandlers, "start to run handlers before server start")
+	l.componentsLauncher.Launch()
+	l.newKratosApp()
+	<-l.run()
+	l.runHandlers(l.afterServerStartHandlers, "start to run handlers after server start")
+
+	<-shutdown.FiredCh()
+	shutdown.Wait(10 * time.Second)
+	l.runHandlers(l.shutdownHandlers, "start to run shutdown handlers")
+}
+
+func (l *Launcher) runInitConfig() {
+	l.runHandlers(l.beforeConfigInitHandlers, "start to run handlers before config init")
+
+	cfg := config.New(
+		l.configOptions...,
+	)
+	if err := cfg.Load(); err != nil {
+		panic(fmt.Errorf("failed to load config: %v", err))
+	}
+
+	l.config = cfg
+	for key, observer := range l.configWatchMap {
+		if err := cfg.Watch(key, observer); err != nil {
+			panic(fmt.Errorf("failed to watch config: %v", err))
+		}
+	}
+
+	l.componentsLauncher = NewComponentsLauncher(cfg)
+	l.runHandlers(l.afterConfigInitHandlers, "start to run handlers after config init")
+}
+
+func (l *Launcher) runHandlers(handlers []func(), info string) {
+	if len(handlers) > 0 {
+		log.Context(context.Background()).Info(info)
+	}
+
+	for _, handler := range handlers {
+		handler()
+	}
+}
+
+func (l *Launcher) newKratosApp() {
+	options := make([]kratos.Option, 0)
+
+	if l.logger != nil {
+		options = append(options, kratos.Logger(l.logger))
+	}
+
+	if l.grpcServer != nil {
+		options = append(options, kratos.Server(l.grpcServer()))
+	}
+
+	if l.ginServer != nil {
+		options = append(options, kratos.Server(l.ginServer()))
+	}
+
+	if len(l.kratosOptions) > 0 {
+		options = append(options, l.kratosOptions...)
+	}
+
+	etcdClient := etcdx.GetClient(context.Background())
+	etcdReg := etcd.New(etcdClient)
+	options = append(options, kratos.Registrar(etcdReg))
+
+	value := l.config.Value("app")
+	appConfig := &App{}
+	if err := value.Scan(appConfig); err != nil {
+		panic(fmt.Errorf("failed to scan app config: %v", err))
+	}
+	options = append(
+		options, kratos.Name(appConfig.Name), kratos.Version(appConfig.Version),
+	)
+
+	l.app = kratos.New(options...)
+}
+
+func (l *Launcher) runKratosApp() <-chan struct{} {
+	if l.app == nil {
+		panic("app not initialized")
+	}
+
+	readyChan := make(chan struct{})
+
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	go func() {
+		wg.Done()
+
+		if err := l.app.Run(); err != nil {
+			log.Context(context.Background()).Fatal("failed to run app")
+			panic(err)
+		}
+	}()
+
+	go func() {
+		wg.Wait()
+		close(readyChan)
+	}()
+
+	return readyChan
+}
+
+func (l *Launcher) run() chan struct{} {
+	ch := l.runKratosApp()
+	appReadyCh := make(chan struct{})
+
+	go func() {
+		<-ch
+		close(appReadyCh)
+	}()
+
+	return appReadyCh
+}
+
+func (l *Launcher) ScanConfig(v interface{}) error {
+	return l.config.Scan(v)
+}
