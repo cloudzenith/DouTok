@@ -6,32 +6,48 @@ info:
     title: ""
     version: 0.0.1
 paths:
-    /user/info:
-        get:
+    /user/code:
+        post:
             tags:
                 - UserService
-            operationId: UserService_GetUserInfo
-            parameters:
-                - name: userId
-                  in: query
-                  schema:
-                    type: string
+            description: 获取验证码
+            operationId: UserService_GetVerificationCode
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.GetVerificationCodeRequest'
+                required: true
             responses:
                 "200":
                     description: OK
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/userapi.GetUserInfoResponse'
+                                $ref: '#/components/schemas/api.GetVerificationCodeResponse'
+    /user/info:
+        get:
+            tags:
+                - UserService
+            description: 获取用户信息
+            operationId: UserService_GetUserInfo
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.GetUserInfoResponse'
         put:
             tags:
                 - UserService
+            description: 更新用户信息
             operationId: UserService_UpdateUserInfo
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/userapi.UpdateUserInfoRequest'
+                            $ref: '#/components/schemas/api.UpdateUserInfoRequest'
                 required: true
             responses:
                 "200":
@@ -39,17 +55,18 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/userapi.UpdateUserInfoResponse'
+                                $ref: '#/components/schemas/api.UpdateUserInfoResponse'
     /user/login:
         post:
             tags:
                 - UserService
+            description: 登录
             operationId: UserService_Login
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/userapi.LoginRequest'
+                            $ref: '#/components/schemas/api.LoginRequest'
                 required: true
             responses:
                 "200":
@@ -57,17 +74,18 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/userapi.LoginResponse'
+                                $ref: '#/components/schemas/api.LoginResponse'
     /user/register:
         post:
             tags:
                 - UserService
+            description: 注册
             operationId: UserService_Register
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/userapi.RegisterRequest'
+                            $ref: '#/components/schemas/api.RegisterRequest'
                 required: true
             responses:
                 "200":
@@ -75,7 +93,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/userapi.RegisterResponse'
+                                $ref: '#/components/schemas/api.RegisterResponse'
     /videos:
         post:
             tags:
@@ -150,6 +168,27 @@ components:
                         $ref: '#/components/schemas/api.Video'
                 nextTime:
                     type: string
+        api.GetUserInfoResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/api.Metadata'
+                user:
+                    $ref: '#/components/schemas/api.User'
+        api.GetVerificationCodeRequest:
+            type: object
+            properties:
+                mobile:
+                    type: string
+                email:
+                    type: string
+        api.GetVerificationCodeResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/api.Metadata'
+                codeId:
+                    type: string
         api.GetVideoByIdResponse:
             type: object
             properties:
@@ -175,6 +214,22 @@ components:
                         $ref: '#/components/schemas/api.Video'
                 pagination:
                     $ref: '#/components/schemas/api.PaginationResponse'
+        api.LoginRequest:
+            type: object
+            properties:
+                mobile:
+                    type: string
+                email:
+                    type: string
+                password:
+                    type: string
+        api.LoginResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/api.Metadata'
+                token:
+                    type: string
         api.Metadata:
             type: object
             properties:
@@ -231,6 +286,26 @@ components:
             properties:
                 meta:
                     $ref: '#/components/schemas/api.Metadata'
+        api.RegisterRequest:
+            type: object
+            properties:
+                mobile:
+                    type: string
+                email:
+                    type: string
+                password:
+                    type: string
+                codeId:
+                    type: string
+                code:
+                    type: string
+        api.RegisterResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/api.Metadata'
+                userId:
+                    type: string
         api.SortField:
             type: object
             properties:
@@ -239,6 +314,51 @@ components:
                 order:
                     type: integer
                     format: enum
+        api.UpdateUserInfoRequest:
+            type: object
+            properties:
+                userId:
+                    type: string
+                name:
+                    type: string
+                avatar:
+                    type: string
+                backgroundImage:
+                    type: string
+                signature:
+                    type: string
+        api.UpdateUserInfoResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/api.Metadata'
+        api.User:
+            type: object
+            properties:
+                id:
+                    type: string
+                name:
+                    type: string
+                avatar:
+                    type: string
+                backgroundImage:
+                    type: string
+                signature:
+                    type: string
+                mobile:
+                    type: string
+                email:
+                    type: string
+                followCount:
+                    type: string
+                followerCount:
+                    type: string
+                totalFavorited:
+                    type: string
+                workCount:
+                    type: string
+                favoriteCount:
+                    type: string
         api.Video:
             type: object
             properties:
@@ -269,90 +389,6 @@ components:
                     type: string
                 isFollowing:
                     type: boolean
-        userapi.GetUserInfoResponse:
-            type: object
-            properties:
-                meta:
-                    $ref: '#/components/schemas/api.Metadata'
-                user:
-                    $ref: '#/components/schemas/userapi.User'
-        userapi.LoginRequest:
-            type: object
-            properties:
-                mobile:
-                    type: string
-                email:
-                    type: string
-                password:
-                    type: string
-        userapi.LoginResponse:
-            type: object
-            properties:
-                meta:
-                    $ref: '#/components/schemas/api.Metadata'
-                token:
-                    type: string
-        userapi.RegisterRequest:
-            type: object
-            properties:
-                mobile:
-                    type: string
-                email:
-                    type: string
-                password:
-                    type: string
-        userapi.RegisterResponse:
-            type: object
-            properties:
-                meta:
-                    $ref: '#/components/schemas/api.Metadata'
-                userId:
-                    type: string
-        userapi.UpdateUserInfoRequest:
-            type: object
-            properties:
-                userId:
-                    type: string
-                name:
-                    type: string
-                avatar:
-                    type: string
-                backgroundImage:
-                    type: string
-                signature:
-                    type: string
-        userapi.UpdateUserInfoResponse:
-            type: object
-            properties:
-                meta:
-                    $ref: '#/components/schemas/api.Metadata'
-        userapi.User:
-            type: object
-            properties:
-                id:
-                    type: string
-                name:
-                    type: string
-                avatar:
-                    type: string
-                backgroundImage:
-                    type: string
-                signature:
-                    type: string
-                mobile:
-                    type: string
-                email:
-                    type: string
-                followCount:
-                    type: string
-                followerCount:
-                    type: string
-                totalFavorited:
-                    type: string
-                workCount:
-                    type: string
-                favoriteCount:
-                    type: string
 tags:
     - name: ShortVideoCoreVideoService
     - name: UserService

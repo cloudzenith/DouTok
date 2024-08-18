@@ -1,5 +1,5 @@
 syntax = "proto3";
-package userapi;
+package api;
 
 option go_package = "github.com/cloudzenith/DouTok/...;api";
 
@@ -8,6 +8,15 @@ import "buf/validate/validate.proto";
 import "base.proto";
 
 service UserService {
+    // 获取验证码
+    rpc GetVerificationCode(GetVerificationCodeRequest) returns (GetVerificationCodeResponse) {
+        option (google.api.http) = {
+            post: "/user/code"
+            body: "*"
+        };
+    };
+
+    // 注册
     rpc Register(RegisterRequest) returns (RegisterResponse) {
         option (google.api.http) = {
             post: "/user/register"
@@ -15,6 +24,7 @@ service UserService {
         };
     };
 
+    // 登录
     rpc Login(LoginRequest) returns (LoginResponse) {
         option (google.api.http) = {
             post: "/user/login"
@@ -22,12 +32,14 @@ service UserService {
         };
     }
 
+    // 获取用户信息
     rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse) {
         option (google.api.http) = {
             get: "/user/info"
         };
     };
 
+    // 更新用户信息
     rpc UpdateUserInfo(UpdateUserInfoRequest) returns (UpdateUserInfoResponse) {
         option (google.api.http) = {
             put: "/user/info"
@@ -51,6 +63,16 @@ message User {
     int64 favorite_count = 12; // 点赞数量
 }
 
+message GetVerificationCodeRequest {
+    string mobile = 1;
+    string email = 2;
+}
+
+message GetVerificationCodeResponse {
+    Metadata meta = 1;
+    int64 code_id = 2;
+}
+
 message RegisterRequest {
     string mobile = 1 [(buf.validate.field).string.pattern = "^\\+?[1-9]\\d{1,14}$"];
     string email = 2 [(buf.validate.field).string.email = true];
@@ -58,10 +80,12 @@ message RegisterRequest {
         (buf.validate.field).string.min_len = 8,
         (buf.validate.field).string.max_len = 50
     ];
+    int64 code_id = 4;
+    string code = 5;
 }
 
 message RegisterResponse {
-    api.Metadata meta = 1;
+    Metadata meta = 1;
     int64 user_id = 2;
 }
 
@@ -75,16 +99,16 @@ message LoginRequest {
 }
 
 message LoginResponse {
-    api.Metadata meta = 1;
+    Metadata meta = 1;
     string token = 3;
 }
 
 message GetUserInfoRequest {
-    int64 user_id = 1 [(buf.validate.field).int64 = {gt: 0}];
+
 }
 
 message GetUserInfoResponse {
-    api.Metadata meta = 1;
+    Metadata meta = 1;
     User user = 2;
 }
 
@@ -100,6 +124,6 @@ message UpdateUserInfoRequest {
 }
 
 message UpdateUserInfoResponse {
-    api.Metadata meta = 1;
+    Metadata meta = 1;
 }
 
