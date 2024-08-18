@@ -12,6 +12,6 @@ func main() {
 		launcher.WithConfigOptions(
 			config.WithSource(file.NewSource("configs/")),
 		),
-		launcher.WithHttpServer(server.NewGinServer),
+		launcher.WithHttpServer(server.NewHttpServer),
 	).Run()
 }
