@@ -3,6 +3,7 @@ package userapp
 import (
 	"context"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/api"
+	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/utils/claims"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/utils/errorx"
 )
 
@@ -13,7 +14,12 @@ func New() *Application {
 	return &Application{}
 }
 
-func (a *Application) GetUserInfo(context.Context, *api.GetUserInfoRequest) (*api.GetUserInfoResponse, error) {
+func (a *Application) GetUserInfo(ctx context.Context, request *api.GetUserInfoRequest) (*api.GetUserInfoResponse, error) {
+	userId, err := claims.GetUserId(ctx)
+	if err != nil {
+		return nil, errorx.New("unknown user info")
+	}
+
 	return &api.GetUserInfoResponse{
 		User: &api.User{
 			Name: "test",
@@ -21,19 +27,19 @@ func (a *Application) GetUserInfo(context.Context, *api.GetUserInfoRequest) (*ap
 	}, errorx.New(21, "test error")
 }
 
-func (a *Application) GetVerificationCode(context.Context, *api.GetVerificationCodeRequest) (*api.GetVerificationCodeResponse, error) {
+func (a *Application) GetVerificationCode(ctx context.Context, request *api.GetVerificationCodeRequest) (*api.GetVerificationCodeResponse, error) {
 	return nil, nil
 }
 
-func (a *Application) Login(context.Context, *api.LoginRequest) (*api.LoginResponse, error) {
+func (a *Application) Login(ctx context.Context, request *api.LoginRequest) (*api.LoginResponse, error) {
 	return nil, nil
 }
 
-func (a *Application) Register(context.Context, *api.RegisterRequest) (*api.RegisterResponse, error) {
+func (a *Application) Register(ctx context.Context, request *api.RegisterRequest) (*api.RegisterResponse, error) {
 	return nil, nil
 }
 
-func (a *Application) UpdateUserInfo(context.Context, *api.UpdateUserInfoRequest) (*api.UpdateUserInfoResponse, error) {
+func (a *Application) UpdateUserInfo(ctx context.Context, request *api.UpdateUserInfoRequest) (*api.UpdateUserInfoResponse, error) {
 	return nil, nil
 }
 
