@@ -51,13 +51,13 @@ func WithConfigWatcher(key string, observer config.Observer) Option {
 	}
 }
 
-func WithHttpServer(s *http.Server) Option {
+func WithHttpServer(s func() *http.Server) Option {
 	return func(l *Launcher) {
 		l.ginServer = s
 	}
 }
 
-func WithGrpcServer(s *grpc.Server) Option {
+func WithGrpcServer(s func() *grpc.Server) Option {
 	return func(l *Launcher) {
 		l.grpcServer = s
 	}

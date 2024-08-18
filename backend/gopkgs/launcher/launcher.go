@@ -24,8 +24,8 @@ type Launcher struct {
 	config         config.Config
 
 	logger        log.Logger
-	grpcServer    *grpc.Server
-	ginServer     *http.Server
+	grpcServer    func() *grpc.Server
+	ginServer     func() *http.Server
 	kratosOptions []kratos.Option
 
 	componentsLauncher *ComponentsLauncher
@@ -104,11 +104,11 @@ func (l *Launcher) newKratosApp() {
 	}
 
 	if l.grpcServer != nil {
-		options = append(options, kratos.Server(l.grpcServer))
+		options = append(options, kratos.Server(l.grpcServer()))
 	}
 
 	if l.ginServer != nil {
-		options = append(options, kratos.Server(l.ginServer))
+		options = append(options, kratos.Server(l.ginServer()))
 	}
 
 	if len(l.kratosOptions) > 0 {

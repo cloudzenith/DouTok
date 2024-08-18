@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/cloudzenith/DouTok/backend/gopkgs/components/mysqlx"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/components/redisx"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/launcher"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/launcher/example/api"
@@ -14,23 +15,41 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func initHttpServer() *http.Server {
-	srv := http.NewServer(
-		http.Address(":8000"),
-	)
+func initHttpServer() func() *http.Server {
+	return func() *http.Server {
+		srv := http.NewServer(
+			http.Address(":8000"),
+		)
 
-	api.RegisterTestServiceHTTPServer(srv, application.Application{})
-	return srv
+		redisClient := redisx.GetClient(context.Background())
+		if err := redisClient.Ping(context.Background()).Err(); err != nil {
+			panic(err)
+		} else {
+			log.Info("redis could be loaded before register http server")
+		}
+
+		mysqlClient := mysqlx.GetDBClient(context.Background())
+		db, _ := mysqlClient.DB()
+		if err := db.Ping(); err != nil {
+			panic(err)
+		} else {
+			log.Info("mysql could be loaded before register http server")
+		}
+
+		api.RegisterTestServiceHTTPServer(srv, application.Application{})
+		return srv
+	}
 }
 
-func initGrpcServer() *grpc.Server {
-	srv := grpc.NewServer(
-		grpc.Address(":9000"),
-	)
+func initGrpcServer() func() *grpc.Server {
+	return func() *grpc.Server {
+		srv := grpc.NewServer(
+			grpc.Address(":9000"),
+		)
 
-	api.RegisterTestServiceServer(srv, application.Application{})
-	return srv
-
+		api.RegisterTestServiceServer(srv, application.Application{})
+		return srv
+	}
 }
 
 func main() {
