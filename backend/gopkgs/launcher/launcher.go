@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/components/etcdx"
+	"github.com/cloudzenith/DouTok/backend/gopkgs/internal/defaultlogger"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/internal/shutdown"
+	"github.com/cloudzenith/DouTok/backend/gopkgs/snowflakeutil"
 	"github.com/go-kratos/kratos/contrib/registry/etcd/v2"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
@@ -101,6 +103,8 @@ func (l *Launcher) newKratosApp() {
 
 	if l.logger != nil {
 		options = append(options, kratos.Logger(l.logger))
+	} else {
+		options = append(options, kratos.Logger(defaultlogger.GetLogger()))
 	}
 
 	if l.grpcServer != nil {
@@ -129,6 +133,14 @@ func (l *Launcher) newKratosApp() {
 	)
 
 	l.app = kratos.New(options...)
+}
+
+func (l *Launcher) initSnowflake(appConfig *App) {
+	if appConfig.Node == 0 {
+		panic("snowflake node should be set")
+	}
+
+	snowflakeutil.InitDefaultSnowflakeNode(appConfig.Node)
 }
 
 func (l *Launcher) runKratosApp() <-chan struct{} {
