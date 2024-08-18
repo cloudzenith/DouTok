@@ -1,6 +1,11 @@
 package launcher
 
-import "github.com/go-kratos/kratos/v2/config"
+import (
+	"github.com/go-kratos/kratos/v2"
+	"github.com/go-kratos/kratos/v2/config"
+	"github.com/go-kratos/kratos/v2/transport/grpc"
+	"github.com/go-kratos/kratos/v2/transport/http"
+)
 
 type Option func(*Launcher)
 
@@ -43,5 +48,23 @@ func WithConfigOptions(options ...config.Option) Option {
 func WithConfigWatcher(key string, observer config.Observer) Option {
 	return func(l *Launcher) {
 		l.configWatchMap[key] = observer
+	}
+}
+
+func WithHttpServer(s *http.Server) Option {
+	return func(l *Launcher) {
+		l.ginServer = s
+	}
+}
+
+func WithGrpcServer(s *grpc.Server) Option {
+	return func(l *Launcher) {
+		l.grpcServer = s
+	}
+}
+
+func WithKratosOptions(options ...kratos.Option) Option {
+	return func(l *Launcher) {
+		l.kratosOptions = append(l.kratosOptions, options...)
 	}
 }

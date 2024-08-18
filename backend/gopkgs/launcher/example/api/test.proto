@@ -1,0 +1,16 @@
+syntax = "proto3";
+package api;
+
+option go_package = "github.com/cloudzenith/DouTok/...;api";
+
+service TestService {
+    rpc Test(TestRequest) returns (TestResponse);
+}
+
+message TestRequest {
+    string test = 1;
+}
+
+message TestResponse {
+    string test = 1;
+}

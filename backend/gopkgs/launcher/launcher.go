@@ -21,9 +21,10 @@ type Launcher struct {
 	configWatchMap map[string]config.Observer
 	config         config.Config
 
-	logger     log.Logger
-	grpcServer *grpc.Server
-	ginServer  *http.Server
+	logger        log.Logger
+	grpcServer    *grpc.Server
+	ginServer     *http.Server
+	kratosOptions []kratos.Option
 
 	componentsLauncher *ComponentsLauncher
 
@@ -108,6 +109,10 @@ func (l *Launcher) newKratosApp() {
 		options = append(options, kratos.Server(l.ginServer))
 	}
 
+	if len(l.kratosOptions) > 0 {
+		options = append(options, l.kratosOptions...)
+	}
+
 	l.app = kratos.New(options...)
 }
 
@@ -147,4 +152,8 @@ func (l *Launcher) run() chan struct{} {
 	}()
 
 	return appReadyCh
+}
+
+func (l *Launcher) ScanConfig(v interface{}) error {
+	return l.config.Scan(v)
 }
