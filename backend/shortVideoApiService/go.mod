@@ -14,6 +14,8 @@ require (
 	dario.cat/mergo v1.0.0 // indirect
 	github.com/TremblingV5/box v0.0.7 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
+	github.com/cloudzenith/DouTok/backend/baseService v0.0.0-20240818111358-8f03776f50dd // indirect
+	github.com/cloudzenith/DouTok/backend/shortVideoCoreService v0.0.0-20240818111358-8f03776f50dd // indirect
 	github.com/coreos/go-semver v0.3.1 // indirect
 	github.com/coreos/go-systemd/v22 v22.5.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
@@ -30,7 +32,7 @@ require (
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid v1.2.3 // indirect
-	github.com/minio/md5-simd v1.1.0 // indirect
+	github.com/minio/md5-simd v1.1.2 // indirect
 	github.com/minio/minio-go/v6 v6.0.57 // indirect
 	github.com/minio/sha256-simd v0.1.1 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
