@@ -5,7 +5,7 @@ go 1.22.2
 require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.34.2-20240717164558-a6c49f84cc0f.2
 	github.com/cloudzenith/DouTok/backend/baseService v0.0.0-20240818111358-8f03776f50dd
-	github.com/cloudzenith/DouTok/backend/gopkgs v0.0.3
+	github.com/cloudzenith/DouTok/backend/gopkgs v0.0.4
 	github.com/cloudzenith/DouTok/backend/shortVideoCoreService v0.0.0-20240818111358-8f03776f50dd
 	github.com/go-kratos/kratos/contrib/registry/etcd/v2 v2.0.0-20240815090334-084c8b4167e7
 	github.com/go-kratos/kratos/v2 v2.8.0
