@@ -85,10 +85,8 @@ func (l *Launcher) runInitConfig() {
 		}
 	}
 
-	if l.configValue != nil {
-		if err := cfg.Scan(l.configValue); err != nil {
-			panic(fmt.Errorf("failed to scan config value: %v", err))
-		}
+	if err := cfg.Scan(l.configValue); err != nil {
+		panic(fmt.Errorf("failed to scan config value: %v", err))
 	}
 
 	l.componentsLauncher = NewComponentsLauncher(cfg)
