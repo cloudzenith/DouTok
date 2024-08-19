@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/components"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/minio/minio-go/v6"
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 	"sync"
 )
 
@@ -39,9 +40,13 @@ func Connect(c *Config) (*minio.Core, error) {
 
 	client, err := minio.NewCore(
 		fmt.Sprintf("%s:%d", c.Host, c.Port),
-		c.AccessKey,
-		c.SecretKey,
-		c.Secure,
+		&minio.Options{
+			Creds: credentials.NewStaticV4(
+				c.AccessKey,
+				c.SecretKey,
+				"",
+			),
+		},
 	)
 	if err != nil {
 		return nil, err
@@ -72,7 +77,7 @@ func GetClient(ctx context.Context, keys ...string) *minio.Core {
 func IsHealth() (err error) {
 	globalClientMap.Range(func(key, value interface{}) bool {
 		client := value.(*minio.Core)
-		_, err = client.ListBuckets()
+		_, err = client.ListBuckets(context.Background())
 		if err != nil {
 			log.Error("minio health check failed, client key: %s", key)
 			return false
