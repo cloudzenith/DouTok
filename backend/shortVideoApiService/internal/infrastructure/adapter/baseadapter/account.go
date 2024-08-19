@@ -22,8 +22,11 @@ func (a *Adapter) Register(ctx context.Context, options ...accountoptions.Regist
 	)
 }
 
-func (a *Adapter) CheckAccount(ctx context.Context) (int64, error) {
+func (a *Adapter) CheckAccount(ctx context.Context, options ...accountoptions.CheckAccountOption) (int64, error) {
 	req := &api.CheckAccountRequest{}
+	for _, option := range options {
+		option(req)
+	}
 
 	resp, err := a.account.CheckAccount(ctx, req)
 	return respcheck.CheckT[int64, *api.Metadata](

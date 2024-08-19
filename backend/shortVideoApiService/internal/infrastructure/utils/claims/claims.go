@@ -12,6 +12,12 @@ type Claims struct {
 	UserId int64 `json:"user_id"`
 }
 
+func New(userId int64) *Claims {
+	return &Claims{
+		UserId: userId,
+	}
+}
+
 func GetUserId(ctx context.Context) (int64, error) {
 	anyClaims, ok := jwt.FromContext(ctx)
 	if !ok {
