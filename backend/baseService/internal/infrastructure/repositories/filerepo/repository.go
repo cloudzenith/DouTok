@@ -3,6 +3,7 @@ package filerepo
 import (
 	"context"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/dal/models"
+	"github.com/cloudzenith/DouTok/backend/gopkgs/components/mysqlx"
 	"gorm.io/gorm"
 )
 
@@ -13,9 +14,9 @@ type PersistRepository struct {
 	db *gorm.DB
 }
 
-func New(db *gorm.DB) *PersistRepository {
+func New() *PersistRepository {
 	return &PersistRepository{
-		db: db,
+		db: mysqlx.GetDBClient(context.Background()),
 	}
 }
 
