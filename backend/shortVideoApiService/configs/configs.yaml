@@ -7,3 +7,6 @@ components:
     default:
       host: localhost
       port: 2379
+  consul:
+    default:
+      address: localhost:8500
