@@ -29,6 +29,9 @@ components:
       console_port: 9001
       access_key: root
       secret_key: rootroot
+  consul:
+    default:
+      address: localhost:8500
 
 data:
   db_sharding_config:

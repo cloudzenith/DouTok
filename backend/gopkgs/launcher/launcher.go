@@ -3,11 +3,11 @@ package launcher
 import (
 	"context"
 	"fmt"
-	"github.com/cloudzenith/DouTok/backend/gopkgs/components/etcdx"
+	"github.com/cloudzenith/DouTok/backend/gopkgs/components/consulx"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/internal/defaultlogger"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/internal/shutdown"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/snowflakeutil"
-	"github.com/go-kratos/kratos/contrib/registry/etcd/v2"
+	consul "github.com/go-kratos/kratos/contrib/registry/consul/v2"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/log"
@@ -124,9 +124,9 @@ func (l *Launcher) newKratosApp() {
 		options = append(options, l.kratosOptions...)
 	}
 
-	etcdClient := etcdx.GetClient(context.Background())
-	etcdReg := etcd.New(etcdClient)
-	options = append(options, kratos.Registrar(etcdReg))
+	consulClient := consulx.GetClient(context.Background())
+	consulReg := consul.New(consulClient)
+	options = append(options, kratos.Registrar(consulReg))
 
 	value := l.config.Value("app")
 	appConfig := &App{}
