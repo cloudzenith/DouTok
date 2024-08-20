@@ -1,11 +1,11 @@
 syntax = "proto3";
-package api;
+package svapi;
 
-option go_package = "github.com/cloudzenith/DouTok/...;api";
+option go_package = "github.com/cloudzenith/DouTok/...;svapi";
 
 import "google/api/annotations.proto";
 import "buf/validate/validate.proto";
-import "base.proto";
+import "svapi/base.proto";
 
 service UserService {
     // 获取验证码

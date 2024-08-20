@@ -3,6 +3,7 @@ package verificationcoderedis
 import (
 	"context"
 	"fmt"
+	"github.com/cloudzenith/DouTok/backend/gopkgs/components/redisx"
 	"github.com/redis/go-redis/v9"
 	"time"
 )
@@ -11,8 +12,8 @@ type RedisRepository struct {
 	db *redis.Client
 }
 
-func New(db *redis.Client) *RedisRepository {
-	return &RedisRepository{db: db}
+func New() *RedisRepository {
+	return &RedisRepository{db: redisx.GetClient(context.Background())}
 }
 
 func (r *RedisRepository) formatVerificationCodeKey(verificationCodeId int64) string {

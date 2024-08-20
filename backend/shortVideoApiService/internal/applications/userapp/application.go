@@ -2,7 +2,7 @@ package userapp
 
 import (
 	"context"
-	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/api"
+	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/api/svapi"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/adapter/baseadapter"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/adapter/baseadapter/accountoptions"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/adapter/svcoreadapter"
@@ -30,7 +30,7 @@ func New(
 	}
 }
 
-func (a *Application) GetUserInfo(ctx context.Context, request *api.GetUserInfoRequest) (*api.GetUserInfoResponse, error) {
+func (a *Application) GetUserInfo(ctx context.Context, request *svapi.GetUserInfoRequest) (*svapi.GetUserInfoResponse, error) {
 	userId, err := claims.GetUserId(ctx)
 	if err != nil {
 		return nil, errorx.New(1, "unknown user info")
@@ -43,8 +43,8 @@ func (a *Application) GetUserInfo(ctx context.Context, request *api.GetUserInfoR
 		return nil, errorx.New(1, "failed to get user info")
 	}
 
-	return &api.GetUserInfoResponse{
-		User: &api.User{
+	return &svapi.GetUserInfoResponse{
+		User: &svapi.User{
 			Id:              userInfo.Id,
 			Name:            userInfo.Name,
 			Avatar:          userInfo.Avatar,
@@ -61,14 +61,14 @@ func (a *Application) GetUserInfo(ctx context.Context, request *api.GetUserInfoR
 	}, nil
 }
 
-func (a *Application) GetVerificationCode(ctx context.Context, request *api.GetVerificationCodeRequest) (*api.GetVerificationCodeResponse, error) {
+func (a *Application) GetVerificationCode(ctx context.Context, request *svapi.GetVerificationCodeRequest) (*svapi.GetVerificationCodeResponse, error) {
 	codeId, err := a.base.CreateVerificationCode(ctx, 6, 60*10)
 	if err != nil {
 		log.Context(ctx).Error("failed to create verification code")
 		return nil, errorx.New(1, "failed to get verification code")
 	}
 
-	return &api.GetVerificationCodeResponse{
+	return &svapi.GetVerificationCodeResponse{
 		CodeId: codeId,
 	}, nil
 }
@@ -87,7 +87,7 @@ func (a *Application) setToken2Header(ctx context.Context, claim *claims.Claims)
 	return jwt.ErrWrongContext
 }
 
-func (a *Application) Login(ctx context.Context, request *api.LoginRequest) (*api.LoginResponse, error) {
+func (a *Application) Login(ctx context.Context, request *svapi.LoginRequest) (*svapi.LoginResponse, error) {
 	userId, err := a.base.CheckAccount(ctx)
 	if err != nil {
 		log.Context(ctx).Error("failed to check account: %v", err)
@@ -95,10 +95,10 @@ func (a *Application) Login(ctx context.Context, request *api.LoginRequest) (*ap
 	}
 
 	a.setToken2Header(ctx, claims.New(userId))
-	return &api.LoginResponse{}, nil
+	return &svapi.LoginResponse{}, nil
 }
 
-func (a *Application) Register(ctx context.Context, request *api.RegisterRequest) (*api.RegisterResponse, error) {
+func (a *Application) Register(ctx context.Context, request *svapi.RegisterRequest) (*svapi.RegisterResponse, error) {
 	if err := a.base.ValidateVerificationCode(ctx, request.CodeId, request.Code); err != nil {
 		return nil, errorx.New(1, "invalid verification code")
 	}
@@ -124,12 +124,12 @@ func (a *Application) Register(ctx context.Context, request *api.RegisterRequest
 
 	// TODO: 调用core服务创建基本用户信息
 
-	return &api.RegisterResponse{
+	return &svapi.RegisterResponse{
 		UserId: userId,
 	}, nil
 }
 
-func (a *Application) UpdateUserInfo(ctx context.Context, request *api.UpdateUserInfoRequest) (*api.UpdateUserInfoResponse, error) {
+func (a *Application) UpdateUserInfo(ctx context.Context, request *svapi.UpdateUserInfoRequest) (*svapi.UpdateUserInfoResponse, error) {
 	if err := a.core.UpdateUserInfo(
 		ctx,
 		useroptions.UpdateUserInfoWithUserId(request.UserId),
@@ -142,7 +142,7 @@ func (a *Application) UpdateUserInfo(ctx context.Context, request *api.UpdateUse
 		return nil, errorx.New(1, "failed to update user info")
 	}
 
-	return &api.UpdateUserInfoResponse{}, nil
+	return &svapi.UpdateUserInfoResponse{}, nil
 }
 
-var _ api.UserServiceHTTPServer = (*Application)(nil)
+var _ svapi.UserServiceHTTPServer = (*Application)(nil)

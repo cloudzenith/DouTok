@@ -13,17 +13,17 @@ import (
 )
 
 func main() {
-	var c conf.Config
+	c := &conf.Config{}
 	launcher.New(
 		launcher.WithConfigValue(c),
 		launcher.WithConfigOptions(
 			config.WithSource(file.NewSource("configs/")),
 		),
-		launcher.WithBeforeServerStartHandler(func() {
+		launcher.WithAfterServerStartHandler(func() {
 			query.SetDefault(mysqlx.GetDBClient(context.Background()))
 		}),
 		launcher.WithGrpcServer(func(configValue interface{}) *grpc.Server {
-			cfg, ok := configValue.(conf.Config)
+			cfg, ok := configValue.(*conf.Config)
 			if !ok {
 				panic("invalid config value")
 			}

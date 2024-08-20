@@ -16,7 +16,7 @@ type PersistRepository struct {
 	core *minio.Core
 }
 
-func New(core *minio.Core) *PersistRepository {
+func New() *PersistRepository {
 	return &PersistRepository{
 		core: miniox.GetClient(context.Background()),
 	}

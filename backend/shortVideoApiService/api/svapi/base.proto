@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package api;
+package svapi;
 
-option go_package = "github.com/cloudzenith/DouTok/...;api";
+option go_package = "github.com/cloudzenith/DouTok/...;svapi";
 
 message Metadata {
   int32 biz_code = 1;

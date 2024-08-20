@@ -1,11 +1,11 @@
 syntax = "proto3";
-package api;
+package svapi;
 
-option go_package = "github.com/cloudzenith/DouTok/...;api";
+option go_package = "github.com/cloudzenith/DouTok/...;svapi";
 
 import "google/api/annotations.proto";
 import "buf/validate/validate.proto";
-import "base.proto";
+import "svapi/base.proto";
 
 service ShortVideoCoreVideoService {
     rpc FeedShortVideo(FeedShortVideoRequest) returns (FeedShortVideoResponse) {
@@ -60,7 +60,7 @@ message FeedShortVideoRequest {
 }
 
 message FeedShortVideoResponse {
-    api.Metadata meta = 1;
+    svapi.Metadata meta = 1;
     repeated Video videos = 2;
     int64 next_time = 3; // 本次返回的视频中，发布最早的时间，作为下次请求时的latest_time
 }
@@ -70,7 +70,7 @@ message GetVideoByIdRequest {
 }
 
 message GetVideoByIdResponse {
-    api.Metadata meta = 1;
+    svapi.Metadata meta = 1;
     Video video = 2;
 }
 
@@ -85,7 +85,7 @@ message PublishVideoRequest {
 }
 
 message PublishVideoResponse {
-    api.Metadata meta = 1;
+    svapi.Metadata meta = 1;
 }
 
 message ListPublishedVideoRequest {
@@ -94,7 +94,7 @@ message ListPublishedVideoRequest {
 }
 
 message ListPublishedVideoResponse {
-    api.Metadata meta = 1;
+    svapi.Metadata meta = 1;
     repeated Video videos = 2;
     PaginationResponse pagination = 3;
 }

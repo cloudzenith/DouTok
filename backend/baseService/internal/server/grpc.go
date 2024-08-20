@@ -3,7 +3,6 @@ package server
 import (
 	"github.com/cloudzenith/DouTok/backend/baseService/api"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/middlewares"
-	"github.com/cloudzenith/DouTok/backend/baseService/internal/server/authappproviders"
 	"github.com/go-kratos/kratos/v2/middleware/metadata"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
@@ -29,12 +28,16 @@ func NewGRPCServer(options ...Option) *grpc.Server {
 			middlewares.ProtobufValidator(),
 		),
 	}
-	opts = append(opts, grpc.Address(params.addr))
+
+	if params.addr != "" {
+		opts = append(opts, grpc.Address(params.addr))
+	}
+
 	srv := grpc.NewServer(opts...)
 
 	api.RegisterAccountServiceServer(srv, initAccountApplication())
-	api.RegisterAuthServiceServer(srv, initAuthApplication(authappproviders.RedisDsn(params.redisDsn), authappproviders.RedisPassword(params.redisPassword)))
+	api.RegisterAuthServiceServer(srv, initAuthApplication())
 	api.RegisterPostServiceServer(srv, initPostApplication())
-	api.RegisterFileServiceServer(srv, initFileApplication(params.db, params.minioCore, params.fileTableShardingConfig))
+	api.RegisterFileServiceServer(srv, initFileApplication(params.fileTableShardingConfig))
 	return srv
 }
