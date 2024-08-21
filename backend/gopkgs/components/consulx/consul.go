@@ -4,8 +4,11 @@ import (
 	"context"
 	"fmt"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/components"
+	"github.com/go-kratos/kratos/contrib/registry/consul/v2"
 	"github.com/go-kratos/kratos/v2/log"
+	kratosgrpc "github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/hashicorp/consul/api"
+	"google.golang.org/grpc"
 	"sync"
 )
 
@@ -60,6 +63,15 @@ func GetClient(ctx context.Context, keys ...string) *api.Client {
 	}
 
 	return client.(*api.Client)
+}
+
+func GetGrpcConn(ctx context.Context, entryPoint string, keys ...string) (*grpc.ClientConn, error) {
+	client := GetClient(ctx, keys...)
+	return kratosgrpc.DialInsecure(
+		ctx,
+		kratosgrpc.WithEndpoint(entryPoint),
+		kratosgrpc.WithDiscovery(consul.New(client)),
+	)
 }
 
 func IsHealth() (err error) {
