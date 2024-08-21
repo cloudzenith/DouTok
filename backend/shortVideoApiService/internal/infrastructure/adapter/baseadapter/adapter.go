@@ -18,7 +18,7 @@ func New() *Adapter {
 	etcdClient := etcdx.GetClient(context.Background())
 	conn, err := grpc.DialInsecure(
 		context.Background(),
-		grpc.WithEndpoint("discovery:///provider"),
+		grpc.WithEndpoint("discovery:///base-service"),
 		grpc.WithDiscovery(etcd.New(etcdClient)),
 	)
 	if err != nil {
