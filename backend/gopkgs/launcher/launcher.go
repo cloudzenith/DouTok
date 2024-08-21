@@ -24,10 +24,11 @@ type Launcher struct {
 	configOptions  []config.Option
 	configWatchMap map[string]config.Observer
 	config         config.Config
+	configValue    interface{}
 
 	logger        log.Logger
-	grpcServer    func() *grpc.Server
-	ginServer     func() *http.Server
+	grpcServer    func(configValue interface{}) *grpc.Server
+	ginServer     func(configValue interface{}) *http.Server
 	kratosOptions []kratos.Option
 
 	componentsLauncher *ComponentsLauncher
@@ -84,6 +85,10 @@ func (l *Launcher) runInitConfig() {
 		}
 	}
 
+	if err := cfg.Scan(l.configValue); err != nil {
+		panic(fmt.Errorf("failed to scan config value: %v", err))
+	}
+
 	l.componentsLauncher = NewComponentsLauncher(cfg)
 	l.runHandlers(l.afterConfigInitHandlers, "start to run handlers after config init")
 }
@@ -108,11 +113,11 @@ func (l *Launcher) newKratosApp() {
 	}
 
 	if l.grpcServer != nil {
-		options = append(options, kratos.Server(l.grpcServer()))
+		options = append(options, kratos.Server(l.grpcServer(l.configValue)))
 	}
 
 	if l.ginServer != nil {
-		options = append(options, kratos.Server(l.ginServer()))
+		options = append(options, kratos.Server(l.ginServer(l.configValue)))
 	}
 
 	if len(l.kratosOptions) > 0 {
