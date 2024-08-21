@@ -5,4 +5,7 @@ gen-proto:
 		--go_out=paths=source_relative:./api \
 		--go-http_out=paths=source_relative:./api \
 		--openapi_out=fq_schema_naming=true,default_response=false:. \
-		./api/*.proto
+		./api/svapi/*.proto
+
+build:
+	docker build -t sv-api-service .

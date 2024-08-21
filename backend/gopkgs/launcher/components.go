@@ -3,6 +3,7 @@ package launcher
 import (
 	"context"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/components"
+	"github.com/cloudzenith/DouTok/backend/gopkgs/components/consulx"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/components/etcdx"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/components/miniox"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/components/mysqlx"
@@ -52,6 +53,11 @@ func launchWrapper(cfg config.Value, componentsName string) {
 
 	if componentsName == "etcd" {
 		launchComponent(cfg, etcdx.Init)
+		return
+	}
+
+	if componentsName == "consul" {
+		launchComponent(cfg, consulx.Init)
 		return
 	}
 

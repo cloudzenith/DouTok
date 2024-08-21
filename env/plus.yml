@@ -1,0 +1,32 @@
+version: '3'
+
+networks:
+  total:
+    driver: bridge
+
+services:
+  apisix:
+    image: apache/apisix:latest
+    restart: always
+    volumes:
+      - ./apisix/config.yaml:/usr/local/apisix/conf/config.yaml:ro
+#    environment:
+#      - APISIX_STAND_ALONE=true
+    ports:
+      - "9180:9180/tcp"
+      - "9080:9080/tcp"
+      - "9091:9091/tcp"
+      - "9443:9443/tcp"
+      - "9092:9092/tcp"
+    networks:
+      total:
+
+  apisix-dashboard:
+    image: apache/apisix-dashboard:latest
+    restart: always
+    volumes:
+      - ./apisix/dashboard.yaml:/usr/local/apisix-dashboard/conf/conf.yaml
+    ports:
+      - "9003:9000"
+    networks:
+      total:

@@ -2,8 +2,7 @@ package server
 
 import (
 	"context"
-	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/api"
-	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/applications/userapp"
+	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/api/svapi"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/middlewares"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/utils/claims"
 	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
@@ -45,6 +44,6 @@ func NewHttpServer() *http.Server {
 
 	srv := http.NewServer(opts...)
 
-	api.RegisterUserServiceHTTPServer(srv, userapp.New())
+	svapi.RegisterUserServiceHTTPServer(srv, initUserApp())
 	return srv
 }

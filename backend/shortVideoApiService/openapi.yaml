@@ -16,7 +16,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/api.GetVerificationCodeRequest'
+                            $ref: '#/components/schemas/svapi.GetVerificationCodeRequest'
                 required: true
             responses:
                 "200":
@@ -24,7 +24,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/api.GetVerificationCodeResponse'
+                                $ref: '#/components/schemas/svapi.GetVerificationCodeResponse'
     /user/info:
         get:
             tags:
@@ -37,7 +37,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/api.GetUserInfoResponse'
+                                $ref: '#/components/schemas/svapi.GetUserInfoResponse'
         put:
             tags:
                 - UserService
@@ -47,7 +47,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/api.UpdateUserInfoRequest'
+                            $ref: '#/components/schemas/svapi.UpdateUserInfoRequest'
                 required: true
             responses:
                 "200":
@@ -55,7 +55,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/api.UpdateUserInfoResponse'
+                                $ref: '#/components/schemas/svapi.UpdateUserInfoResponse'
     /user/login:
         post:
             tags:
@@ -66,7 +66,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/api.LoginRequest'
+                            $ref: '#/components/schemas/svapi.LoginRequest'
                 required: true
             responses:
                 "200":
@@ -74,7 +74,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/api.LoginResponse'
+                                $ref: '#/components/schemas/svapi.LoginResponse'
     /user/register:
         post:
             tags:
@@ -85,7 +85,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/api.RegisterRequest'
+                            $ref: '#/components/schemas/svapi.RegisterRequest'
                 required: true
             responses:
                 "200":
@@ -93,7 +93,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/api.RegisterResponse'
+                                $ref: '#/components/schemas/svapi.RegisterResponse'
     /videos:
         post:
             tags:
@@ -103,7 +103,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/api.ListPublishedVideoRequest'
+                            $ref: '#/components/schemas/svapi.ListPublishedVideoRequest'
                 required: true
             responses:
                 "200":
@@ -111,7 +111,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/api.ListPublishedVideoResponse'
+                                $ref: '#/components/schemas/svapi.ListPublishedVideoResponse'
     /videos/feed:
         post:
             tags:
@@ -121,7 +121,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/api.FeedShortVideoRequest'
+                            $ref: '#/components/schemas/svapi.FeedShortVideoRequest'
                 required: true
             responses:
                 "200":
@@ -129,7 +129,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/api.FeedShortVideoResponse'
+                                $ref: '#/components/schemas/svapi.FeedShortVideoResponse'
     /videos/{videoId}:
         get:
             tags:
@@ -147,74 +147,74 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/api.GetVideoByIdResponse'
+                                $ref: '#/components/schemas/svapi.GetVideoByIdResponse'
 components:
     schemas:
-        api.FeedShortVideoRequest:
+        svapi.FeedShortVideoRequest:
             type: object
             properties:
                 latestTime:
                     type: string
                 userId:
                     type: string
-        api.FeedShortVideoResponse:
+        svapi.FeedShortVideoResponse:
             type: object
             properties:
                 meta:
-                    $ref: '#/components/schemas/api.Metadata'
+                    $ref: '#/components/schemas/svapi.Metadata'
                 videos:
                     type: array
                     items:
-                        $ref: '#/components/schemas/api.Video'
+                        $ref: '#/components/schemas/svapi.Video'
                 nextTime:
                     type: string
-        api.GetUserInfoResponse:
+        svapi.GetUserInfoResponse:
             type: object
             properties:
                 meta:
-                    $ref: '#/components/schemas/api.Metadata'
+                    $ref: '#/components/schemas/svapi.Metadata'
                 user:
-                    $ref: '#/components/schemas/api.User'
-        api.GetVerificationCodeRequest:
+                    $ref: '#/components/schemas/svapi.User'
+        svapi.GetVerificationCodeRequest:
             type: object
             properties:
                 mobile:
                     type: string
                 email:
                     type: string
-        api.GetVerificationCodeResponse:
+        svapi.GetVerificationCodeResponse:
             type: object
             properties:
                 meta:
-                    $ref: '#/components/schemas/api.Metadata'
+                    $ref: '#/components/schemas/svapi.Metadata'
                 codeId:
                     type: string
-        api.GetVideoByIdResponse:
+        svapi.GetVideoByIdResponse:
             type: object
             properties:
                 meta:
-                    $ref: '#/components/schemas/api.Metadata'
+                    $ref: '#/components/schemas/svapi.Metadata'
                 video:
-                    $ref: '#/components/schemas/api.Video'
-        api.ListPublishedVideoRequest:
+                    $ref: '#/components/schemas/svapi.Video'
+        svapi.ListPublishedVideoRequest:
             type: object
             properties:
                 userId:
                     type: string
                 pagination:
-                    $ref: '#/components/schemas/api.PaginationRequest'
-        api.ListPublishedVideoResponse:
+                    $ref: '#/components/schemas/svapi.PaginationRequest'
+        svapi.ListPublishedVideoResponse:
             type: object
             properties:
                 meta:
-                    $ref: '#/components/schemas/api.Metadata'
+                    $ref: '#/components/schemas/svapi.Metadata'
                 videos:
                     type: array
                     items:
-                        $ref: '#/components/schemas/api.Video'
+                        $ref: '#/components/schemas/svapi.Video'
                 pagination:
-                    $ref: '#/components/schemas/api.PaginationResponse'
-        api.LoginRequest:
+                    $ref: '#/components/schemas/svapi.PaginationResponse'
+        svapi.LoginRequest:
             type: object
             properties:
                 mobile:
@@ -223,14 +223,14 @@ components:
                     type: string
                 password:
                     type: string
-        api.LoginResponse:
+        svapi.LoginResponse:
             type: object
             properties:
                 meta:
-                    $ref: '#/components/schemas/api.Metadata'
+                    $ref: '#/components/schemas/svapi.Metadata'
                 token:
                     type: string
-        api.Metadata:
+        svapi.Metadata:
             type: object
             properties:
                 bizCode:
@@ -244,7 +244,7 @@ components:
                     type: array
                     items:
                         type: string
-        api.PaginationRequest:
+        svapi.PaginationRequest:
             type: object
             properties:
                 page:
@@ -256,8 +256,8 @@ components:
                 sort:
                     type: array
                     items:
-                        $ref: '#/components/schemas/api.SortField'
-        api.PaginationResponse:
+                        $ref: '#/components/schemas/svapi.SortField'
+        svapi.PaginationResponse:
             type: object
             properties:
                 page:
@@ -269,7 +269,7 @@ components:
                 count:
                     type: integer
                     format: int32
-        api.PublishVideoRequest:
+        svapi.PublishVideoRequest:
             type: object
             properties:
                 data:
@@ -281,12 +281,12 @@ components:
                     type: string
                 userId:
                     type: string
-        api.PublishVideoResponse:
+        svapi.PublishVideoResponse:
             type: object
             properties:
                 meta:
-                    $ref: '#/components/schemas/api.Metadata'
-        api.RegisterRequest:
+                    $ref: '#/components/schemas/svapi.Metadata'
+        svapi.RegisterRequest:
             type: object
             properties:
                 mobile:
@@ -299,14 +299,14 @@ components:
                     type: string
                 code:
                     type: string
-        api.RegisterResponse:
+        svapi.RegisterResponse:
             type: object
             properties:
                 meta:
-                    $ref: '#/components/schemas/api.Metadata'
+                    $ref: '#/components/schemas/svapi.Metadata'
                 userId:
                     type: string
-        api.SortField:
+        svapi.SortField:
             type: object
             properties:
                 field:
@@ -314,7 +314,7 @@ components:
                 order:
                     type: integer
                     format: enum
-        api.UpdateUserInfoRequest:
+        svapi.UpdateUserInfoRequest:
             type: object
             properties:
                 userId:
@@ -327,12 +327,12 @@ components:
                     type: string
                 signature:
                     type: string
-        api.UpdateUserInfoResponse:
+        svapi.UpdateUserInfoResponse:
             type: object
             properties:
                 meta:
-                    $ref: '#/components/schemas/api.Metadata'
-        api.User:
+                    $ref: '#/components/schemas/svapi.Metadata'
+        svapi.User:
             type: object
             properties:
                 id:
@@ -359,13 +359,13 @@ components:
                     type: string
                 favoriteCount:
                     type: string
-        api.Video:
+        svapi.Video:
             type: object
             properties:
                 id:
                     type: string
                 author:
-                    $ref: '#/components/schemas/api.VideoAuthor'
+                    $ref: '#/components/schemas/svapi.VideoAuthor'
                 playUrl:
                     type: string
                 coverUrl:
@@ -378,7 +378,7 @@ components:
                     type: boolean
                 title:
                     type: string
-        api.VideoAuthor:
+        svapi.VideoAuthor:
             type: object
             properties:
                 id:

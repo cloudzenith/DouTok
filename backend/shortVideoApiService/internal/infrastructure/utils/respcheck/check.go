@@ -2,6 +2,7 @@ package respcheck
 
 import (
 	"errors"
+	"reflect"
 )
 
 type metadata interface {
@@ -25,7 +26,7 @@ func Check[Meta metadata](resp response[Meta], e error) error {
 	}
 
 	meta := resp.GetMeta()
-	if meta == nil {
+	if reflect.ValueOf(meta).Elem().IsNil() {
 		return errors.New("meta is nil")
 	}
 
@@ -50,7 +51,7 @@ func CheckT[T any, Meta metadata](resp response[Meta], e error, noError func() T
 	}
 
 	meta := resp.GetMeta()
-	if meta == nil {
+	if reflect.ValueOf(meta).Elem().IsNil() {
 		return t, errors.New("meta is nil")
 	}
 

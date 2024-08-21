@@ -16,7 +16,7 @@ type Adapter struct {
 
 func New() *Adapter {
 	etcdClient := etcdx.GetClient(context.Background())
-	conn, err := grpc.Dial(
+	conn, err := grpc.DialInsecure(
 		context.Background(),
 		grpc.WithEndpoint("discovery:///provider"),
 		grpc.WithDiscovery(etcd.New(etcdClient)),
