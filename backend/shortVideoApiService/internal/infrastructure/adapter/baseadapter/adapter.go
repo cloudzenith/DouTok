@@ -3,9 +3,7 @@ package baseadapter
 import (
 	"context"
 	"github.com/cloudzenith/DouTok/backend/baseService/api"
-	"github.com/cloudzenith/DouTok/backend/gopkgs/components/etcdx"
-	"github.com/go-kratos/kratos/contrib/registry/etcd/v2"
-	"github.com/go-kratos/kratos/v2/transport/grpc"
+	"github.com/cloudzenith/DouTok/backend/gopkgs/components/consulx"
 )
 
 type Adapter struct {
@@ -15,12 +13,7 @@ type Adapter struct {
 }
 
 func New() *Adapter {
-	etcdClient := etcdx.GetClient(context.Background())
-	conn, err := grpc.DialInsecure(
-		context.Background(),
-		grpc.WithEndpoint("discovery:///base-service"),
-		grpc.WithDiscovery(etcd.New(etcdClient)),
-	)
+	conn, err := consulx.GetGrpcConn(context.Background(), "discovery:///base-service")
 	if err != nil {
 		panic(err)
 	}

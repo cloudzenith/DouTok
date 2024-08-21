@@ -2,10 +2,8 @@ package svcoreadapter
 
 import (
 	"context"
-	"github.com/cloudzenith/DouTok/backend/gopkgs/components/etcdx"
+	"github.com/cloudzenith/DouTok/backend/gopkgs/components/consulx"
 	v1 "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1"
-	"github.com/go-kratos/kratos/contrib/registry/etcd/v2"
-	"github.com/go-kratos/kratos/v2/transport/grpc"
 )
 
 type Adapter struct {
@@ -13,12 +11,7 @@ type Adapter struct {
 }
 
 func New() *Adapter {
-	etcdClient := etcdx.GetClient(context.Background())
-	conn, err := grpc.DialInsecure(
-		context.Background(),
-		grpc.WithEndpoint("discovery:///sv-core-service"),
-		grpc.WithDiscovery(etcd.New(etcdClient)),
-	)
+	conn, err := consulx.GetGrpcConn(context.Background(), "discovery:///sv-core-service")
 	if err != nil {
 		panic(err)
 	}
