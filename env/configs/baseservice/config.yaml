@@ -31,7 +31,7 @@ components:
       secret_key: rootroot
   consul:
     default:
-      address: consul:8500
+      address: 123.456.78.9:8500
 
 data:
   db_sharding_config:

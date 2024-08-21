@@ -7,7 +7,7 @@ require (
 	github.com/bufbuild/protovalidate-go v0.6.3
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/bytedance/sonic v1.11.9
-	github.com/cloudzenith/DouTok/backend/gopkgs v0.0.7
+	github.com/cloudzenith/DouTok/backend/gopkgs v0.0.8
 	github.com/go-kratos/kratos/contrib/log/zap/v2 v2.0.0-20240815090334-084c8b4167e7
 	github.com/go-kratos/kratos/v2 v2.8.0
 	github.com/go-playground/assert/v2 v2.0.1

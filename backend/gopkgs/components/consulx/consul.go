@@ -43,7 +43,7 @@ func Connect(c *Config) (*api.Client, error) {
 	cfg := api.DefaultConfig()
 	cfg.Address = c.Address
 
-	client, err := api.NewClient(api.DefaultConfig())
+	client, err := api.NewClient(cfg)
 	if err != nil {
 		return nil, err
 	}
