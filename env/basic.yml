@@ -68,9 +68,10 @@ services:
 
   consul:
     container_name: consul
-    image: consul:1.15.4
+    image: hashicorp/consul:1.15.4
     networks:
       - total
     ports:
       - "8500:8500"
-    command: ["consul","agent","-server","-bootstrap","-data-dir","/consul","-ui","-bind","127.0.0.1","-client","0.0.0.0"]
+    command:
+      consul agent -server -bootstrap -data-dir /tmp

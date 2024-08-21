@@ -67,6 +67,7 @@ func launchWrapper(cfg config.Value, componentsName string) {
 func (l *ComponentsLauncher) Launch() {
 	for componentsName, cfg := range l.config {
 		log.Infof("launch component: %s", componentsName)
+		log.Infof("%s config: %v", componentsName, cfg)
 		launchWrapper(cfg, componentsName)
 	}
 

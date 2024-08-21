@@ -19,7 +19,7 @@ services:
       - "9443:9443/tcp"
       - "9092:9092/tcp"
     networks:
-      total:
+      - total
 
   apisix-dashboard:
     image: apache/apisix-dashboard:latest
@@ -29,4 +29,4 @@ services:
     ports:
       - "9003:9000"
     networks:
-      total:
+      - total
