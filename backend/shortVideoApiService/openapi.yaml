@@ -98,12 +98,13 @@ paths:
         post:
             tags:
                 - ShortVideoCoreVideoService
-            operationId: ShortVideoCoreVideoService_ListPublishedVideo
+            description: 预注册上传视频
+            operationId: ShortVideoCoreVideoService_PreSign4UploadVideo
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/svapi.ListPublishedVideoRequest'
+                            $ref: '#/components/schemas/svapi.PreSign4UploadVideoRequest'
                 required: true
             responses:
                 "200":
@@ -111,11 +112,12 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/svapi.ListPublishedVideoResponse'
+                                $ref: '#/components/schemas/svapi.PreSign4UploadVideoResponse'
     /videos/feed:
         post:
             tags:
                 - ShortVideoCoreVideoService
+            description: 刷视频
             operationId: ShortVideoCoreVideoService_FeedShortVideo
             requestBody:
                 content:
@@ -130,10 +132,94 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/svapi.FeedShortVideoResponse'
+    /videos/list:
+        get:
+            tags:
+                - ShortVideoCoreVideoService
+            description: 获取当前用户的发布视频列表
+            operationId: ShortVideoCoreVideoService_ListPublishedVideo
+            parameters:
+                - name: userId
+                  in: query
+                  schema:
+                    type: string
+                - name: pagination.page
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: pagination.size
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/svapi.ListPublishedVideoResponse'
+    /videos/list/{accountId}:
+        get:
+            tags:
+                - ShortVideoCoreVideoService
+            description: 获取某人的发布视频列表
+            operationId: ShortVideoCoreVideoService_ListOthersPublishedVideo
+            parameters:
+                - name: accountId
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: pagination.page
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: pagination.size
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/svapi.ListPublishedVideoResponse'
+    /videos/{fileId}/finish:
+        put:
+            tags:
+                - ShortVideoCoreVideoService
+            description: 确认视频上传完成
+            operationId: ShortVideoCoreVideoService_ReportFinishUpload
+            parameters:
+                - name: fileId
+                  in: path
+                  description: 文件id
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/svapi.ReportFinishUploadRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/svapi.ListVideo'
     /videos/{videoId}:
         get:
             tags:
                 - ShortVideoCoreVideoService
+            description: 获取视频信息
             operationId: ShortVideoCoreVideoService_GetVideoById
             parameters:
                 - name: videoId
@@ -171,8 +257,6 @@ components:
         svapi.GetUserInfoResponse:
             type: object
             properties:
-                meta:
-                    $ref: '#/components/schemas/svapi.Metadata'
                 user:
                     $ref: '#/components/schemas/svapi.User'
         svapi.GetVerificationCodeRequest:
@@ -185,35 +269,38 @@ components:
         svapi.GetVerificationCodeResponse:
             type: object
             properties:
-                meta:
-                    $ref: '#/components/schemas/svapi.Metadata'
                 codeId:
                     type: string
         svapi.GetVideoByIdResponse:
             type: object
             properties:
-                meta:
-                    $ref: '#/components/schemas/svapi.Metadata'
                 video:
                     $ref: '#/components/schemas/svapi.Video'
-        svapi.ListPublishedVideoRequest:
-            type: object
-            properties:
-                userId:
-                    type: string
-                pagination:
-                    $ref: '#/components/schemas/svapi.PaginationRequest'
         svapi.ListPublishedVideoResponse:
             type: object
             properties:
-                meta:
-                    $ref: '#/components/schemas/svapi.Metadata'
-                videos:
+                videoList:
                     type: array
                     items:
-                        $ref: '#/components/schemas/svapi.Video'
+                        $ref: '#/components/schemas/svapi.ListVideo'
                 pagination:
                     $ref: '#/components/schemas/svapi.PaginationResponse'
+        svapi.ListVideo:
+            type: object
+            properties:
+                id:
+                    type: string
+                playUrl:
+                    type: string
+                coverUrl:
+                    type: string
+                favoriteCount:
+                    type: string
+                commentCount:
+                    type: string
+                title:
+                    type: string
+            description: 视频列表相关接口返回体video
         svapi.LoginRequest:
             type: object
             properties:
@@ -226,8 +313,6 @@ components:
         svapi.LoginResponse:
             type: object
             properties:
-                meta:
-                    $ref: '#/components/schemas/svapi.Metadata'
                 token:
                     type: string
         svapi.Metadata:
@@ -244,19 +329,6 @@ components:
                     type: array
                     items:
                         type: string
-        svapi.PaginationRequest:
-            type: object
-            properties:
-                page:
-                    type: integer
-                    format: int32
-                size:
-                    type: integer
-                    format: int32
-                sort:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/svapi.SortField'
         svapi.PaginationResponse:
             type: object
             properties:
@@ -269,23 +341,36 @@ components:
                 count:
                     type: integer
                     format: int32
-        svapi.PublishVideoRequest:
+        svapi.PreSign4UploadVideoRequest:
             type: object
             properties:
-                data:
+                hash:
                     type: string
-                    format: bytes
+                    description: md5 hash
+                fileType:
+                    type: string
+                    description: 文件类型，默认mp4
+                size:
+                    type: string
+                    description: 文件大小，单位byte
+                filename:
+                    type: string
+                    description: 文件名
                 title:
                     type: string
-                coverUrl:
-                    type: string
-                userId:
-                    type: string
-        svapi.PublishVideoResponse:
+                    description: 视频标题
+        svapi.PreSign4UploadVideoResponse:
             type: object
             properties:
-                meta:
-                    $ref: '#/components/schemas/svapi.Metadata'
+                url:
+                    type: string
+                    description: minio上传地址
+                fileId:
+                    type: string
+                    description: 文件id
+                videoId:
+                    type: string
+                    description: 上传视频id
         svapi.RegisterRequest:
             type: object
             properties:
@@ -302,18 +387,14 @@ components:
         svapi.RegisterResponse:
             type: object
             properties:
-                meta:
-                    $ref: '#/components/schemas/svapi.Metadata'
                 userId:
                     type: string
-        svapi.SortField:
+        svapi.ReportFinishUploadRequest:
             type: object
             properties:
-                field:
+                fileId:
                     type: string
-                order:
-                    type: integer
-                    format: enum
+                    description: 文件id
         svapi.UpdateUserInfoRequest:
             type: object
             properties:
@@ -329,9 +410,7 @@ components:
                     type: string
         svapi.UpdateUserInfoResponse:
             type: object
-            properties:
-                meta:
-                    $ref: '#/components/schemas/svapi.Metadata'
+            properties: {}
         svapi.User:
             type: object
             properties:

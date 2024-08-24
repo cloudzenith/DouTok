@@ -8,6 +8,23 @@ import "buf/validate/validate.proto";
 import "svapi/base.proto";
 
 service ShortVideoCoreVideoService {
+    // 预注册上传视频
+    rpc PreSign4UploadVideo(PreSign4UploadVideoRequest) returns (PreSign4UploadVideoResponse) {
+        option (google.api.http) = {
+            post: "/videos"
+            body: "*"
+        };
+    };
+
+    // 确认视频上传完成
+    rpc ReportFinishUpload(ReportFinishUploadRequest) returns (ListVideo) {
+        option (google.api.http) = {
+            put: "/videos/{file_id}/finish"
+            body: "*"
+        };
+    };
+
+    // 刷视频
     rpc FeedShortVideo(FeedShortVideoRequest) returns (FeedShortVideoResponse) {
         option (google.api.http) = {
             post: "/videos/feed"
@@ -15,23 +32,24 @@ service ShortVideoCoreVideoService {
         };
     };
 
+    // 获取视频信息
     rpc GetVideoById(GetVideoByIdRequest) returns (GetVideoByIdResponse) {
         option (google.api.http) = {
             get: "/videos/{video_id}"
         };
     };
 
-    rpc PublishVideo(PublishVideoRequest) returns (PublishVideoResponse) {
+    // 获取当前用户的发布视频列表
+    rpc ListPublishedVideo(ListPublishedVideoRequest) returns (ListPublishedVideoResponse) {
         option (google.api.http) = {
-            post: "/videos"
-            body: "*"
+            get: "/videos/list"
         };
     };
 
-    rpc ListPublishedVideo(ListPublishedVideoRequest) returns (ListPublishedVideoResponse) {
+    // 获取某人的发布视频列表
+    rpc ListOthersPublishedVideo(ListOthersPublishedVideoRequest) returns(ListPublishedVideoResponse) {
         option (google.api.http) = {
-            post: "/videos"
-            body: "*"
+            get: "/videos/list/{account_id}"
         };
     };
 }
@@ -54,6 +72,43 @@ message Video {
     string title = 8; // 视频标题
 }
 
+// 视频列表相关接口返回体video
+message ListVideo {
+    int64 id = 1;
+    string play_url = 2;
+    string cover_url = 3;
+    int64 favorite_count = 4;
+    int64 comment_count = 5;
+    string title = 6;
+}
+
+message PreSign4UploadVideoRequest {
+    // md5 hash
+    string hash = 1;
+    // 文件类型，默认mp4
+    string file_type = 2;
+    // 文件大小，单位byte
+    int64 size = 3;
+    // 文件名
+    string filename = 4;
+    // 视频标题
+    string title = 5;
+}
+
+message PreSign4UploadVideoResponse {
+    // minio上传地址
+    string url = 1;
+    // 文件id
+    int64 file_id = 2;
+    // 上传视频id
+    int64 video_id = 3;
+}
+
+message ReportFinishUploadRequest {
+    // 文件id
+    int64 file_id = 1;
+}
+
 message FeedShortVideoRequest {
     int64 latest_time = 1;  // 可选参数，限制返回视频的最新投稿时间戳，精确到秒，不填表示当前时间
     int64 user_id = 2 [(buf.validate.field).int64 = {gt: 0}];
@@ -70,22 +125,7 @@ message GetVideoByIdRequest {
 }
 
 message GetVideoByIdResponse {
-    svapi.Metadata meta = 1;
     Video video = 2;
-}
-
-message PublishVideoRequest {
-    bytes data = 1; // 视频数据
-    string title = 2 [
-        (buf.validate.field).string.min_len = 1,
-        (buf.validate.field).string.max_len = 50
-    ]; // 视频标题
-    string cover_url = 4; // 视频封面地址
-    int64 user_id = 3 [(buf.validate.field).int64 = {gt: 0}]; // 发布视频的user id
-}
-
-message PublishVideoResponse {
-    svapi.Metadata meta = 1;
 }
 
 message ListPublishedVideoRequest {
@@ -93,8 +133,14 @@ message ListPublishedVideoRequest {
     PaginationRequest pagination = 2;
 }
 
+message ListOthersPublishedVideoRequest {
+    int64 account_id = 1 [(buf.validate.field).int64 = {gt: 0}];
+    PaginationRequest pagination = 2;
+}
+
 message ListPublishedVideoResponse {
-    svapi.Metadata meta = 1;
-    repeated Video videos = 2;
+    repeated ListVideo video_list = 2;
     PaginationResponse pagination = 3;
 }
+
+
