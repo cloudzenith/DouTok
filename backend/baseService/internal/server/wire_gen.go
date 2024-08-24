@@ -22,9 +22,6 @@ import (
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/repositories/filerepo"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/repositories/miniorepo"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/repositories/templaterepo"
-	"github.com/cloudzenith/DouTok/backend/baseService/internal/server/authappproviders"
-	"github.com/minio/minio-go/v7"
-	"gorm.io/gorm"
 )
 
 // Injectors from wire.go:
@@ -36,9 +33,8 @@ func initAccountApplication() *accountapp.AccountApplication {
 	return accountApplication
 }
 
-func initAuthApplication(dsn authappproviders.RedisDsn, password authappproviders.RedisPassword) *authapp.AuthApplication {
-	client := authappproviders.NewRedis(dsn, password)
-	redisRepository := verificationcoderedis.New(client)
+func initAuthApplication() *authapp.AuthApplication {
+	redisRepository := verificationcoderedis.New()
 	authService := authservice.New(redisRepository)
 	authApplication := authapp.New(authService)
 	return authApplication
@@ -52,9 +48,9 @@ func initPostApplication() *postapp.PostApplication {
 	return postApplication
 }
 
-func initFileApplication(db *gorm.DB, core *minio.Core, fileTableShardingConfig filerepohelper.FileTableShardingConfig) *fileapp.FileApplication {
-	persistRepository := filerepo.New(db)
-	miniorepoPersistRepository := miniorepo.New(core)
+func initFileApplication(fileTableShardingConfig filerepohelper.FileTableShardingConfig) *fileapp.FileApplication {
+	persistRepository := filerepo.New()
+	miniorepoPersistRepository := miniorepo.New()
 	fileService := fileservice.New(persistRepository, miniorepoPersistRepository, fileTableShardingConfig)
 	fileApplication := fileapp.New(fileService)
 	return fileApplication

@@ -1,0 +1,129 @@
+syntax = "proto3";
+package svapi;
+
+option go_package = "github.com/cloudzenith/DouTok/...;svapi";
+
+import "google/api/annotations.proto";
+import "buf/validate/validate.proto";
+import "svapi/base.proto";
+
+service UserService {
+    // 获取验证码
+    rpc GetVerificationCode(GetVerificationCodeRequest) returns (GetVerificationCodeResponse) {
+        option (google.api.http) = {
+            post: "/user/code"
+            body: "*"
+        };
+    };
+
+    // 注册
+    rpc Register(RegisterRequest) returns (RegisterResponse) {
+        option (google.api.http) = {
+            post: "/user/register"
+            body: "*"
+        };
+    };
+
+    // 登录
+    rpc Login(LoginRequest) returns (LoginResponse) {
+        option (google.api.http) = {
+            post: "/user/login"
+            body: "*"
+        };
+    }
+
+    // 获取用户信息
+    rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse) {
+        option (google.api.http) = {
+            get: "/user/info"
+        };
+    };
+
+    // 更新用户信息
+    rpc UpdateUserInfo(UpdateUserInfoRequest) returns (UpdateUserInfoResponse) {
+        option (google.api.http) = {
+            put: "/user/info"
+            body: "*"
+        };
+    };
+}
+
+message User {
+    int64 id = 1; // 用户id
+    string name = 2; // 用户名称
+    string avatar = 3; // 用户头像Url
+    string background_image = 4; // 用户个人页顶部大图
+    string signature = 5; // 个人简介
+    string mobile = 6; // 手机号
+    string email = 7; // 邮箱
+    int64 follow_count = 8; // 关注总数
+    int64 follower_count = 9; // 粉丝总数
+    int64 total_favorited = 10; // 获赞数量
+    int64 work_count = 11; // 作品数量
+    int64 favorite_count = 12; // 点赞数量
+}
+
+message GetVerificationCodeRequest {
+    string mobile = 1;
+    string email = 2;
+}
+
+message GetVerificationCodeResponse {
+    Metadata meta = 1;
+    int64 code_id = 2;
+}
+
+message RegisterRequest {
+    string mobile = 1 [(buf.validate.field).string.pattern = "^\\+?[1-9]\\d{1,14}$"];
+    string email = 2 [(buf.validate.field).string.email = true];
+    string password = 3 [
+        (buf.validate.field).string.min_len = 8,
+        (buf.validate.field).string.max_len = 50
+    ];
+    int64 code_id = 4;
+    string code = 5;
+}
+
+message RegisterResponse {
+    Metadata meta = 1;
+    int64 user_id = 2;
+}
+
+message LoginRequest {
+    string mobile = 1 [(buf.validate.field).string.pattern = "^\\+?[1-9]\\d{1,14}$"];
+    string email = 2 [(buf.validate.field).string.email = true];
+    string password = 3 [
+        (buf.validate.field).string.min_len = 8,
+        (buf.validate.field).string.max_len = 50
+    ];
+}
+
+message LoginResponse {
+    Metadata meta = 1;
+    string token = 3;
+}
+
+message GetUserInfoRequest {
+
+}
+
+message GetUserInfoResponse {
+    Metadata meta = 1;
+    User user = 2;
+}
+
+message UpdateUserInfoRequest {
+    int64 user_id = 1 [(buf.validate.field).int64 = {gt: 0}];
+    string name = 2 [
+        (buf.validate.field).string.min_len = 1,
+        (buf.validate.field).string.max_len = 50
+    ];
+    string avatar = 3;
+    string background_image = 4;
+    string signature = 5;
+}
+
+message UpdateUserInfoResponse {
+    Metadata meta = 1;
+}
+

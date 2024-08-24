@@ -3,6 +3,7 @@ package miniorepo
 import (
 	"context"
 	"fmt"
+	"github.com/cloudzenith/DouTok/backend/gopkgs/components/miniox"
 	"github.com/minio/minio-go/v7"
 	"net/http"
 	"net/url"
@@ -15,9 +16,9 @@ type PersistRepository struct {
 	core *minio.Core
 }
 
-func New(core *minio.Core) *PersistRepository {
+func New() *PersistRepository {
 	return &PersistRepository{
-		core: core,
+		core: miniox.GetClient(context.Background()),
 	}
 }
 

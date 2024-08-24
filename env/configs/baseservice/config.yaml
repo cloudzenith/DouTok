@@ -1,0 +1,51 @@
+app:
+  name: base-service
+  version: 0.0.1-test
+
+server:
+  grpc:
+    addr: 0.0.0.0:8888
+
+components:
+  mysql:
+    default:
+      host: mysql
+      port: 3306
+      db_name: doutok
+      user: root
+      password: root
+  redis:
+    default:
+      dsn: redis:6379
+      password: root
+  etcd:
+    default:
+      host: etcd
+      port: 2379
+  minio:
+    default:
+      host: minio
+      port: 9000
+      console_port: 9001
+      access_key: root
+      secret_key: rootroot
+  consul:
+    default:
+      address: consul:8500
+
+data:
+  db_sharding_config:
+    file_shortvideo_short_video:
+      sharding: file_shortvideo_short_video
+      sharding_number: 5
+  db_sharding_tables:
+    file:
+      domain_name: shortvideo
+      biz_sharding_field_config:
+        short_video:
+          fields:
+            - id
+            - hash
+
+snowflake:
+  node: 1

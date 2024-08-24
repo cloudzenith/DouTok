@@ -3,6 +3,7 @@ package launcher
 import (
 	"context"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/components"
+	"github.com/cloudzenith/DouTok/backend/gopkgs/components/consulx"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/components/etcdx"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/components/miniox"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/components/mysqlx"
@@ -55,12 +56,18 @@ func launchWrapper(cfg config.Value, componentsName string) {
 		return
 	}
 
+	if componentsName == "consul" {
+		launchComponent(cfg, consulx.Init)
+		return
+	}
+
 	panic("unknown components name: " + componentsName)
 }
 
 func (l *ComponentsLauncher) Launch() {
 	for componentsName, cfg := range l.config {
 		log.Infof("launch component: %s", componentsName)
+		log.Infof("%s config: %v", componentsName, cfg)
 		launchWrapper(cfg, componentsName)
 	}
 

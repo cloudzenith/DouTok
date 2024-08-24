@@ -1,0 +1,394 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: ""
+    version: 0.0.1
+paths:
+    /user/code:
+        post:
+            tags:
+                - UserService
+            description: 获取验证码
+            operationId: UserService_GetVerificationCode
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/svapi.GetVerificationCodeRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/svapi.GetVerificationCodeResponse'
+    /user/info:
+        get:
+            tags:
+                - UserService
+            description: 获取用户信息
+            operationId: UserService_GetUserInfo
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/svapi.GetUserInfoResponse'
+        put:
+            tags:
+                - UserService
+            description: 更新用户信息
+            operationId: UserService_UpdateUserInfo
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/svapi.UpdateUserInfoRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/svapi.UpdateUserInfoResponse'
+    /user/login:
+        post:
+            tags:
+                - UserService
+            description: 登录
+            operationId: UserService_Login
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/svapi.LoginRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/svapi.LoginResponse'
+    /user/register:
+        post:
+            tags:
+                - UserService
+            description: 注册
+            operationId: UserService_Register
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/svapi.RegisterRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/svapi.RegisterResponse'
+    /videos:
+        post:
+            tags:
+                - ShortVideoCoreVideoService
+            operationId: ShortVideoCoreVideoService_ListPublishedVideo
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/svapi.ListPublishedVideoRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/svapi.ListPublishedVideoResponse'
+    /videos/feed:
+        post:
+            tags:
+                - ShortVideoCoreVideoService
+            operationId: ShortVideoCoreVideoService_FeedShortVideo
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/svapi.FeedShortVideoRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/svapi.FeedShortVideoResponse'
+    /videos/{videoId}:
+        get:
+            tags:
+                - ShortVideoCoreVideoService
+            operationId: ShortVideoCoreVideoService_GetVideoById
+            parameters:
+                - name: videoId
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/svapi.GetVideoByIdResponse'
+components:
+    schemas:
+        svapi.FeedShortVideoRequest:
+            type: object
+            properties:
+                latestTime:
+                    type: string
+                userId:
+                    type: string
+        svapi.FeedShortVideoResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/svapi.Metadata'
+                videos:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/svapi.Video'
+                nextTime:
+                    type: string
+        svapi.GetUserInfoResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/svapi.Metadata'
+                user:
+                    $ref: '#/components/schemas/svapi.User'
+        svapi.GetVerificationCodeRequest:
+            type: object
+            properties:
+                mobile:
+                    type: string
+                email:
+                    type: string
+        svapi.GetVerificationCodeResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/svapi.Metadata'
+                codeId:
+                    type: string
+        svapi.GetVideoByIdResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/svapi.Metadata'
+                video:
+                    $ref: '#/components/schemas/svapi.Video'
+        svapi.ListPublishedVideoRequest:
+            type: object
+            properties:
+                userId:
+                    type: string
+                pagination:
+                    $ref: '#/components/schemas/svapi.PaginationRequest'
+        svapi.ListPublishedVideoResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/svapi.Metadata'
+                videos:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/svapi.Video'
+                pagination:
+                    $ref: '#/components/schemas/svapi.PaginationResponse'
+        svapi.LoginRequest:
+            type: object
+            properties:
+                mobile:
+                    type: string
+                email:
+                    type: string
+                password:
+                    type: string
+        svapi.LoginResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/svapi.Metadata'
+                token:
+                    type: string
+        svapi.Metadata:
+            type: object
+            properties:
+                bizCode:
+                    type: integer
+                    format: int32
+                message:
+                    type: string
+                domain:
+                    type: string
+                reason:
+                    type: array
+                    items:
+                        type: string
+        svapi.PaginationRequest:
+            type: object
+            properties:
+                page:
+                    type: integer
+                    format: int32
+                size:
+                    type: integer
+                    format: int32
+                sort:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/svapi.SortField'
+        svapi.PaginationResponse:
+            type: object
+            properties:
+                page:
+                    type: integer
+                    format: int32
+                total:
+                    type: integer
+                    format: int32
+                count:
+                    type: integer
+                    format: int32
+        svapi.PublishVideoRequest:
+            type: object
+            properties:
+                data:
+                    type: string
+                    format: bytes
+                title:
+                    type: string
+                coverUrl:
+                    type: string
+                userId:
+                    type: string
+        svapi.PublishVideoResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/svapi.Metadata'
+        svapi.RegisterRequest:
+            type: object
+            properties:
+                mobile:
+                    type: string
+                email:
+                    type: string
+                password:
+                    type: string
+                codeId:
+                    type: string
+                code:
+                    type: string
+        svapi.RegisterResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/svapi.Metadata'
+                userId:
+                    type: string
+        svapi.SortField:
+            type: object
+            properties:
+                field:
+                    type: string
+                order:
+                    type: integer
+                    format: enum
+        svapi.UpdateUserInfoRequest:
+            type: object
+            properties:
+                userId:
+                    type: string
+                name:
+                    type: string
+                avatar:
+                    type: string
+                backgroundImage:
+                    type: string
+                signature:
+                    type: string
+        svapi.UpdateUserInfoResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/svapi.Metadata'
+        svapi.User:
+            type: object
+            properties:
+                id:
+                    type: string
+                name:
+                    type: string
+                avatar:
+                    type: string
+                backgroundImage:
+                    type: string
+                signature:
+                    type: string
+                mobile:
+                    type: string
+                email:
+                    type: string
+                followCount:
+                    type: string
+                followerCount:
+                    type: string
+                totalFavorited:
+                    type: string
+                workCount:
+                    type: string
+                favoriteCount:
+                    type: string
+        svapi.Video:
+            type: object
+            properties:
+                id:
+                    type: string
+                author:
+                    $ref: '#/components/schemas/svapi.VideoAuthor'
+                playUrl:
+                    type: string
+                coverUrl:
+                    type: string
+                favoriteCount:
+                    type: string
+                commentCount:
+                    type: string
+                isFavorite:
+                    type: boolean
+                title:
+                    type: string
+        svapi.VideoAuthor:
+            type: object
+            properties:
+                id:
+                    type: string
+                name:
+                    type: string
+                avatar:
+                    type: string
+                isFollowing:
+                    type: boolean
+tags:
+    - name: ShortVideoCoreVideoService
+    - name: UserService

@@ -1,17 +1,39 @@
+app:
+  name: base-service
+  version: 0.0.1-test
+
 server:
   grpc:
     addr: 0.0.0.0:8888
 
-data:
-  database:
-    source: root:root@tcp(localhost:3306)/doutok?parseTime=true
+components:
+  mysql:
+    default:
+      host: localhost
+      port: 3306
+      db_name: doutok
+      user: root
+      password: root
   redis:
-    source: localhost:6379
-    password: root
+    default:
+      dsn: localhost:6379
+      password: root
+  etcd:
+    default:
+      host: localhost
+      port: 2379
   minio:
-    endpoint: localhost:9000
-    accessKey: root
-    secretKey: rootroot
+    default:
+      host: localhost
+      port: 9000
+      console_port: 9001
+      access_key: root
+      secret_key: rootroot
+  consul:
+    default:
+      address: localhost:8500
+
+data:
   db_sharding_config:
     file_shortvideo_short_video:
       sharding: file_shortvideo_short_video
