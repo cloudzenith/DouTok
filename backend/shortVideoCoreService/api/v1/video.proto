@@ -32,6 +32,9 @@ service VideoService {
             body: "*"
         };
     };
+
+    // 标记视频已经成功上传
+    rpc MarkVideoUploaded(MarkVideoUploadedRequest) returns (MarkVideoUploadedResponse);
 }
 
 message Author {
@@ -105,4 +108,12 @@ message ListPublishedVideoResponse {
     Metadata meta = 1;
     repeated Video videos = 2;
     PaginationResponse pagination = 3;
+}
+
+message MarkVideoUploadedRequest {
+
+}
+
+message MarkVideoUploadedResponse {
+
 }

@@ -7,7 +7,8 @@ import (
 )
 
 type Adapter struct {
-	user v1.UserServiceClient
+	user  v1.UserServiceClient
+	video v1.ShortVideoCoreVideoServiceClient
 }
 
 func New() *Adapter {
