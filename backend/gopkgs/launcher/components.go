@@ -8,6 +8,8 @@ import (
 	"github.com/cloudzenith/DouTok/backend/gopkgs/components/miniox"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/components/mysqlx"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/components/redisx"
+	"github.com/cloudzenith/DouTok/backend/gopkgs/components/rmqconsumerx"
+	"github.com/cloudzenith/DouTok/backend/gopkgs/components/rmqproducerx"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/gofer"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/log"
@@ -58,6 +60,16 @@ func launchWrapper(cfg config.Value, componentsName string) {
 
 	if componentsName == "consul" {
 		launchComponent(cfg, consulx.Init)
+		return
+	}
+
+	if componentsName == "rmqconsumer" {
+		launchComponent(cfg, rmqconsumerx.Init)
+		return
+	}
+
+	if componentsName == "rmqproducer" {
+		launchComponent(cfg, rmqproducerx.Init)
 		return
 	}
 
