@@ -23,6 +23,7 @@ const (
 	VideoService_GetVideoById_FullMethodName       = "/shortVideoCoreService.api.v1.VideoService/GetVideoById"
 	VideoService_PublishVideo_FullMethodName       = "/shortVideoCoreService.api.v1.VideoService/PublishVideo"
 	VideoService_ListPublishedVideo_FullMethodName = "/shortVideoCoreService.api.v1.VideoService/ListPublishedVideo"
+	VideoService_MarkVideoUploaded_FullMethodName  = "/shortVideoCoreService.api.v1.VideoService/MarkVideoUploaded"
 )
 
 // VideoServiceClient is the client API for VideoService service.
@@ -33,6 +34,8 @@ type VideoServiceClient interface {
 	GetVideoById(ctx context.Context, in *GetVideoByIdRequest, opts ...grpc.CallOption) (*GetVideoByIdResponse, error)
 	PublishVideo(ctx context.Context, in *PublishVideoRequest, opts ...grpc.CallOption) (*PublishVideoResponse, error)
 	ListPublishedVideo(ctx context.Context, in *ListPublishedVideoRequest, opts ...grpc.CallOption) (*ListPublishedVideoResponse, error)
+	// 标记视频已经成功上传
+	MarkVideoUploaded(ctx context.Context, in *MarkVideoUploadedRequest, opts ...grpc.CallOption) (*MarkVideoUploadedResponse, error)
 }
 
 type videoServiceClient struct {
@@ -83,6 +86,16 @@ func (c *videoServiceClient) ListPublishedVideo(ctx context.Context, in *ListPub
 	return out, nil
 }
 
+func (c *videoServiceClient) MarkVideoUploaded(ctx context.Context, in *MarkVideoUploadedRequest, opts ...grpc.CallOption) (*MarkVideoUploadedResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MarkVideoUploadedResponse)
+	err := c.cc.Invoke(ctx, VideoService_MarkVideoUploaded_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // VideoServiceServer is the server API for VideoService service.
 // All implementations must embed UnimplementedVideoServiceServer
 // for forward compatibility
@@ -91,6 +104,8 @@ type VideoServiceServer interface {
 	GetVideoById(context.Context, *GetVideoByIdRequest) (*GetVideoByIdResponse, error)
 	PublishVideo(context.Context, *PublishVideoRequest) (*PublishVideoResponse, error)
 	ListPublishedVideo(context.Context, *ListPublishedVideoRequest) (*ListPublishedVideoResponse, error)
+	// 标记视频已经成功上传
+	MarkVideoUploaded(context.Context, *MarkVideoUploadedRequest) (*MarkVideoUploadedResponse, error)
 	mustEmbedUnimplementedVideoServiceServer()
 }
 
@@ -109,6 +124,9 @@ func (UnimplementedVideoServiceServer) PublishVideo(context.Context, *PublishVid
 }
 func (UnimplementedVideoServiceServer) ListPublishedVideo(context.Context, *ListPublishedVideoRequest) (*ListPublishedVideoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListPublishedVideo not implemented")
+}
+func (UnimplementedVideoServiceServer) MarkVideoUploaded(context.Context, *MarkVideoUploadedRequest) (*MarkVideoUploadedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MarkVideoUploaded not implemented")
 }
 func (UnimplementedVideoServiceServer) mustEmbedUnimplementedVideoServiceServer() {}
 
@@ -195,6 +213,24 @@ func _VideoService_ListPublishedVideo_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _VideoService_MarkVideoUploaded_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MarkVideoUploadedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VideoServiceServer).MarkVideoUploaded(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: VideoService_MarkVideoUploaded_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VideoServiceServer).MarkVideoUploaded(ctx, req.(*MarkVideoUploadedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // VideoService_ServiceDesc is the grpc.ServiceDesc for VideoService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -217,6 +253,10 @@ var VideoService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListPublishedVideo",
 			Handler:    _VideoService_ListPublishedVideo_Handler,
+		},
+		{
+			MethodName: "MarkVideoUploaded",
+			Handler:    _VideoService_MarkVideoUploaded_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

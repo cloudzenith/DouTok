@@ -4,15 +4,14 @@ import (
 	"context"
 	"fmt"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/conf"
-	domain_dto "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/data/dto"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/data/model"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/data/userdata"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/data/videodata"
 	service_dto "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/dto"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/entity"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/userdomain"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/db"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/pkg/auth"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/pkg/utils"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/middleware/jwt"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/model"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/query"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/utils"
 	"github.com/go-kratos/kratos/v2/log"
 	"time"
 )
@@ -20,26 +19,20 @@ import (
 type VideoUseCase struct {
 	config    *conf.Config
 	videoRepo videodata.IVideoRepo
-	userRepo  userdomain.UserRepo
-	snowflake *utils.SnowflakeNode
-	dbClient  *db.DBClient
+	userRepo  userdata.IUserRepo
 	log       *log.Helper
 }
 
 func NewVideoUseCase(
 	config *conf.Config,
-	snowflake *utils.SnowflakeNode,
-	userRepo userdomain.UserRepo,
+	userRepo userdata.IUserRepo,
 	videoRepo videodata.IVideoRepo,
-	dbClient *db.DBClient,
 	logger log.Logger,
 ) *VideoUseCase {
 	return &VideoUseCase{
 		config:    config,
 		videoRepo: videoRepo,
 		userRepo:  userRepo,
-		snowflake: snowflake,
-		dbClient:  dbClient,
 		log:       log.NewHelper(logger),
 	}
 }
@@ -50,25 +43,21 @@ func (uc *VideoUseCase) FeedShortVideo(ctx context.Context, request *service_dto
 		latestTime = request.LatestTime
 	}
 
-	resp, err := uc.videoRepo.GetVideoFeed(ctx, &domain_dto.GetVideoFeedRequest{
-		UserId:     request.UserId,
-		LatestTime: latestTime,
-		Num:        request.FeedNum,
-	})
+	videos, err := uc.videoRepo.GetVideoFeed(ctx, query.Q, request.UserId, latestTime, request.FeedNum)
 	if err != nil {
 		return nil, err
 	}
 
 	// 去重并查询用户
 	uniqueUserIds := make(map[int64]struct{})
-	for _, video := range resp.Videos {
+	for _, video := range videos {
 		uniqueUserIds[video.UserID] = struct{}{}
 	}
 	userIds := make([]int64, 0, len(uniqueUserIds))
 	for id := range uniqueUserIds {
 		userIds = append(userIds, id)
 	}
-	users, err := uc.userRepo.FindByIds(ctx, userIds)
+	users, err := uc.userRepo.FindByIds(ctx, query.Q, userIds)
 	if err != nil {
 		return nil, err
 	}
@@ -80,36 +69,36 @@ func (uc *VideoUseCase) FeedShortVideo(ctx context.Context, request *service_dto
 	}
 
 	// 构建视频列表
-	videos := make([]*entity.Video, 0, len(resp.Videos))
-	for _, videoModel := range resp.Videos {
+	videoList := make([]*entity.Video, 0, len(videos))
+	for _, videoModel := range videos {
 		videoEntity := entity.FromVideoModel(videoModel)
 		authorModel, ok := userMap[videoModel.UserID]
 		if !ok {
 			uc.log.Warnf("user not found: %d", videoModel.UserID)
 		}
 		videoEntity.Author = entity.ToAuthorEntity(authorModel)
-		videos = append(videos, videoEntity)
+		videoList = append(videoList, videoEntity)
 	}
 
 	return &service_dto.FeedShortVideoResponse{
-		Videos: videos,
+		Videos: videoList,
 	}, nil
 }
 
 func (uc *VideoUseCase) PublishVideo(ctx context.Context, in *service_dto.PublishVideoRequest) (int64, error) {
-	userId, err := auth.GetLoginUser(ctx)
+	userId, err := jwt.GetLoginUser(ctx)
 	if err != nil {
 		return 0, fmt.Errorf("get login user failed: %v", err)
 	}
 	video := model.Video{
-		ID:          uc.snowflake.GetSnowflakeId(),
+		ID:          utils.GetSnowflakeId(),
 		UserID:      userId,
 		Title:       in.Title,
 		Description: in.Description,
 		VideoURL:    in.VideoURL,
 		CoverURL:    in.CoverURL,
 	}
-	err = uc.videoRepo.Save(ctx, &video)
+	err = uc.videoRepo.Save(ctx, query.Q, &video)
 	if err != nil {
 		return 0, err
 	}
@@ -117,11 +106,11 @@ func (uc *VideoUseCase) PublishVideo(ctx context.Context, in *service_dto.Publis
 }
 
 func (uc *VideoUseCase) GetVideoById(ctx context.Context, videoId int64) (*entity.Video, error) {
-	video, err := uc.videoRepo.FindByID(ctx, videoId)
+	video, err := uc.videoRepo.FindByID(ctx, query.Q, videoId)
 	if err != nil {
 		return nil, err
 	}
-	authorModel, err := uc.userRepo.FindByID(ctx, video.UserID)
+	authorModel, err := uc.userRepo.FindByID(ctx, query.Q, video.UserID)
 	if err != nil {
 		return nil, err
 	}
@@ -136,28 +125,24 @@ func (uc *VideoUseCase) ListPublishedVideo(ctx context.Context, request *service
 		latestTime = request.LatestTime
 	}
 
-	user, err := uc.userRepo.FindByID(ctx, request.UserId)
+	user, err := uc.userRepo.FindByID(ctx, query.Q, request.UserId)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := uc.videoRepo.GetVideoList(ctx, &domain_dto.GetVideoListRequest{
-		UserId:            request.UserId,
-		LatestTime:        latestTime,
-		PaginationRequest: request.Pagination,
-	})
+	videos, pageResp, err := uc.videoRepo.GetVideoList(ctx, query.Q, request.UserId, latestTime, request.Pagination)
 	if err != nil {
 		return nil, err
 	}
 
-	videos := entity.FromVideoModelList(resp.Videos)
+	videoEntityList := entity.FromVideoModelList(videos)
 	author := entity.ToAuthorEntity(user)
-	for _, video := range videos {
+	for _, video := range videoEntityList {
 		video.Author = author
 	}
 
 	return &service_dto.ListPublishedVideoResponse{
-		Videos:     videos,
-		Pagination: resp.PaginationResponse,
+		Videos:     videoEntityList,
+		Pagination: pageResp,
 	}, nil
 }

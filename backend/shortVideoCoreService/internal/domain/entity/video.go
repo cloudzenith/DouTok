@@ -2,7 +2,7 @@ package entity
 
 import (
 	v1 "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/data/model"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/model"
 	"time"
 )
 

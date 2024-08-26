@@ -2,55 +2,47 @@ package videodata
 
 import (
 	"context"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/data/dto"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/data/model"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/db"
 	infra_dto "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/dto"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/model"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/query"
 	"github.com/go-kratos/kratos/v2/log"
-	"gorm.io/gorm"
 	"time"
 )
 
 type VideoRepo struct {
-	dbClient *db.DBClient
-	log      *log.Helper
+	log *log.Helper
 }
 
 // NewVideoRepo .
-func NewVideoRepo(dbClient *db.DBClient, logger log.Logger) *VideoRepo {
+func NewVideoRepo(logger log.Logger) *VideoRepo {
 	return &VideoRepo{
-		dbClient: dbClient,
-		log:      log.NewHelper(logger),
+		log: log.NewHelper(logger),
 	}
 }
 
-func (r *VideoRepo) Save(ctx context.Context, v *model.Video) error {
-	result := r.dbClient.DB(ctx).Create(v)
-	return result.Error
+func (r *VideoRepo) Save(ctx context.Context, tx *query.Query, v *model.Video) error {
+	return tx.Video.WithContext(ctx).Create(v)
 }
 
-func (r *VideoRepo) UpdateById(ctx context.Context, v *model.Video) (int64, error) {
-	result := r.dbClient.DB(ctx).Where(&model.Video{ID: v.ID}).Updates(v)
-	return result.RowsAffected, result.Error
+func (r *VideoRepo) UpdateById(ctx context.Context, tx *query.Query, v *model.Video) (int64, error) {
+	res, err := tx.Video.WithContext(ctx).Where(tx.Video.ID.Eq(v.ID)).Updates(v)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected, nil
 }
 
-func (r *VideoRepo) FindByID(ctx context.Context, id int64) (*model.Video, error) {
-	video := &model.Video{}
-	result := r.dbClient.DB(ctx).First(video, id)
-	if result.Error != nil {
-		return nil, result.Error
+func (r *VideoRepo) FindByID(ctx context.Context, tx *query.Query, id int64) (*model.Video, error) {
+	video, err := tx.Video.WithContext(ctx).Where(tx.Video.ID.Eq(id)).First()
+	if err != nil {
+		return nil, err
 	}
 	return video, nil
 }
 
-func (r *VideoRepo) GetVideoList(ctx context.Context, request *dto.GetVideoListRequest) (*dto.GetVideoListResponse, error) {
-	whereConditionFn := func(db *gorm.DB) *gorm.DB {
-		db = db.
-			Where("user_id = ?", request.UserId).
-			Where("created_at < ?", time.Unix(request.LatestTime, 0).UTC())
-		return db
-	}
-
+func (r *VideoRepo) GetVideoList(
+	ctx context.Context, tx *query.Query, userId int64, latestTime int64, pageRequest *infra_dto.PaginationRequest,
+) ([]*model.Video, *infra_dto.PaginationResponse, error) {
 	//var sortStrings []string
 	//for _, sortField := range request.PaginationRequest.SortFields {
 	//	order := "ASC"
@@ -61,33 +53,30 @@ func (r *VideoRepo) GetVideoList(ctx context.Context, request *dto.GetVideoListR
 	//}
 	//sortString := strings.Join(sortStrings, ", ")
 	// 暂时屏蔽外层排序逻辑
-	sortString := "id desc"
-
-	var videos []*model.Video
-	result := r.dbClient.WhereWithPaginateAndSort(ctx, whereConditionFn, &videos, sortString, request.PaginationRequest)
-	if result.Error != nil {
-		return nil, result.Error
+	offset := (pageRequest.PageNum - 1) * pageRequest.PageSize
+	videos, err := tx.Video.WithContext(ctx).
+		Where(tx.Video.UserID.Eq(userId)).
+		Where(tx.Video.CreatedAt.Lt(time.Unix(latestTime, 0).UTC())).
+		Limit(int(pageRequest.PageSize)).
+		Offset(int(offset)).
+		Order(tx.Video.ID.Desc()).Find()
+	if err != nil {
+		return nil, nil, err
 	}
-
-	return &dto.GetVideoListResponse{
-		Videos: videos,
-		PaginationResponse: &infra_dto.PaginationResponse{
-			Page:  int64(request.PaginationRequest.PageNum),
-			Count: int64(len(videos)),
-		},
+	return videos, &infra_dto.PaginationResponse{
+		Page:  int64(pageRequest.PageNum),
+		Count: int64(len(videos)),
 	}, nil
 }
 
-func (r *VideoRepo) GetVideoFeed(ctx context.Context, request *dto.GetVideoFeedRequest) (*dto.GetVideoFeedResponse, error) {
-	var videos []*model.Video
-	result := r.dbClient.DB(ctx).
-		Where("user_id = ?", request.UserId).
-		Where("created_at < ?", time.Unix(request.LatestTime, 0).UTC()).
-		Limit(int(request.Num)).Order("id desc").Find(&videos)
-	if result.Error != nil {
-		return nil, result.Error
+func (r *VideoRepo) GetVideoFeed(ctx context.Context, tx *query.Query, userId, latestTime, num int64) ([]*model.Video, error) {
+	videos, err := tx.Video.WithContext(ctx).
+		Where(tx.Video.UserID.Eq(userId)).
+		Where(tx.Video.CreatedAt.Lt(time.Unix(latestTime, 0).UTC())).
+		Limit(int(num)).
+		Order(tx.Video.ID.Desc()).Find()
+	if err != nil {
+		return nil, err
 	}
-	return &dto.GetVideoFeedResponse{
-		Videos: videos,
-	}, nil
+	return videos, nil
 }

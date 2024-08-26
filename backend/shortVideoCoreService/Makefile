@@ -87,3 +87,6 @@ help:
 # generate schema
 schema:
 	go run github.com/cloudzenith/DouTok/backend/shortVideoCoreService/cmd -schema
+
+gen-db:
+	gentool -c "gen.yml"

@@ -19,66 +19,41 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationUserServiceCreateUser = "/shortVideoCoreService.api.v1.UserService/CreateUser"
 const OperationUserServiceGetUserInfo = "/shortVideoCoreService.api.v1.UserService/GetUserInfo"
-const OperationUserServiceLogin = "/shortVideoCoreService.api.v1.UserService/Login"
-const OperationUserServiceRegister = "/shortVideoCoreService.api.v1.UserService/Register"
 const OperationUserServiceUpdateUserInfo = "/shortVideoCoreService.api.v1.UserService/UpdateUserInfo"
 
 type UserServiceHTTPServer interface {
+	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
 	GetUserInfo(context.Context, *GetUserInfoRequest) (*GetUserInfoResponse, error)
-	Login(context.Context, *LoginRequest) (*LoginResponse, error)
-	Register(context.Context, *RegisterRequest) (*RegisterResponse, error)
 	UpdateUserInfo(context.Context, *UpdateUserInfoRequest) (*UpdateUserInfoResponse, error)
 }
 
 func RegisterUserServiceHTTPServer(s *http.Server, srv UserServiceHTTPServer) {
 	r := s.Route("/")
-	r.POST("/v1/user/register", _UserService_Register0_HTTP_Handler(srv))
-	r.POST("/v1/user/login", _UserService_Login0_HTTP_Handler(srv))
+	r.POST("/v1/user", _UserService_CreateUser0_HTTP_Handler(srv))
 	r.GET("/v1/user/info", _UserService_GetUserInfo0_HTTP_Handler(srv))
-	r.PUT("/v1/user/info", _UserService_UpdateUserInfo0_HTTP_Handler(srv))
+	r.PUT("/v1/user", _UserService_UpdateUserInfo0_HTTP_Handler(srv))
 }
 
-func _UserService_Register0_HTTP_Handler(srv UserServiceHTTPServer) func(ctx http.Context) error {
+func _UserService_CreateUser0_HTTP_Handler(srv UserServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in RegisterRequest
+		var in CreateUserRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationUserServiceRegister)
+		http.SetOperation(ctx, OperationUserServiceCreateUser)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Register(ctx, req.(*RegisterRequest))
+			return srv.CreateUser(ctx, req.(*CreateUserRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*RegisterResponse)
-		return ctx.Result(200, reply)
-	}
-}
-
-func _UserService_Login0_HTTP_Handler(srv UserServiceHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in LoginRequest
-		if err := ctx.Bind(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationUserServiceLogin)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Login(ctx, req.(*LoginRequest))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*LoginResponse)
+		reply := out.(*CreateUserResponse)
 		return ctx.Result(200, reply)
 	}
 }
@@ -125,9 +100,8 @@ func _UserService_UpdateUserInfo0_HTTP_Handler(srv UserServiceHTTPServer) func(c
 }
 
 type UserServiceHTTPClient interface {
+	CreateUser(ctx context.Context, req *CreateUserRequest, opts ...http.CallOption) (rsp *CreateUserResponse, err error)
 	GetUserInfo(ctx context.Context, req *GetUserInfoRequest, opts ...http.CallOption) (rsp *GetUserInfoResponse, err error)
-	Login(ctx context.Context, req *LoginRequest, opts ...http.CallOption) (rsp *LoginResponse, err error)
-	Register(ctx context.Context, req *RegisterRequest, opts ...http.CallOption) (rsp *RegisterResponse, err error)
 	UpdateUserInfo(ctx context.Context, req *UpdateUserInfoRequest, opts ...http.CallOption) (rsp *UpdateUserInfoResponse, err error)
 }
 
@@ -137,6 +111,19 @@ type UserServiceHTTPClientImpl struct {
 
 func NewUserServiceHTTPClient(client *http.Client) UserServiceHTTPClient {
 	return &UserServiceHTTPClientImpl{client}
+}
+
+func (c *UserServiceHTTPClientImpl) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...http.CallOption) (*CreateUserResponse, error) {
+	var out CreateUserResponse
+	pattern := "/v1/user"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationUserServiceCreateUser))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 func (c *UserServiceHTTPClientImpl) GetUserInfo(ctx context.Context, in *GetUserInfoRequest, opts ...http.CallOption) (*GetUserInfoResponse, error) {
@@ -152,35 +139,9 @@ func (c *UserServiceHTTPClientImpl) GetUserInfo(ctx context.Context, in *GetUser
 	return &out, nil
 }
 
-func (c *UserServiceHTTPClientImpl) Login(ctx context.Context, in *LoginRequest, opts ...http.CallOption) (*LoginResponse, error) {
-	var out LoginResponse
-	pattern := "/v1/user/login"
-	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationUserServiceLogin))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, nil
-}
-
-func (c *UserServiceHTTPClientImpl) Register(ctx context.Context, in *RegisterRequest, opts ...http.CallOption) (*RegisterResponse, error) {
-	var out RegisterResponse
-	pattern := "/v1/user/register"
-	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationUserServiceRegister))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, nil
-}
-
 func (c *UserServiceHTTPClientImpl) UpdateUserInfo(ctx context.Context, in *UpdateUserInfoRequest, opts ...http.CallOption) (*UpdateUserInfoResponse, error) {
 	var out UpdateUserInfoResponse
-	pattern := "/v1/user/info"
+	pattern := "/v1/user"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationUserServiceUpdateUserInfo))
 	opts = append(opts, http.PathTemplate(pattern))

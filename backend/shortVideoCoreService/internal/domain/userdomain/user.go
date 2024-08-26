@@ -3,66 +3,41 @@ package userdomain
 import (
 	"context"
 	"fmt"
-	"github.com/cloudzenith/DouTok/backend/baseService/api"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/conf"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/data/model"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/data/userdata"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/entity"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/db"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/thirdparty"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/pkg/auth"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/pkg/utils"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/model"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/query"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/utils"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/uuid"
 )
 
 type UserUsecase struct {
-	config               *conf.Config
-	accountServiceClient *thirdparty.AccountServiceClient
-	repo                 UserRepo
-	snowflake            *utils.SnowflakeNode
-	dbClient             *db.DBClient
-	log                  *log.Helper
+	config *conf.Config
+	repo   userdata.IUserRepo
+	log    *log.Helper
 }
 
 func NewUserUsecase(
-	config *conf.Config,
-	snowflake *utils.SnowflakeNode,
-	client *thirdparty.AccountServiceClient,
-	repo UserRepo,
-	dbClient *db.DBClient,
+	repo userdata.IUserRepo,
 	logger log.Logger,
 ) *UserUsecase {
 	return &UserUsecase{
-		config:               config,
-		accountServiceClient: client,
-		repo:                 repo,
-		snowflake:            snowflake,
-		dbClient:             dbClient,
-		log:                  log.NewHelper(logger),
+		repo: repo,
+		log:  log.NewHelper(logger),
 	}
 }
 
-func (uc *UserUsecase) Register(ctx context.Context, mobile, email, password string) (int64, error) {
-	resp, err := uc.accountServiceClient.Register(ctx, &api.RegisterRequest{
-		Mobile:   mobile,
-		Email:    email,
-		Password: password,
-	})
-	if err != nil {
-		return 0, err
-	}
-	uc.log.Infof("account id: %d", resp.AccountId)
-
+func (uc *UserUsecase) CreateUser(ctx context.Context, mobile, email string, accountId int64) (int64, error) {
 	user := model.User{
-		ID:        uc.snowflake.GetSnowflakeId(),
+		ID:        utils.GetSnowflakeId(),
 		Mobile:    mobile,
 		Email:     email,
 		Name:      uuid.New().String(),
-		AccountID: resp.AccountId,
+		AccountID: accountId,
 	}
-	err = uc.dbClient.ExecTx(ctx, func(ctx context.Context) error {
-		return uc.repo.Save(ctx, &user)
-	})
+	err := uc.repo.Save(ctx, query.Q, &user)
 	if err != nil {
 		return 0, err
 	}
@@ -70,39 +45,12 @@ func (uc *UserUsecase) Register(ctx context.Context, mobile, email, password str
 	return user.ID, nil
 }
 
-func (uc *UserUsecase) Login(ctx context.Context, mobile, email, password string) (string, error) {
-	resp, err := uc.accountServiceClient.CheckAccount(ctx, &api.CheckAccountRequest{
-		Mobile:   mobile,
-		Email:    email,
-		Password: password,
-	})
-	if err != nil {
-		return "", err
-	}
-
-	user, err := uc.repo.FindByAccountID(ctx, resp.AccountId)
-	if err != nil {
-		return "", err
-	}
-
-	token, err := auth.GenerateToken(user.ID, uc.config.Common)
-	if err != nil {
-		return "", err
-	}
-
-	return token, nil
-}
-
 func (uc *UserUsecase) UpdateUserInfo(ctx context.Context, user *entity.User) error {
 	usermodel := user.ToUserModel()
-	var (
-		err error
-		row int64
-	)
-	err = uc.dbClient.ExecTx(ctx, func(ctx context.Context) error {
-		row, err = uc.repo.UpdateById(ctx, usermodel)
+	row, err := uc.repo.UpdateById(ctx, query.Q, usermodel)
+	if err != nil {
 		return err
-	})
+	}
 	if row == 0 {
 		return fmt.Errorf("user not found: %d", user.ID)
 	}
@@ -110,7 +58,7 @@ func (uc *UserUsecase) UpdateUserInfo(ctx context.Context, user *entity.User) er
 }
 
 func (uc *UserUsecase) GetUserInfo(ctx context.Context, userId int64) (*entity.User, error) {
-	user, err := uc.repo.FindByID(ctx, userId)
+	user, err := uc.repo.FindByID(ctx, query.Q, userId)
 	if err != nil {
 		return nil, err
 	}

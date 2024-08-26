@@ -1,4 +1,4 @@
-package db
+package utils
 
 import (
 	"context"
@@ -12,18 +12,15 @@ type DBClient struct {
 	db *gorm.DB
 }
 
-func NewDBClient(c *conf.Database) (*DBClient, error) {
-	dsn := c.Source
-	if c.Driver == "mysql" {
-		db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
-			SkipDefaultTransaction: true,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return &DBClient{db: db}, nil
+func NewDBClient(c *conf.Components) *DBClient {
+	dsn := c.MySQL.Default.Source
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+		SkipDefaultTransaction: true,
+	})
+	if err != nil {
+		panic(err)
 	}
-	return nil, nil
+	return &DBClient{db: db}
 }
 
 func (c *DBClient) GetDB() *gorm.DB {

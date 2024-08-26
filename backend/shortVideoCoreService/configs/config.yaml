@@ -1,22 +1,29 @@
-server:
-  http:
-    addr: 0.0.0.0:8001
-    timeout: 3s
-  grpc:
-    addr: 0.0.0.0:9010
-    timeout: 3s
-database:
-  driver: mysql
-  source: root:root@tcp(127.0.0.1:3306)/doutok?parseTime=True&loc=Local
-redis:
-  addr: 127.0.0.1:6379
-  read_timeout: 0.2s
-  write_timeout: 0.2s
-third_party:
-  base_service:
-    address: localhost:8888
-common:
+app:
+  name: short-video-core-service
+  version: 0.0.1-test
   node: 2
-  auth:
-    secret: "secret-key"
-    expire: 720
+
+server:
+  grpc:
+    addr: 0.0.0.0:8001
+
+components:
+  mysql:
+    default:
+      host: localhost
+      port: 3306
+      db_name: doutok
+      user: root
+      password: root
+  redis:
+    default:
+      dsn: localhost:6379
+      password: root
+  consul:
+    default:
+      address: localhost:8500
+
+auth:
+  jwt:
+    access_expire: 720 # 30 days
+    access_secret: "secret-key"

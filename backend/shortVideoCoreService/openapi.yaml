@@ -6,23 +6,7 @@ info:
     title: ""
     version: 0.0.1
 paths:
-    /v1/user/info:
-        get:
-            tags:
-                - UserService
-            operationId: UserService_GetUserInfo
-            parameters:
-                - name: userId
-                  in: query
-                  schema:
-                    type: string
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/shortVideoCoreService.api.v1.GetUserInfoResponse'
+    /v1/user:
         put:
             tags:
                 - UserService
@@ -40,16 +24,15 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/shortVideoCoreService.api.v1.UpdateUserInfoResponse'
-    /v1/user/login:
         post:
             tags:
                 - UserService
-            operationId: UserService_Login
+            operationId: UserService_CreateUser
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/shortVideoCoreService.api.v1.LoginRequest'
+                            $ref: '#/components/schemas/shortVideoCoreService.api.v1.CreateUserRequest'
                 required: true
             responses:
                 "200":
@@ -57,25 +40,24 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/shortVideoCoreService.api.v1.LoginResponse'
-    /v1/user/register:
-        post:
+                                $ref: '#/components/schemas/shortVideoCoreService.api.v1.CreateUserResponse'
+    /v1/user/info:
+        get:
             tags:
                 - UserService
-            operationId: UserService_Register
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/shortVideoCoreService.api.v1.RegisterRequest'
-                required: true
+            operationId: UserService_GetUserInfo
+            parameters:
+                - name: userId
+                  in: query
+                  schema:
+                    type: string
             responses:
                 "200":
                     description: OK
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/shortVideoCoreService.api.v1.RegisterResponse'
+                                $ref: '#/components/schemas/shortVideoCoreService.api.v1.GetUserInfoResponse'
     /v1/video/feed:
         post:
             tags:
@@ -161,6 +143,22 @@ components:
                     type: string
                 isFollowing:
                     type: string
+        shortVideoCoreService.api.v1.CreateUserRequest:
+            type: object
+            properties:
+                mobile:
+                    type: string
+                email:
+                    type: string
+                accountId:
+                    type: string
+        shortVideoCoreService.api.v1.CreateUserResponse:
+            type: object
+            properties:
+                meta:
+                    $ref: '#/components/schemas/shortVideoCoreService.api.v1.Metadata'
+                userId:
+                    type: string
         shortVideoCoreService.api.v1.FeedShortVideoRequest:
             type: object
             properties:
@@ -213,22 +211,6 @@ components:
                         $ref: '#/components/schemas/shortVideoCoreService.api.v1.Video'
                 pagination:
                     $ref: '#/components/schemas/shortVideoCoreService.api.v1.PaginationResponse'
-        shortVideoCoreService.api.v1.LoginRequest:
-            type: object
-            properties:
-                mobile:
-                    type: string
-                email:
-                    type: string
-                password:
-                    type: string
-        shortVideoCoreService.api.v1.LoginResponse:
-            type: object
-            properties:
-                meta:
-                    $ref: '#/components/schemas/shortVideoCoreService.api.v1.Metadata'
-                token:
-                    type: string
         shortVideoCoreService.api.v1.Metadata:
             type: object
             properties:
@@ -285,22 +267,6 @@ components:
                 meta:
                     $ref: '#/components/schemas/shortVideoCoreService.api.v1.Metadata'
                 videoId:
-                    type: string
-        shortVideoCoreService.api.v1.RegisterRequest:
-            type: object
-            properties:
-                mobile:
-                    type: string
-                email:
-                    type: string
-                password:
-                    type: string
-        shortVideoCoreService.api.v1.RegisterResponse:
-            type: object
-            properties:
-                meta:
-                    $ref: '#/components/schemas/shortVideoCoreService.api.v1.Metadata'
-                userId:
                     type: string
         shortVideoCoreService.api.v1.SortField:
             type: object

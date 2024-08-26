@@ -9,18 +9,12 @@ import "validate/validate.proto";
 import "v1/base.proto";
 
 service UserService {
-    rpc Register(RegisterRequest) returns (RegisterResponse) {
+    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
         option (google.api.http) = {
-            post: "/v1/user/register"
+            post: "/v1/user"
             body: "*"
         };
     };
-    rpc Login(LoginRequest) returns (LoginResponse) {
-        option (google.api.http) = {
-            post: "/v1/user/login"
-            body: "*"
-        };
-    }
     rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse) {
         option (google.api.http) = {
             get: "/v1/user/info"
@@ -28,7 +22,7 @@ service UserService {
     };
     rpc UpdateUserInfo(UpdateUserInfoRequest) returns (UpdateUserInfoResponse) {
         option (google.api.http) = {
-            put: "/v1/user/info"
+            put: "/v1/user"
             body: "*"
         };
     };
@@ -49,32 +43,15 @@ message User {
     int64 favorite_count = 12; // 点赞数量
 }
 
-message RegisterRequest {
+message CreateUserRequest {
     string mobile = 1 [(validate.rules).string.pattern = "^\\+?[1-9]\\d{1,14}$"];
     string email = 2 [(validate.rules).string.email = true];
-    string password = 3 [
-        (validate.rules).string.min_len = 8,
-        (validate.rules).string.max_len = 50
-    ];
+    int64 account_id = 3 [(validate.rules).int64 = {gt: 0}];
 }
 
-message RegisterResponse {
+message CreateUserResponse {
     Metadata meta = 1;
     int64 user_id = 2;
-}
-
-message LoginRequest {
-    string mobile = 1 [(validate.rules).string.pattern = "^\\+?[1-9]\\d{1,14}$"];
-    string email = 2 [(validate.rules).string.email = true];
-    string password = 3 [
-        (validate.rules).string.min_len = 8,
-        (validate.rules).string.max_len = 50
-    ];
-}
-
-message LoginResponse {
-    Metadata meta = 1;
-    string token = 3;
 }
 
 message GetUserInfoRequest {
