@@ -11,16 +11,16 @@ sidebar_position: 2
 ## 环境准备
 
 1. Golang 1.22+
-   > - <https://golang.org/dl/>
-   > - <https://golang.google.cn/dl/>
+   > - https://golang.org/dl/
+   > - https://golang.google.cn/dl/
 2. Node 14.17+
-   > - <https://nodejs.org/en/download/>
+   > - https://nodejs.org/en/download/
 3. JetBrains GoLand/WebStorem
-   > - <https://www.jetbrains.com/>
+   > - https://www.jetbrains.com/
 4. VSCode
-   > - <https://code.visualstudio.com/>
+   > - https://code.visualstudio.com/
 5. Docker
-   > - <https://www.docker.com/products/docker-desktop>
+   > - https://www.docker.com/products/docker-desktop
 
 ## 必要组件配置及启动
 
