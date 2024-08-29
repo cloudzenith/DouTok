@@ -1,0 +1,63 @@
+syntax = "proto3";
+package api;
+
+option go_package = "github.com/cloudzenith/DouTok/...;imapi";
+
+import "base.proto";
+
+// 聊天室服务。1对1聊天视为只拥有2个人的聊天室
+service RoomService {
+    // 创建聊天室
+    rpc Create(CreateRequest) returns (CreateResponse);
+    // 删除聊天室
+    rpc Remove(RemoveRequest) returns (RemoveResponse);
+    // 将account加入聊天室
+    rpc AddAccount2Room(AddAccount2RoomRequest) returns (AddAccount2RoomResponse);
+    // 将account从聊天室中移除
+    rpc RmAccountFromRoom(RmAccountFromRoomRequest) returns (RmAccountFromRoomResponse);
+}
+
+message CreateRequest {
+    string domain = 1; // 业务领域名称
+    string biz = 2; // 业务名称
+    int64 creator_id = 3; // 创建者ID
+}
+
+message CreateResponse {
+    Metadata meta = 1;
+    int64 room_id = 2; // 聊天室ID
+}
+
+message RemoveRequest {
+    string domain = 1; // 业务领域名称
+    string biz = 2; // 业务名称
+    int64 room_id = 3; // 聊天室ID
+}
+
+message RemoveResponse {
+    Metadata meta = 1;
+}
+
+message AddAccount2RoomRequest {
+    string domain = 1; // 业务领域名称
+    string biz = 2; // 业务名称
+    int64 room_id = 3; // 聊天室ID
+    int64 account_id = 4; // 账号ID
+}
+
+message AddAccount2RoomResponse {
+    Metadata meta = 1;
+    repeated int64 account_ids = 2; // 聊天室中的账号ID列表
+}
+
+message RmAccountFromRoomRequest {
+    string domain = 1; // 业务领域名称
+    string biz = 2; // 业务名称
+    int64 room_id = 3; // 聊天室ID
+    int64 account_id = 4; // 账号ID
+}
+
+message RmAccountFromRoomResponse {
+    Metadata meta = 1;
+    repeated int64 account_ids = 2; // 聊天室中的账号ID列表
+}

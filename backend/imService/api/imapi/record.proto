@@ -1,0 +1,71 @@
+syntax = "proto3";
+package api;
+
+option go_package = "github.com/cloudzenith/DouTok/...;imapi";
+
+import "base.proto";
+
+// 聊天记录服务
+service RecordService {
+    // 同步推送聊天记录到im service
+    rpc Push(PushRequest) returns (PushResponse);
+    // 从im service拉取聊天记录
+    rpc Pull(PullRequest) returns (PullResponse);
+    // 获取长连接地址，用于拉取聊天记录
+    rpc PullByAliveConnection(PullByAliveConnectionRequest) returns (PullByAliveConnectionResponse);
+}
+
+enum RecordType {
+    TEXT = 0; // 文本消息
+    AUDIO = 1; // 语音消息
+    IMAGE = 2; // 图片消息
+    VIDEO = 3; // 视频消息
+    FILE = 4; // 文件消息
+    LOCATION = 5; // 位置消息
+    STICKER = 6; // 表情消息
+}
+
+message Record {
+    int64 id = 1; // 聊天记录ID
+    RecordType type = 2; // 聊天记录类型
+    int64 room_id = 3; // 聊天室ID
+    int64 account_id = 4; // 账号ID
+    string content = 5; // 聊天内容. 文本消息为文本内容，其他消息为BaseService.FileService的file id
+}
+
+message PushRequest {
+    string domain = 1; // 业务领域名称
+    string biz = 2; // 业务名称
+    int64 room_id = 3; // 聊天室ID
+    int64 account_id = 4; // 账号ID
+    string biz_info = 5; // 聊天内容
+}
+
+message PushResponse {
+    Metadata meta = 1;
+}
+
+message PullRequest {
+    string domain = 1; // 业务领域名称
+    string biz = 2; // 业务名称
+    int64 room_id = 3; // 聊天室ID
+    int64 size = 4; // 拉取的聊天记录的条数
+    int64 latest_time = 5; // 最新的聊天记录的时间
+}
+
+message PullResponse {
+    Metadata meta = 1;
+    repeated Record records = 2; // 聊天记录
+}
+
+message PullByAliveConnectionRequest {
+    string domain = 1; // 业务领域名称
+    string biz = 2; // 业务名称
+    int64 room_id = 3; // 聊天室ID
+    int64 account_id = 4; // 账号ID
+}
+
+message PullByAliveConnectionResponse {
+    Metadata meta = 1;
+    string url = 2; // 长连接地址
+}
