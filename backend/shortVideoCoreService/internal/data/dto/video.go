@@ -1,8 +1,8 @@
 package dto
 
 import (
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/data/model"
 	infra_dto "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/dto"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/model"
 )
 
 type GetVideoListRequest struct {

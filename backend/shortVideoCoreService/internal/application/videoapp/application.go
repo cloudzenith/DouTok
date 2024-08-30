@@ -1,32 +1,26 @@
-package videoservice
+package videoapp
 
 import (
 	"context"
 	v1 "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/conf"
+	service_dto "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/application/dto"
 	domain_dto "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/dto"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/videodomain"
 	infra_dto "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/dto"
-	service_dto "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/service/dto"
-	"github.com/go-kratos/kratos/v2/log"
 )
 
-type VideoService struct {
-	config       *conf.Config
-	log          *log.Helper
+type VideoApplication struct {
 	videoUsecase videodomain.VideoUsecase
 	v1.UnimplementedVideoServiceServer
 }
 
-func NewVideoService(config *conf.Config, logger log.Logger, video videodomain.VideoUsecase) *VideoService {
-	return &VideoService{
-		config:       config,
-		log:          log.NewHelper(logger),
+func NewVideoApplication(video videodomain.VideoUsecase) *VideoApplication {
+	return &VideoApplication{
 		videoUsecase: video,
 	}
 }
 
-func (s *VideoService) PublishVideo(ctx context.Context, in *v1.PublishVideoRequest) (*v1.PublishVideoResponse, error) {
+func (s *VideoApplication) PublishVideo(ctx context.Context, in *v1.PublishVideoRequest) (*v1.PublishVideoResponse, error) {
 	videoId, err := s.videoUsecase.PublishVideo(ctx, &domain_dto.PublishVideoRequest{
 		Title:       in.Title,
 		Description: in.Description,
@@ -45,7 +39,7 @@ func (s *VideoService) PublishVideo(ctx context.Context, in *v1.PublishVideoRequ
 	}, nil
 }
 
-func (s *VideoService) GetVideoById(ctx context.Context, in *v1.GetVideoByIdRequest) (*v1.GetVideoByIdResponse, error) {
+func (s *VideoApplication) GetVideoById(ctx context.Context, in *v1.GetVideoByIdRequest) (*v1.GetVideoByIdResponse, error) {
 	video, err := s.videoUsecase.GetVideoById(ctx, in.VideoId)
 	if err != nil {
 		return nil, err
@@ -59,7 +53,7 @@ func (s *VideoService) GetVideoById(ctx context.Context, in *v1.GetVideoByIdRequ
 	}, nil
 }
 
-func (s *VideoService) FeedShortVideo(ctx context.Context, in *v1.FeedShortVideoRequest) (*v1.FeedShortVideoResponse, error) {
+func (s *VideoApplication) FeedShortVideo(ctx context.Context, in *v1.FeedShortVideoRequest) (*v1.FeedShortVideoResponse, error) {
 	resp, err := s.videoUsecase.FeedShortVideo(ctx, &domain_dto.FeedShortVideoRequest{
 		UserId:     in.UserId,
 		LatestTime: in.LatestTime,
@@ -77,7 +71,7 @@ func (s *VideoService) FeedShortVideo(ctx context.Context, in *v1.FeedShortVideo
 	}, nil
 }
 
-func (s *VideoService) ListPublishedVideo(ctx context.Context, in *v1.ListPublishedVideoRequest) (*v1.ListPublishedVideoResponse, error) {
+func (s *VideoApplication) ListPublishedVideo(ctx context.Context, in *v1.ListPublishedVideoRequest) (*v1.ListPublishedVideoResponse, error) {
 	resp, err := s.videoUsecase.ListPublishedVideo(ctx, &domain_dto.ListPublishedVideoRequest{
 		UserId:     in.UserId,
 		Pagination: infra_dto.FromPBPaginationRequest(in.Pagination),

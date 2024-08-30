@@ -2,57 +2,54 @@ package userdata
 
 import (
 	"context"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/data/model"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/db"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/model"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/query"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
 type UserRepo struct {
-	dbClient *db.DBClient
-	log      *log.Helper
+	log *log.Helper
 }
 
 // NewUserRepo .
-func NewUserRepo(dbClient *db.DBClient, logger log.Logger) *UserRepo {
+func NewUserRepo(logger log.Logger) *UserRepo {
 	return &UserRepo{
-		dbClient: dbClient,
-		log:      log.NewHelper(logger),
+		log: log.NewHelper(logger),
 	}
 }
 
-func (r *UserRepo) Save(ctx context.Context, u *model.User) error {
-	result := r.dbClient.DB(ctx).Create(u)
-	return result.Error
+func (r *UserRepo) Save(ctx context.Context, tx *query.Query, u *model.User) error {
+	return tx.WithContext(ctx).User.Create(u)
 }
 
-func (r *UserRepo) UpdateById(ctx context.Context, u *model.User) (int64, error) {
-	result := r.dbClient.DB(ctx).Where(&model.User{ID: u.ID}).Updates(u)
-	return result.RowsAffected, result.Error
-}
-
-func (r *UserRepo) FindByID(ctx context.Context, userID int64) (*model.User, error) {
-	user := &model.User{}
-	result := r.dbClient.DB(ctx).First(user, userID)
-	if result.Error != nil {
-		return nil, result.Error
+func (r *UserRepo) UpdateById(ctx context.Context, tx *query.Query, u *model.User) (int64, error) {
+	ret, err := tx.User.WithContext(ctx).Where(tx.User.ID.Eq(u.ID)).Updates(u)
+	if err != nil {
+		return 0, err
 	}
-	return user, nil
+	return ret.RowsAffected, nil
 }
 
-func (r *UserRepo) FindByAccountID(ctx context.Context, accountID int64) (*model.User, error) {
-	user := &model.User{}
-	result := r.dbClient.DB(ctx).Where(&model.User{AccountID: accountID}).First(user)
-	if result.Error != nil {
-		return nil, result.Error
+func (r *UserRepo) FindByID(ctx context.Context, tx *query.Query, userID int64) (*model.User, error) {
+	user, err := tx.User.WithContext(ctx).Where(tx.User.ID.Eq(userID)).First()
+	if err != nil {
+		return nil, err
 	}
 	return user, nil
 }
 
-func (r *UserRepo) FindByIds(ctx context.Context, ids []int64) ([]*model.User, error) {
-	var users []*model.User
-	result := r.dbClient.DB(ctx).Where("id IN ?", ids).Find(&users)
-	if result.Error != nil {
-		return nil, result.Error
+func (r *UserRepo) FindByAccountID(ctx context.Context, tx *query.Query, accountID int64) (*model.User, error) {
+	user, err := tx.User.WithContext(ctx).Where(tx.User.AccountID.Eq(accountID)).First()
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func (r *UserRepo) FindByIds(ctx context.Context, tx *query.Query, ids []int64) ([]*model.User, error) {
+	users, err := tx.User.WithContext(ctx).Where(tx.User.ID.In(ids...)).Find()
+	if err != nil {
+		return nil, err
 	}
 	return users, nil
 }

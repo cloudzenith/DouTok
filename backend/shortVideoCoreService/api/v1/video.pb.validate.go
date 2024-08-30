@@ -1466,3 +1466,207 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ListPublishedVideoResponseValidationError{}
+
+// Validate checks the field values on MarkVideoUploadedRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *MarkVideoUploadedRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on MarkVideoUploadedRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// MarkVideoUploadedRequestMultiError, or nil if none found.
+func (m *MarkVideoUploadedRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *MarkVideoUploadedRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return MarkVideoUploadedRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// MarkVideoUploadedRequestMultiError is an error wrapping multiple validation
+// errors returned by MarkVideoUploadedRequest.ValidateAll() if the designated
+// constraints aren't met.
+type MarkVideoUploadedRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m MarkVideoUploadedRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m MarkVideoUploadedRequestMultiError) AllErrors() []error { return m }
+
+// MarkVideoUploadedRequestValidationError is the validation error returned by
+// MarkVideoUploadedRequest.Validate if the designated constraints aren't met.
+type MarkVideoUploadedRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e MarkVideoUploadedRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e MarkVideoUploadedRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e MarkVideoUploadedRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e MarkVideoUploadedRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e MarkVideoUploadedRequestValidationError) ErrorName() string {
+	return "MarkVideoUploadedRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e MarkVideoUploadedRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sMarkVideoUploadedRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = MarkVideoUploadedRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = MarkVideoUploadedRequestValidationError{}
+
+// Validate checks the field values on MarkVideoUploadedResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *MarkVideoUploadedResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on MarkVideoUploadedResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// MarkVideoUploadedResponseMultiError, or nil if none found.
+func (m *MarkVideoUploadedResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *MarkVideoUploadedResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return MarkVideoUploadedResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// MarkVideoUploadedResponseMultiError is an error wrapping multiple validation
+// errors returned by MarkVideoUploadedResponse.ValidateAll() if the
+// designated constraints aren't met.
+type MarkVideoUploadedResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m MarkVideoUploadedResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m MarkVideoUploadedResponseMultiError) AllErrors() []error { return m }
+
+// MarkVideoUploadedResponseValidationError is the validation error returned by
+// MarkVideoUploadedResponse.Validate if the designated constraints aren't met.
+type MarkVideoUploadedResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e MarkVideoUploadedResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e MarkVideoUploadedResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e MarkVideoUploadedResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e MarkVideoUploadedResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e MarkVideoUploadedResponseValidationError) ErrorName() string {
+	return "MarkVideoUploadedResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e MarkVideoUploadedResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sMarkVideoUploadedResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = MarkVideoUploadedResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = MarkVideoUploadedResponseValidationError{}
