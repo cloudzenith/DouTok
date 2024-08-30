@@ -25,3 +25,13 @@ components:
       console_port: 9001
       access_key: root
       secret_key: rootroot
+  consul:
+    default:
+      address: localhost:8500
+  rmqconsumer:
+    default:
+      name_server: 127.0.0.1:9876
+      consumer_group: test-group
+  rmqproducer:
+    default:
+      name_server: 127.0.0.1:9876
