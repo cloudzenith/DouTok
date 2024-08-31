@@ -3,6 +3,7 @@ package userapp
 import (
 	"context"
 	v1 "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/dto"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/entity"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/userdomain"
 )
@@ -45,21 +46,24 @@ func (s *UserApplication) UpdateUserInfo(ctx context.Context, in *v1.UpdateUserI
 	}
 	return &v1.UpdateUserInfoResponse{
 		Meta: &v1.Metadata{
-			BizCode: 200,
+			BizCode: 0,
 			Message: "success",
 		},
 	}, nil
 }
 
 func (s *UserApplication) GetUserInfo(ctx context.Context, in *v1.GetUserInfoRequest) (*v1.GetUserInfoResponse, error) {
-	user, err := s.userUsecase.GetUserInfo(ctx, in.UserId)
+	user, err := s.userUsecase.GetUserInfo(ctx, dto.GetUserInfoRequest{
+		UserId:    in.UserId,
+		AccountId: in.AccountId,
+	})
 	if err != nil {
 		return nil, err
 	}
 	return &v1.GetUserInfoResponse{
 		User: user.ToUserResp(),
 		Meta: &v1.Metadata{
-			BizCode: 200,
+			BizCode: 0,
 			Message: "success",
 		},
 	}, nil

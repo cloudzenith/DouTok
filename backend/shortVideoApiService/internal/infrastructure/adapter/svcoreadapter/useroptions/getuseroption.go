@@ -10,8 +10,8 @@ func GetUserInfoWithUserId(userId int64) GetUserInfoOption {
 	}
 }
 
-//func GetUserInfoWithAccountId(accountId int64) GetUserInfoOption {
-//	return func(request *v1.GetUserInfoRequest) {
-//		request.AccountId = accountId
-//	}
-//}
+func GetUserInfoWithAccountId(accountId int64) GetUserInfoOption {
+	return func(request *v1.GetUserInfoRequest) {
+		request.AccountId = accountId
+	}
+}
