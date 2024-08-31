@@ -265,6 +265,8 @@ components:
                     type: string
                 description:
                     type: string
+                userId:
+                    type: string
         shortVideoCoreService.api.v1.PublishVideoResponse:
             type: object
             properties:

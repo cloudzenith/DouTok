@@ -916,6 +916,17 @@ func (m *PublishVideoRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if m.GetUserId() <= 0 {
+		err := PublishVideoRequestValidationError{
+			field:  "UserId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if len(errors) > 0 {
 		return PublishVideoRequestMultiError(errors)
 	}

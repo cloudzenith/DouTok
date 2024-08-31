@@ -91,6 +91,7 @@ message PublishVideoRequest {
         (validate.rules).string.max_len = 500
     ]; // 视频播放地址
     string description = 4 [(validate.rules).string.max_len = 500]; // 视频描述
+    int64 user_id = 5 [(validate.rules).int64 = {gt: 0}]; // 视频作者id
 }
 
 message PublishVideoResponse {

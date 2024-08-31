@@ -2,13 +2,11 @@ package videodomain
 
 import (
 	"context"
-	"fmt"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/conf"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/data/userdata"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/data/videodata"
 	service_dto "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/dto"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/entity"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/middleware/jwt"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/model"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/query"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/utils"
@@ -86,19 +84,15 @@ func (uc *VideoUseCase) FeedShortVideo(ctx context.Context, request *service_dto
 }
 
 func (uc *VideoUseCase) PublishVideo(ctx context.Context, in *service_dto.PublishVideoRequest) (int64, error) {
-	userId, err := jwt.GetLoginUser(ctx)
-	if err != nil {
-		return 0, fmt.Errorf("get login user failed: %v", err)
-	}
 	video := model.Video{
 		ID:          utils.GetSnowflakeId(),
-		UserID:      userId,
+		UserID:      in.UserId,
 		Title:       in.Title,
 		Description: in.Description,
 		VideoURL:    in.VideoURL,
 		CoverURL:    in.CoverURL,
 	}
-	err = uc.videoRepo.Save(ctx, query.Q, &video)
+	err := uc.videoRepo.Save(ctx, query.Q, &video)
 	if err != nil {
 		return 0, err
 	}

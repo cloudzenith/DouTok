@@ -16,6 +16,7 @@ type FeedShortVideoResponse struct {
 }
 
 type PublishVideoRequest struct {
+	UserId      int64  `json:"user_id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	VideoURL    string `json:"video_url"`

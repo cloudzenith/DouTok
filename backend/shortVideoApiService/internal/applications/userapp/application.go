@@ -94,10 +94,14 @@ func (a *Application) Login(ctx context.Context, request *svapi.LoginRequest) (*
 		log.Context(ctx).Error("failed to check account: %v", err)
 		return nil, errorx.New(1, "failed to check account")
 	}
-	// TODO: 调用core服务获取用户信息, 使用 userId 生成 token，accountId 不外露
+	user, err := a.core.GetUserInfo(ctx, useroptions.GetUserInfoWithAccountId(accountId))
+	if err != nil {
+		log.Context(ctx).Error("failed to get user info: %v", err)
+		return nil, errorx.New(1, "failed to get user info")
+	}
 
 	//a.setToken2Header(ctx, claims.New(userId))
-	token, err := claims.GenerateToken(claims.New(accountId))
+	token, err := claims.GenerateToken(claims.New(user.Id))
 	if err != nil {
 		log.Context(ctx).Error("failed to generate token: %v", err)
 		return nil, errorx.New(1, "failed to generate token")
