@@ -7,9 +7,10 @@ import (
 	v1 "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1"
 )
 
-func (a *Adapter) GetUserInfo(ctx context.Context, userId int64) (*v1.User, error) {
-	req := &v1.GetUserInfoRequest{
-		UserId: userId,
+func (a *Adapter) GetUserInfo(ctx context.Context, options ...useroptions.GetUserInfoOption) (*v1.User, error) {
+	req := &v1.GetUserInfoRequest{}
+	for _, option := range options {
+		option(req)
 	}
 
 	resp, err := a.user.GetUserInfo(ctx, req)
@@ -29,4 +30,18 @@ func (a *Adapter) UpdateUserInfo(ctx context.Context, options ...useroptions.Upd
 
 	resp, err := a.user.UpdateUserInfo(ctx, req)
 	return respcheck.Check[*v1.Metadata](resp, err)
+}
+
+func (a *Adapter) CreateUser(ctx context.Context, mobile, email string, accountId int64) (int64, error) {
+	req := &v1.CreateUserRequest{
+		Mobile:    mobile,
+		Email:     email,
+		AccountId: accountId,
+	}
+
+	resp, err := a.user.CreateUser(ctx, req)
+	if err != nil {
+		return 0, err
+	}
+	return resp.UserId, nil
 }
