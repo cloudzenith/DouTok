@@ -32,7 +32,7 @@ func (s *VideoApplication) PublishVideo(ctx context.Context, in *v1.PublishVideo
 	}
 	return &v1.PublishVideoResponse{
 		Meta: &v1.Metadata{
-			BizCode: 200,
+			BizCode: 0,
 			Message: "success",
 		},
 		VideoId: videoId,
@@ -46,7 +46,7 @@ func (s *VideoApplication) GetVideoById(ctx context.Context, in *v1.GetVideoById
 	}
 	return &v1.GetVideoByIdResponse{
 		Meta: &v1.Metadata{
-			BizCode: 200,
+			BizCode: 0,
 			Message: "success",
 		},
 		Video: service_dto.ToPBVideo(video),
@@ -64,7 +64,7 @@ func (s *VideoApplication) FeedShortVideo(ctx context.Context, in *v1.FeedShortV
 	}
 	return &v1.FeedShortVideoResponse{
 		Meta: &v1.Metadata{
-			BizCode: 200,
+			BizCode: 0,
 			Message: "success",
 		},
 		Videos: service_dto.ToPBVideoList(resp.Videos),
@@ -81,7 +81,7 @@ func (s *VideoApplication) ListPublishedVideo(ctx context.Context, in *v1.ListPu
 	}
 	return &v1.ListPublishedVideoResponse{
 		Meta: &v1.Metadata{
-			BizCode: 200,
+			BizCode: 0,
 			Message: "success",
 		},
 		Videos: service_dto.ToPBVideoList(resp.Videos),
