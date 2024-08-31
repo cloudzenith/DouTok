@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/conf"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/data/userdata"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/dto"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/entity"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/model"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/query"
@@ -57,8 +58,19 @@ func (uc *UserUsecase) UpdateUserInfo(ctx context.Context, user *entity.User) er
 	return err
 }
 
-func (uc *UserUsecase) GetUserInfo(ctx context.Context, userId int64) (*entity.User, error) {
-	user, err := uc.repo.FindByID(ctx, query.Q, userId)
+func (uc *UserUsecase) GetUserInfo(ctx context.Context, req dto.GetUserInfoRequest) (*entity.User, error) {
+	var (
+		user *model.User
+		err  error
+	)
+	if req.UserId != 0 {
+		user, err = uc.repo.FindByID(ctx, query.Q, req.UserId)
+		if err != nil {
+			return nil, err
+		}
+		return entity.FromUserModel(user), err
+	}
+	user, err = uc.repo.FindByAccountID(ctx, query.Q, req.AccountId)
 	if err != nil {
 		return nil, err
 	}

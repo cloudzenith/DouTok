@@ -2,6 +2,7 @@ package userapp
 
 import (
 	"context"
+	"fmt"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/api/svapi"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/adapter/baseadapter"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/adapter/baseadapter/accountoptions"
@@ -31,16 +32,10 @@ func New(
 }
 
 func (a *Application) GetUserInfo(ctx context.Context, request *svapi.GetUserInfoRequest) (*svapi.GetUserInfoResponse, error) {
-	userId, err := claims.GetUserId(ctx)
-	if err != nil {
-		log.Context(ctx).Error("unknown user info: %v", err)
-		return nil, errorx.New(1, "unknown user info")
-	}
-
-	userInfo, err := a.core.GetUserInfo(ctx, userId)
+	userInfo, err := a.core.GetUserInfo(ctx, useroptions.GetUserInfoWithUserId(request.UserId))
 	if err != nil {
 		log.Context(ctx).Error("failed to get user info")
-		log.Context(ctx).Errorw("error", err, "user_id", userId)
+		log.Context(ctx).Errorw("error", err, "user_id", request.UserId)
 		return nil, errorx.New(1, "failed to get user info")
 	}
 
@@ -89,7 +84,7 @@ func (a *Application) setToken2Header(ctx context.Context, claim *claims.Claims)
 }
 
 func (a *Application) Login(ctx context.Context, request *svapi.LoginRequest) (*svapi.LoginResponse, error) {
-	userId, err := a.base.CheckAccount(
+	accountId, err := a.base.CheckAccount(
 		ctx,
 		accountoptions.CheckAccountWithMobile(request.GetMobile()),
 		accountoptions.CheckAccountWithEmail(request.GetEmail()),
@@ -99,9 +94,17 @@ func (a *Application) Login(ctx context.Context, request *svapi.LoginRequest) (*
 		log.Context(ctx).Error("failed to check account: %v", err)
 		return nil, errorx.New(1, "failed to check account")
 	}
+	// TODO: 调用core服务获取用户信息, 使用 userId 生成 token，accountId 不外露
 
-	a.setToken2Header(ctx, claims.New(userId))
-	return &svapi.LoginResponse{}, nil
+	//a.setToken2Header(ctx, claims.New(userId))
+	token, err := claims.GenerateToken(claims.New(accountId))
+	if err != nil {
+		log.Context(ctx).Error("failed to generate token: %v", err)
+		return nil, errorx.New(1, "failed to generate token")
+	}
+	return &svapi.LoginResponse{
+		Token: token,
+	}, nil
 }
 
 func (a *Application) Register(ctx context.Context, request *svapi.RegisterRequest) (*svapi.RegisterResponse, error) {
@@ -122,14 +125,18 @@ func (a *Application) Register(ctx context.Context, request *svapi.RegisterReque
 		options = append(options, accountoptions.RegisterWithPassword(request.Password))
 	}
 
-	userId, err := a.base.Register(ctx, options...)
+	accountId, err := a.base.Register(ctx, options...)
 	if err != nil {
 		log.Context(ctx).Error("failed to register account")
 		return nil, errorx.New(1, "failed to register account")
 	}
 
-	// TODO: 调用core服务创建基本用户信息
-
+	// TODO: 调用core服务创建基本用户信息, 需要处理 register 成功，但是创建用户信息失败
+	userId, err := a.core.CreateUser(ctx, request.Mobile, request.Email, accountId)
+	if err != nil {
+		log.Context(ctx).Error(fmt.Sprintf("failed to create user: %v", err))
+		return nil, errorx.New(1, fmt.Sprintf("failed to create user: %v", err))
+	}
 	return &svapi.RegisterResponse{
 		UserId: userId,
 	}, nil

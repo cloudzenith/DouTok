@@ -8,11 +8,11 @@ import (
 
 type Adapter struct {
 	user  v1.UserServiceClient
-	video v1.ShortVideoCoreVideoServiceClient
+	video v1.VideoServiceClient
 }
 
 func New() *Adapter {
-	conn, err := consulx.GetGrpcConn(context.Background(), "discovery:///sv-core-service")
+	conn, err := consulx.GetGrpcConn(context.Background(), "discovery:///short-video-core-service")
 	if err != nil {
 		panic(err)
 	}
