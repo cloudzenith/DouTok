@@ -9,3 +9,6 @@ gen-proto:
 
 build:
 	docker build -t sv-api-service .
+
+install
+	go install github.com/cloudzenith/DouTok/backend/gopkgs/tools/protoc-gen-go-http@latest
