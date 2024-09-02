@@ -3,7 +3,9 @@ package api;
 
 option go_package = "github.com/cloudzenith/DouTok/...;imapi";
 
-import "base.proto";
+import "google/api/annotations.proto";
+import "buf/validate/validate.proto";
+import "imapi/base.proto";
 
 // 聊天记录服务
 service RecordService {

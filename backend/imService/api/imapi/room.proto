@@ -3,7 +3,7 @@ package api;
 
 option go_package = "github.com/cloudzenith/DouTok/...;imapi";
 
-import "base.proto";
+import "imapi/base.proto";
 
 // 聊天室服务。1对1聊天视为只拥有2个人的聊天室
 service RoomService {

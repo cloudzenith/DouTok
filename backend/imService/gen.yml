@@ -1,0 +1,24 @@
+version: "0.1"
+database:
+  dsn : "root:root@tcp(localhost:3306)/doutok?parseTime=true"
+  db  : "mysql"
+  outPath :  "./internal/infrastructure/dal/query"
+  outFile :  "gen.go"
+  tables:
+    - account
+    - template
+    - file
+  mode:
+    - WithDefaultQuery
+    - WithoutContext
+    - WithQueryInterface
+  withUnitTest  : false
+  # generated model code's package name
+  # 生成的model的代码的包名
+  modelPkgName  : "models"
+  # 使用指针当字段是空的
+  fieldNullable : true
+  # 生成的字段带有gorm tag
+  fieldWithIndexTag : true
+  # 生成的字段时候带有gorm type 标签
+  fieldWithTypeTag  : true
