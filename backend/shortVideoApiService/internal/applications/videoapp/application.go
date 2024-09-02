@@ -70,57 +70,57 @@ func (a *Application) listPublishedList(ctx context.Context, userId int64, page,
 	return &svapi.ListPublishedVideoResponse{}, nil
 }
 
-func (a *Application) ListOthersPublishedVideo(ctx context.Context, request *svapi.ListOthersPublishedVideoRequest) (*svapi.ListPublishedVideoResponse, error) {
-	return a.listPublishedList(ctx, request.AccountId, request.Pagination.Page, request.Pagination.Size)
-}
-
-func (a *Application) ListPublishedVideo(ctx context.Context, request *svapi.ListPublishedVideoRequest) (*svapi.ListPublishedVideoResponse, error) {
-	userId, err := claims.GetUserId(ctx)
-	if err != nil {
-		log.Context(ctx).Errorf("failed to get user id from context: %v", err)
-		return nil, errorx.New(1, "failed to get user id from context")
-	}
-
-	return a.listPublishedList(ctx, userId, request.Pagination.Page, request.Pagination.Size)
-}
-
-func (a *Application) PreSign4UploadVideo(ctx context.Context, request *svapi.PreSign4UploadVideoRequest) (*svapi.PreSign4UploadVideoResponse, error) {
-	resp, err := a.base.PreSign4UploadVideo(
-		ctx,
-		request.Hash,
-		request.FileType,
-		request.Filename,
-		request.Size,
-		3600,
-	)
-	if err != nil {
-		log.Context(ctx).Errorf("failed to pre sign for upload video: %v", err)
-		return nil, errorx.New(1, "failed to pre sign for upload video")
-	}
-
-	// TODO: 通过sv-core预先添加视频基础信息
-	videoId, err := a.core.PreSaveVideoInfo(ctx, request.Title)
-	if err != nil {
-		log.Context(ctx).Errorf("failed to pre save video info: %v", err)
-		return nil, errorx.New(1, "failed to upload video")
-	}
-
-	return &svapi.PreSign4UploadVideoResponse{
-		FileId:  resp.FileId,
-		Url:     resp.Url,
-		VideoId: videoId,
-	}, nil
-}
-
-func (a *Application) ReportFinishUpload(ctx context.Context, request *svapi.ReportFinishUploadRequest) (*svapi.ListVideo, error) {
-	if err := a.base.ReportUploaded(ctx, request.FileId); err != nil {
-		log.Context(ctx).Errorf("failed to report finish upload: %v", err)
-		return nil, errorx.New(1, "failed to report finish upload")
-	}
-
-	// TODO：通过sv-core标记视频已被上传成功，并得到视频基础信息
-
-	return nil, nil
-}
-
-var _ svapi.ShortVideoCoreVideoServiceHTTPServer = (*Application)(nil)
+//func (a *Application) ListOthersPublishedVideo(ctx context.Context, request *svapi.ListOthersPublishedVideoRequest) (*svapi.ListPublishedVideoResponse, error) {
+//	return a.listPublishedList(ctx, request.AccountId, request.Pagination.Page, request.Pagination.Size)
+//}
+//
+//func (a *Application) ListPublishedVideo(ctx context.Context, request *svapi.ListPublishedVideoRequest) (*svapi.ListPublishedVideoResponse, error) {
+//	userId, err := claims.GetUserId(ctx)
+//	if err != nil {
+//		log.Context(ctx).Errorf("failed to get user id from context: %v", err)
+//		return nil, errorx.New(1, "failed to get user id from context")
+//	}
+//
+//	return a.listPublishedList(ctx, userId, request.Pagination.Page, request.Pagination.Size)
+//}
+//
+//func (a *Application) PreSign4UploadVideo(ctx context.Context, request *svapi.PreSign4UploadVideoRequest) (*svapi.PreSign4UploadVideoResponse, error) {
+//	resp, err := a.base.PreSign4UploadVideo(
+//		ctx,
+//		request.Hash,
+//		request.FileType,
+//		request.Filename,
+//		request.Size,
+//		3600,
+//	)
+//	if err != nil {
+//		log.Context(ctx).Errorf("failed to pre sign for upload video: %v", err)
+//		return nil, errorx.New(1, "failed to pre sign for upload video")
+//	}
+//
+//	// TODO: 通过sv-core预先添加视频基础信息
+//	videoId, err := a.core.PreSaveVideoInfo(ctx, request.Title)
+//	if err != nil {
+//		log.Context(ctx).Errorf("failed to pre save video info: %v", err)
+//		return nil, errorx.New(1, "failed to upload video")
+//	}
+//
+//	return &svapi.PreSign4UploadVideoResponse{
+//		FileId:  resp.FileId,
+//		Url:     resp.Url,
+//		VideoId: videoId,
+//	}, nil
+//}
+//
+//func (a *Application) ReportFinishUpload(ctx context.Context, request *svapi.ReportFinishUploadRequest) (*svapi.ListVideo, error) {
+//	if err := a.base.ReportUploaded(ctx, request.FileId); err != nil {
+//		log.Context(ctx).Errorf("failed to report finish upload: %v", err)
+//		return nil, errorx.New(1, "failed to report finish upload")
+//	}
+//
+//	// TODO：通过sv-core标记视频已被上传成功，并得到视频基础信息
+//
+//	return nil, nil
+//}
+//
+//var _ svapi.ShortVideoCoreVideoServiceHTTPServer = (*Application)(nil)

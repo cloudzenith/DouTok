@@ -9,15 +9,31 @@ import "svapi/base.proto";
 
 service ShortVideoCoreVideoService {
     // 预注册上传视频
-    rpc PreSign4UploadVideo(PreSign4UploadVideoRequest) returns (PreSign4UploadVideoResponse) {
+    rpc PreSign4UploadFile(PreSign4UploadVideoRequest) returns (PreSign4UploadVideoResponse) {
         option (google.api.http) = {
-            post: "/videos"
+            post: "/video/upload"
+            body: "*"
+        };
+    };
+
+    // 预注册上传封面
+    rpc PreSign4UploadCover(PreSign4UploadFileRequest) returns (PreSign4UploadFileResponse) {
+        option (google.api.http) = {
+            put: "/cover/upload"
+            body: "*"
+        };
+    };
+
+    // 通用确认上传完成
+    rpc ReportFinishUpload(ReportFileFinishUploadRequest) returns (ReportFileFinishUploadResponse) {
+        option (google.api.http) = {
+            put: "/videos/{file_id}/finish"
             body: "*"
         };
     };
 
     // 确认视频上传完成
-    rpc ReportFinishUpload(ReportFinishUploadRequest) returns (ListVideo) {
+    rpc ReportVideoFinishUpload(ReportVideoFinishUploadRequest) returns (ReportVideoFinishUploadResponse) {
         option (google.api.http) = {
             put: "/videos/{file_id}/finish"
             body: "*"
@@ -45,13 +61,6 @@ service ShortVideoCoreVideoService {
             get: "/videos/list"
         };
     };
-
-    // 获取某人的发布视频列表
-    rpc ListOthersPublishedVideo(ListOthersPublishedVideoRequest) returns(ListPublishedVideoResponse) {
-        option (google.api.http) = {
-            get: "/videos/list/{account_id}"
-        };
-    };
 }
 
 message VideoAuthor {
@@ -72,16 +81,7 @@ message Video {
     string title = 8; // 视频标题
 }
 
-// 视频列表相关接口返回体video
-message ListVideo {
-    int64 id = 1;
-    string play_url = 2;
-    string cover_url = 3;
-    int64 favorite_count = 4;
-    int64 comment_count = 5;
-    string title = 6;
-}
-
+// 预注册上传视频请求消息类型
 message PreSign4UploadVideoRequest {
     // md5 hash
     string hash = 1;
@@ -91,55 +91,103 @@ message PreSign4UploadVideoRequest {
     int64 size = 3;
     // 文件名
     string filename = 4;
-    // 视频标题
-    string title = 5;
 }
 
+// 预注册上传视频响应消息类型
 message PreSign4UploadVideoResponse {
     // minio上传地址
     string url = 1;
     // 文件id
     int64 file_id = 2;
-    // 上传视频id
-    int64 video_id = 3;
 }
 
-message ReportFinishUploadRequest {
+// 通用小文件单次上传请求消息类型
+message PreSign4UploadFileRequest {
+    // md5 hash
+    string hash = 1;
+    // 文件类型，默认mp4
+    string file_type = 2;
+    // 文件大小，单位byte
+    int64 size = 3;
+    // 文件名
+    string filename = 4;
+}
+
+// 通用小文件单次上传响应消息类型
+message PreSign4UploadFileResponse {
+    // minio上传地址
+    string url = 1;
+    // 文件id
+    int64 file_id = 2;
+}
+
+// 确认视频上传完成请求消息类型
+message ReportVideoFinishUploadRequest {
+    // 文件id
+    int64 file_id = 1;
+    // 视频id
+    int64 video_id = 2;
+    // 视频标题
+    string title = 3;
+    // 视频封面地址
+    string cover_url = 4;
+    // 视频描述
+    string description = 5;
+    // 视频作者id
+    int64 user_id = 6;
+}
+
+// 确认视频上传完成响应消息类型
+message ReportVideoFinishUploadResponse {
+    // 视频播放地址
+    string url = 1;
+}
+
+// 通用确认上传完成请求消息类型
+message ReportFileFinishUploadRequest {
     // 文件id
     int64 file_id = 1;
 }
 
+// 通用确认上传完成响应消息类型
+message ReportFileFinishUploadResponse {
+    // url
+    string url = 1;
+}
+
+// 刷视频请求消息类型
 message FeedShortVideoRequest {
     int64 latest_time = 1;  // 可选参数，限制返回视频的最新投稿时间戳，精确到秒，不填表示当前时间
     int64 user_id = 2 [(buf.validate.field).int64 = {gt: 0}];
+    int64 feed_num = 3 [(buf.validate.field).int64 = {gt: 0}]; // 返回视频的数量
 }
 
+// 刷视频响应消息类型
 message FeedShortVideoResponse {
     svapi.Metadata meta = 1;
     repeated Video videos = 2;
     int64 next_time = 3; // 本次返回的视频中，发布最早的时间，作为下次请求时的latest_time
 }
 
+// 获取视频信息请求消息类型
 message GetVideoByIdRequest {
     int64 video_id = 1 [(buf.validate.field).int64 = {gt: 0}];
 }
 
+// 获取视频信息响应消息类型
 message GetVideoByIdResponse {
     Video video = 2;
 }
 
+// 获取当前用户的发布视频列表请求消息类型
 message ListPublishedVideoRequest {
     int64 user_id = 1 [(buf.validate.field).int64 = {gt: 0}];
     PaginationRequest pagination = 2;
 }
 
-message ListOthersPublishedVideoRequest {
-    int64 account_id = 1 [(buf.validate.field).int64 = {gt: 0}];
-    PaginationRequest pagination = 2;
-}
-
+// 获取当前用户的发布视频列表响应消息类型
 message ListPublishedVideoResponse {
-    repeated ListVideo video_list = 2;
+    repeated Video video_list = 2;
     PaginationResponse pagination = 3;
 }
 

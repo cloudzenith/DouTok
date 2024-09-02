@@ -21,37 +21,41 @@ const _ = http.SupportPackageIsVersion1
 
 const OperationShortVideoCoreVideoServiceFeedShortVideo = "/svapi.ShortVideoCoreVideoService/FeedShortVideo"
 const OperationShortVideoCoreVideoServiceGetVideoById = "/svapi.ShortVideoCoreVideoService/GetVideoById"
-const OperationShortVideoCoreVideoServiceListOthersPublishedVideo = "/svapi.ShortVideoCoreVideoService/ListOthersPublishedVideo"
 const OperationShortVideoCoreVideoServiceListPublishedVideo = "/svapi.ShortVideoCoreVideoService/ListPublishedVideo"
-const OperationShortVideoCoreVideoServicePreSign4UploadVideo = "/svapi.ShortVideoCoreVideoService/PreSign4UploadVideo"
+const OperationShortVideoCoreVideoServicePreSign4UploadCover = "/svapi.ShortVideoCoreVideoService/PreSign4UploadCover"
+const OperationShortVideoCoreVideoServicePreSign4UploadFile = "/svapi.ShortVideoCoreVideoService/PreSign4UploadFile"
 const OperationShortVideoCoreVideoServiceReportFinishUpload = "/svapi.ShortVideoCoreVideoService/ReportFinishUpload"
+const OperationShortVideoCoreVideoServiceReportVideoFinishUpload = "/svapi.ShortVideoCoreVideoService/ReportVideoFinishUpload"
 
 type ShortVideoCoreVideoServiceHTTPServer interface {
 	// FeedShortVideo 刷视频
 	FeedShortVideo(context.Context, *FeedShortVideoRequest) (*FeedShortVideoResponse, error)
 	// GetVideoById 获取视频信息
 	GetVideoById(context.Context, *GetVideoByIdRequest) (*GetVideoByIdResponse, error)
-	// ListOthersPublishedVideo 获取某人的发布视频列表
-	ListOthersPublishedVideo(context.Context, *ListOthersPublishedVideoRequest) (*ListPublishedVideoResponse, error)
 	// ListPublishedVideo 获取当前用户的发布视频列表
 	ListPublishedVideo(context.Context, *ListPublishedVideoRequest) (*ListPublishedVideoResponse, error)
-	// PreSign4UploadVideo 预注册上传视频
-	PreSign4UploadVideo(context.Context, *PreSign4UploadVideoRequest) (*PreSign4UploadVideoResponse, error)
-	// ReportFinishUpload 确认视频上传完成
-	ReportFinishUpload(context.Context, *ReportFinishUploadRequest) (*ListVideo, error)
+	// PreSign4UploadCover 预注册上传封面
+	PreSign4UploadCover(context.Context, *PreSign4UploadFileRequest) (*PreSign4UploadFileResponse, error)
+	// PreSign4UploadFile 预注册上传视频
+	PreSign4UploadFile(context.Context, *PreSign4UploadVideoRequest) (*PreSign4UploadVideoResponse, error)
+	// ReportFinishUpload 通用确认上传完成
+	ReportFinishUpload(context.Context, *ReportFileFinishUploadRequest) (*ReportFileFinishUploadResponse, error)
+	// ReportVideoFinishUpload 确认视频上传完成
+	ReportVideoFinishUpload(context.Context, *ReportVideoFinishUploadRequest) (*ReportVideoFinishUploadResponse, error)
 }
 
 func RegisterShortVideoCoreVideoServiceHTTPServer(s *http.Server, srv ShortVideoCoreVideoServiceHTTPServer) {
 	r := s.Route("/")
-	r.POST("/videos", _ShortVideoCoreVideoService_PreSign4UploadVideo0_HTTP_Handler(srv))
+	r.POST("/video/upload", _ShortVideoCoreVideoService_PreSign4UploadFile0_HTTP_Handler(srv))
+	r.PUT("/cover/upload", _ShortVideoCoreVideoService_PreSign4UploadCover0_HTTP_Handler(srv))
 	r.PUT("/videos/{file_id}/finish", _ShortVideoCoreVideoService_ReportFinishUpload0_HTTP_Handler(srv))
+	r.PUT("/videos/{file_id}/finish", _ShortVideoCoreVideoService_ReportVideoFinishUpload0_HTTP_Handler(srv))
 	r.POST("/videos/feed", _ShortVideoCoreVideoService_FeedShortVideo0_HTTP_Handler(srv))
 	r.GET("/videos/{video_id}", _ShortVideoCoreVideoService_GetVideoById0_HTTP_Handler(srv))
 	r.GET("/videos/list", _ShortVideoCoreVideoService_ListPublishedVideo0_HTTP_Handler(srv))
-	r.GET("/videos/list/{account_id}", _ShortVideoCoreVideoService_ListOthersPublishedVideo0_HTTP_Handler(srv))
 }
 
-func _ShortVideoCoreVideoService_PreSign4UploadVideo0_HTTP_Handler(srv ShortVideoCoreVideoServiceHTTPServer) func(ctx http.Context) error {
+func _ShortVideoCoreVideoService_PreSign4UploadFile0_HTTP_Handler(srv ShortVideoCoreVideoServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in PreSign4UploadVideoRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -60,9 +64,9 @@ func _ShortVideoCoreVideoService_PreSign4UploadVideo0_HTTP_Handler(srv ShortVide
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationShortVideoCoreVideoServicePreSign4UploadVideo)
+		http.SetOperation(ctx, OperationShortVideoCoreVideoServicePreSign4UploadFile)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.PreSign4UploadVideo(ctx, req.(*PreSign4UploadVideoRequest))
+			return srv.PreSign4UploadFile(ctx, req.(*PreSign4UploadVideoRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -73,9 +77,31 @@ func _ShortVideoCoreVideoService_PreSign4UploadVideo0_HTTP_Handler(srv ShortVide
 	}
 }
 
+func _ShortVideoCoreVideoService_PreSign4UploadCover0_HTTP_Handler(srv ShortVideoCoreVideoServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in PreSign4UploadFileRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationShortVideoCoreVideoServicePreSign4UploadCover)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.PreSign4UploadCover(ctx, req.(*PreSign4UploadFileRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*PreSign4UploadFileResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 func _ShortVideoCoreVideoService_ReportFinishUpload0_HTTP_Handler(srv ShortVideoCoreVideoServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in ReportFinishUploadRequest
+		var in ReportFileFinishUploadRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
@@ -87,13 +113,38 @@ func _ShortVideoCoreVideoService_ReportFinishUpload0_HTTP_Handler(srv ShortVideo
 		}
 		http.SetOperation(ctx, OperationShortVideoCoreVideoServiceReportFinishUpload)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.ReportFinishUpload(ctx, req.(*ReportFinishUploadRequest))
+			return srv.ReportFinishUpload(ctx, req.(*ReportFileFinishUploadRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*ListVideo)
+		reply := out.(*ReportFileFinishUploadResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ShortVideoCoreVideoService_ReportVideoFinishUpload0_HTTP_Handler(srv ShortVideoCoreVideoServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in ReportVideoFinishUploadRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationShortVideoCoreVideoServiceReportVideoFinishUpload)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ReportVideoFinishUpload(ctx, req.(*ReportVideoFinishUploadRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ReportVideoFinishUploadResponse)
 		return ctx.Result(200, reply)
 	}
 }
@@ -161,35 +212,14 @@ func _ShortVideoCoreVideoService_ListPublishedVideo0_HTTP_Handler(srv ShortVideo
 	}
 }
 
-func _ShortVideoCoreVideoService_ListOthersPublishedVideo0_HTTP_Handler(srv ShortVideoCoreVideoServiceHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in ListOthersPublishedVideoRequest
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindVars(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationShortVideoCoreVideoServiceListOthersPublishedVideo)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.ListOthersPublishedVideo(ctx, req.(*ListOthersPublishedVideoRequest))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*ListPublishedVideoResponse)
-		return ctx.Result(200, reply)
-	}
-}
-
 type ShortVideoCoreVideoServiceHTTPClient interface {
 	FeedShortVideo(ctx context.Context, req *FeedShortVideoRequest, opts ...http.CallOption) (rsp *FeedShortVideoResponse, err error)
 	GetVideoById(ctx context.Context, req *GetVideoByIdRequest, opts ...http.CallOption) (rsp *GetVideoByIdResponse, err error)
-	ListOthersPublishedVideo(ctx context.Context, req *ListOthersPublishedVideoRequest, opts ...http.CallOption) (rsp *ListPublishedVideoResponse, err error)
 	ListPublishedVideo(ctx context.Context, req *ListPublishedVideoRequest, opts ...http.CallOption) (rsp *ListPublishedVideoResponse, err error)
-	PreSign4UploadVideo(ctx context.Context, req *PreSign4UploadVideoRequest, opts ...http.CallOption) (rsp *PreSign4UploadVideoResponse, err error)
-	ReportFinishUpload(ctx context.Context, req *ReportFinishUploadRequest, opts ...http.CallOption) (rsp *ListVideo, err error)
+	PreSign4UploadCover(ctx context.Context, req *PreSign4UploadFileRequest, opts ...http.CallOption) (rsp *PreSign4UploadFileResponse, err error)
+	PreSign4UploadFile(ctx context.Context, req *PreSign4UploadVideoRequest, opts ...http.CallOption) (rsp *PreSign4UploadVideoResponse, err error)
+	ReportFinishUpload(ctx context.Context, req *ReportFileFinishUploadRequest, opts ...http.CallOption) (rsp *ReportFileFinishUploadResponse, err error)
+	ReportVideoFinishUpload(ctx context.Context, req *ReportVideoFinishUploadRequest, opts ...http.CallOption) (rsp *ReportVideoFinishUploadResponse, err error)
 }
 
 type ShortVideoCoreVideoServiceHTTPClientImpl struct {
@@ -226,19 +256,6 @@ func (c *ShortVideoCoreVideoServiceHTTPClientImpl) GetVideoById(ctx context.Cont
 	return &out, nil
 }
 
-func (c *ShortVideoCoreVideoServiceHTTPClientImpl) ListOthersPublishedVideo(ctx context.Context, in *ListOthersPublishedVideoRequest, opts ...http.CallOption) (*ListPublishedVideoResponse, error) {
-	var out ListPublishedVideoResponse
-	pattern := "/videos/list/{account_id}"
-	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationShortVideoCoreVideoServiceListOthersPublishedVideo))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, nil
-}
-
 func (c *ShortVideoCoreVideoServiceHTTPClientImpl) ListPublishedVideo(ctx context.Context, in *ListPublishedVideoRequest, opts ...http.CallOption) (*ListPublishedVideoResponse, error) {
 	var out ListPublishedVideoResponse
 	pattern := "/videos/list"
@@ -252,11 +269,24 @@ func (c *ShortVideoCoreVideoServiceHTTPClientImpl) ListPublishedVideo(ctx contex
 	return &out, nil
 }
 
-func (c *ShortVideoCoreVideoServiceHTTPClientImpl) PreSign4UploadVideo(ctx context.Context, in *PreSign4UploadVideoRequest, opts ...http.CallOption) (*PreSign4UploadVideoResponse, error) {
-	var out PreSign4UploadVideoResponse
-	pattern := "/videos"
+func (c *ShortVideoCoreVideoServiceHTTPClientImpl) PreSign4UploadCover(ctx context.Context, in *PreSign4UploadFileRequest, opts ...http.CallOption) (*PreSign4UploadFileResponse, error) {
+	var out PreSign4UploadFileResponse
+	pattern := "/cover/upload"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationShortVideoCoreVideoServicePreSign4UploadVideo))
+	opts = append(opts, http.Operation(OperationShortVideoCoreVideoServicePreSign4UploadCover))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *ShortVideoCoreVideoServiceHTTPClientImpl) PreSign4UploadFile(ctx context.Context, in *PreSign4UploadVideoRequest, opts ...http.CallOption) (*PreSign4UploadVideoResponse, error) {
+	var out PreSign4UploadVideoResponse
+	pattern := "/video/upload"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationShortVideoCoreVideoServicePreSign4UploadFile))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
@@ -265,11 +295,24 @@ func (c *ShortVideoCoreVideoServiceHTTPClientImpl) PreSign4UploadVideo(ctx conte
 	return &out, nil
 }
 
-func (c *ShortVideoCoreVideoServiceHTTPClientImpl) ReportFinishUpload(ctx context.Context, in *ReportFinishUploadRequest, opts ...http.CallOption) (*ListVideo, error) {
-	var out ListVideo
+func (c *ShortVideoCoreVideoServiceHTTPClientImpl) ReportFinishUpload(ctx context.Context, in *ReportFileFinishUploadRequest, opts ...http.CallOption) (*ReportFileFinishUploadResponse, error) {
+	var out ReportFileFinishUploadResponse
 	pattern := "/videos/{file_id}/finish"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationShortVideoCoreVideoServiceReportFinishUpload))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *ShortVideoCoreVideoServiceHTTPClientImpl) ReportVideoFinishUpload(ctx context.Context, in *ReportVideoFinishUploadRequest, opts ...http.CallOption) (*ReportVideoFinishUploadResponse, error) {
+	var out ReportVideoFinishUploadResponse
+	pattern := "/videos/{file_id}/finish"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationShortVideoCoreVideoServiceReportVideoFinishUpload))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
 	if err != nil {
