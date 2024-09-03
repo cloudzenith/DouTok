@@ -74,5 +74,4 @@ func (a *Adapter) PreSaveVideoInfo(ctx context.Context, title string) (int64, er
 			return 1
 		},
 	)
-
 }

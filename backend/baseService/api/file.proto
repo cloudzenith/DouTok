@@ -67,6 +67,7 @@ message ReportUploadedRequest {
 
 message ReportUploadedResponse {
   api.Metadata meta = 1;
+  string url = 2;
 }
 
 message PreSignSlicingPutRequest {
