@@ -3,11 +3,14 @@ package server
 import (
 	"context"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/api/svapi"
+	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/applications/imapp"
+	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/middlewares"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/utils/claims"
 	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
 	"github.com/go-kratos/kratos/v2/middleware/selector"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	jwt5 "github.com/golang-jwt/jwt/v5"
+	"github.com/gorilla/mux"
 )
 
 func TokenParseWhiteList() selector.MatchFunc {

@@ -1,0 +1,26 @@
+app:
+  name: im-service
+  version: 0.0.1-test
+
+components:
+  mysql:
+    default:
+      host: localhost
+      port: 3306
+      db_name: doutok
+      user: root
+      password: root
+  redis:
+    default:
+      dsn: localhost:6379
+      password: root
+  etcd:
+    default:
+      host: localhost
+      port: 2379
+  consul:
+    default:
+      address: localhost:8500
+
+snowflake:
+  node: 1
