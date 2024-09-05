@@ -1,0 +1,55 @@
+auth_enabled: false
+
+server:
+  http_listen_port: 3100
+
+common:                             #通用配置
+  path_prefix: /loki
+  storage:
+    filesystem:
+      chunks_directory: /loki/chunks
+      rules_directory: /loki/rules
+  replication_factor: 1
+  ring:
+    kvstore:
+      store: inmemory
+
+schema_config:
+  configs:
+    - from: 2020-10-24               # 架构配置的生效日期
+      store: boltdb-shipper          # 存储类型
+      object_store: filesystem       # 对象存储类型为文件系统
+      schema: v11                    # 架构版本
+      index:                         # 索引配置
+        prefix: index_               # 索引前缀
+        period: 24h                  # 索引周期
+
+storage_config:                                                # 存储相关
+  boltdb_shipper:
+    active_index_directory: /loki/boltdb-shipper-active        # 活动索引的目录
+    cache_location: /loki/boltdb-shipper-cache                 # 缓存位置
+    cache_ttl: 24h                                             # 缓存的过期时间
+    shared_store: filesystem                                   # 共享存储类型为文件系统
+  filesystem:
+    directory: /loki/chunks                                    # 文件系统的目录
+
+compactor:
+  working_directory: /loki/boltdb-shipper-compactor            # 紧缩器的工作目录
+  shared_store: filesystem                                     # 共享存储类型为文件系统
+
+limits_config:
+  reject_old_samples: true               # 是否拒绝旧样本
+  reject_old_samples_max_age: 72h        # 72小时之前的样本被拒绝
+  max_entries_limit_per_query: 9999      # 数值改为自己想要的最大查询行数
+  ingestion_rate_mb: 32                  # mb单位，每个用户每秒的采样率限制  不设置客户端会报错
+  ingestion_burst_size_mb: 64            # 每个用户允许的采样突发大小
+
+chunk_store_config:
+  max_look_back_period: 72h              # 为避免查询超过保留期的数据，必须小于或等于下方的时间值
+
+table_manager:
+  retention_deletes_enabled: true        # 保留删除开启
+  retention_period: 72h                  # 超过72h的块数据将被删除
+
+ruler:
+  alertmanager_url: http://localhost:9093

@@ -1,0 +1,50 @@
+version: "3"
+
+networks:
+  total:
+    driver: bridge
+
+services:
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: loki
+    ports:
+      - "3100:3100"
+      - "9095:9095"
+    volumes:
+      - ./loki_data:/var/loki
+      - ./loki/loki-config.yaml:/etc/loki/local-config.yaml
+    user: root
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - total
+
+  promtail:
+    image: grafana/promtail:2.9.0
+    container_name: promtail
+    ports:
+      - "9080:9080"
+    volumes:
+      - ./promtail/promtail-config.yaml:/promtail-config.yaml
+    privileged: true
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 200M
+    command: [ "-config.file=/promtail-config.yaml" ]
+    networks:
+      - total
+
+  grafana:
+    image: grafana/grafana:9.5.18
+    restart: "always"
+    ports:
+      - 3000:3000
+    container_name: "grafana"
+    volumes:
+#      - "./grafana/grafana.ini:/etc/grafana/grafana.ini"
+      - "./grafana/grafana-storage:/var/lib/grafana"
+    networks:
+      - total
