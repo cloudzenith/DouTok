@@ -1,7 +1,7 @@
 package main
 
 import (
-	"crypto/sha256"
+	"crypto/md5"
 	"encoding/hex"
 	"io"
 	"mime"
@@ -47,7 +47,7 @@ func getFileSize(filePath string) (int64, error) {
 	return fileInfo.Size(), nil
 }
 
-// getFileHash 计算文件的 SHA256 哈希值
+// getFileHash 计算文件的 MD5 哈希值
 func getFileHash(filePath string) (string, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -55,7 +55,7 @@ func getFileHash(filePath string) (string, error) {
 	}
 	defer file.Close()
 
-	hasher := sha256.New()
+	hasher := md5.New()
 	if _, err := io.Copy(hasher, file); err != nil {
 		return "", err
 	}

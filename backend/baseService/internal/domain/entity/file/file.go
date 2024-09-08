@@ -5,6 +5,7 @@ import (
 	"github.com/cloudzenith/DouTok/backend/baseService/api"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/dal/models"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/utils"
+	"strings"
 	"time"
 )
 
@@ -77,7 +78,12 @@ func (f *File) GetObjectName() string {
 }
 
 func (f *File) CheckHash(hash string) bool {
-	return f.Hash == hash
+	// 将两个哈希值都转换为小写
+	fHashLower := strings.ToLower(f.Hash)
+	hashLower := strings.ToLower(hash)
+
+	// 比较小写哈希值
+	return fHashLower == hashLower
 }
 
 func (f *File) SetUploaded() *File {
