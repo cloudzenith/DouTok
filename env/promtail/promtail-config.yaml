@@ -1,0 +1,32 @@
+server:
+  http_listen_port: 9080 #云服务器需开放9080端口
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+#loki地址
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+
+#我名词定义是 ”环境-服务-文件/容器“
+scrape_configs:
+  - job_name: sv-api-service
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: sv-api-service
+          container_name: sv-api-service                 #变量定义类型
+          __path__: /app/logs/*.log        #收集程序输出的日志
+
+
+  - job_name: base-service
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: base-service
+          container_name: base-service
+          __path__: /app/logs/*.log
