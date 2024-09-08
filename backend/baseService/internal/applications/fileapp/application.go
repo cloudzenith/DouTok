@@ -67,8 +67,16 @@ func (a *FileApplication) ReportUploaded(ctx context.Context, request *api.Repor
 		}, nil
 	}
 
+	url, err := a.fileService.PreSignGet(ctx, request.FileContext)
+	if err != nil {
+		return &api.ReportUploadedResponse{
+			Meta: utils.GetMetaWithError(err),
+		}, nil
+	}
+
 	return &api.ReportUploadedResponse{
 		Meta: utils.GetSuccessMeta(),
+		Url:  url,
 	}, nil
 }
 

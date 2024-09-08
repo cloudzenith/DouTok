@@ -18,6 +18,7 @@ func New() *Adapter {
 	}
 
 	return &Adapter{
-		user: v1.NewUserServiceClient(conn),
+		user:  v1.NewUserServiceClient(conn),
+		video: v1.NewVideoServiceClient(conn),
 	}
 }

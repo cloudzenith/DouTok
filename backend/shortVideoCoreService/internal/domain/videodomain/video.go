@@ -2,6 +2,8 @@ package videodomain
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/conf"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/data/userdata"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/data/videodata"
@@ -11,6 +13,7 @@ import (
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/query"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/utils"
 	"github.com/go-kratos/kratos/v2/log"
+	"gorm.io/gorm"
 	"time"
 )
 
@@ -101,6 +104,9 @@ func (uc *VideoUseCase) PublishVideo(ctx context.Context, in *service_dto.Publis
 
 func (uc *VideoUseCase) GetVideoById(ctx context.Context, videoId int64) (*entity.Video, error) {
 	video, err := uc.videoRepo.FindByID(ctx, query.Q, videoId)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, fmt.Errorf("video not found: %d", videoId)
+	}
 	if err != nil {
 		return nil, err
 	}

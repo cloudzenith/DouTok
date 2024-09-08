@@ -84,6 +84,7 @@ func (s *VideoApplication) ListPublishedVideo(ctx context.Context, in *v1.ListPu
 			BizCode: 0,
 			Message: "success",
 		},
-		Videos: service_dto.ToPBVideoList(resp.Videos),
+		Videos:     service_dto.ToPBVideoList(resp.Videos),
+		Pagination: infra_dto.ToPBPaginationResponse(resp.Pagination),
 	}, nil
 }
