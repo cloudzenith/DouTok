@@ -49,7 +49,7 @@ func uploadCover() {
 	fmt.Printf("Request body: %s\n", requestBody)
 
 	// 构建 HTTP 请求
-	url := "http://127.0.0.1:22000/video/upload" // 替换为你的服务器地址
+	url := "http://127.0.0.1:22000/cover/upload" // 替换为你的服务器地址
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(requestBody))
 	if err != nil {
 		log.Fatalf("Error creating request: %v", err)
@@ -95,13 +95,13 @@ func uploadCover() {
 
 	putResp, err := client.Do(putReq)
 	if err != nil {
-		log.Fatalf("Failed to upload video: %v", err)
+		log.Fatalf("Failed to upload cover: %v", err)
 	}
 	defer putResp.Body.Close()
 
 	if putResp.StatusCode != http.StatusOK {
-		log.Fatalf("Failed to upload video: %d", putResp.StatusCode)
+		log.Fatalf("Failed to upload cover: %d", putResp.StatusCode)
 	}
 
-	fmt.Println("Video uploaded successfully")
+	fmt.Println("cover uploaded successfully")
 }

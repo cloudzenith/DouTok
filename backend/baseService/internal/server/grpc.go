@@ -7,6 +7,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
+	"time"
 )
 
 func NewGRPCServer(options ...Option) *grpc.Server {
@@ -27,6 +28,7 @@ func NewGRPCServer(options ...Option) *grpc.Server {
 			middlewares.RequestMonitor(),
 			middlewares.ProtobufValidator(),
 		),
+		grpc.Timeout(time.Second * 3),
 	}
 
 	if params.addr != "" {

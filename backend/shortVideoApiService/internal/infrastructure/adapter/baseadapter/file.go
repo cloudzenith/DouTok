@@ -47,9 +47,10 @@ func (a *Adapter) PreSign4Upload(ctx context.Context, hash, fileType, fileName s
 func (a *Adapter) ReportUploaded(ctx context.Context, fileId int64) (*ReportUploadedResp, error) {
 	req := &api.ReportUploadedRequest{
 		FileContext: &api.FileContext{
-			BizName: BizName,
-			Domain:  DomainName,
-			FileId:  fileId,
+			BizName:       BizName,
+			Domain:        DomainName,
+			FileId:        fileId,
+			ExpireSeconds: 7200,
 		},
 	}
 	resp, err := a.file.ReportUploaded(ctx, req)
