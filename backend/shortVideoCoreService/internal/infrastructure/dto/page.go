@@ -41,3 +41,11 @@ func FromPBPaginationRequest(p *v1.PaginationRequest) *PaginationRequest {
 		SortFields: sortFields,
 	}
 }
+
+func ToPBPaginationResponse(p *PaginationResponse) *v1.PaginationResponse {
+	return &v1.PaginationResponse{
+		Page:  int32(p.Page),
+		Total: int32(p.Total),
+		Count: int32(p.Count),
+	}
+}

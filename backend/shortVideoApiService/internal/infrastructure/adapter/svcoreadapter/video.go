@@ -7,12 +7,7 @@ import (
 	v1 "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1"
 )
 
-type ListUserPublishedListDTO struct {
-	Videos     []*v1.Video
-	Pagination *v1.PaginationResponse
-}
-
-func (a *Adapter) ListUserPublishedList(ctx context.Context, userId int64, pageIndex, pageSize int32) (*ListUserPublishedListDTO, error) {
+func (a *Adapter) ListUserPublishedList(ctx context.Context, userId int64, pageIndex, pageSize int32) (*v1.ListPublishedVideoResponse, error) {
 	req := &v1.ListPublishedVideoRequest{
 		UserId: userId,
 		Pagination: &v1.PaginationRequest{
@@ -21,20 +16,19 @@ func (a *Adapter) ListUserPublishedList(ctx context.Context, userId int64, pageI
 		},
 	}
 	resp, err := a.video.ListPublishedVideo(ctx, req)
-	return respcheck.CheckT[*ListUserPublishedListDTO, *v1.Metadata](
+	return respcheck.CheckT[*v1.ListPublishedVideoResponse, *v1.Metadata](
 		resp, err,
-		func() *ListUserPublishedListDTO {
-			return &ListUserPublishedListDTO{
-				Videos:     resp.GetVideos(),
-				Pagination: resp.GetPagination(),
-			}
+		func() *v1.ListPublishedVideoResponse {
+			return resp
 		},
 	)
 }
 
-func (a *Adapter) Feed(ctx context.Context, userId int64, options ...videooptions.FeedOptions) (*v1.FeedShortVideoResponse, error) {
+func (a *Adapter) Feed(ctx context.Context, userId int64, num int64, options ...videooptions.FeedOptions) (*v1.FeedShortVideoResponse, error) {
 	req := &v1.FeedShortVideoRequest{
-		UserId: userId,
+		LatestTime: 0,
+		UserId:     userId,
+		FeedNum:    num,
 	}
 	for _, opt := range options {
 		opt(req)
@@ -62,16 +56,19 @@ func (a *Adapter) GetVideoById(ctx context.Context, videoId int64) (*v1.Video, e
 	)
 }
 
-func (a *Adapter) PreSaveVideoInfo(ctx context.Context, title string) (int64, error) {
+func (a *Adapter) SaveVideoInfo(ctx context.Context, title, videoUrl, coverUrl, desc string, userId int64) (int64, error) {
 	req := &v1.PublishVideoRequest{
-		Title: title,
+		Title:       title,
+		PlayUrl:     videoUrl,
+		CoverUrl:    coverUrl,
+		Description: desc,
+		UserId:      userId,
 	}
 	resp, err := a.video.PublishVideo(ctx, req)
 	return respcheck.CheckT[int64, *v1.Metadata](
 		resp, err,
 		func() int64 {
-			// TODO 返回视频id
-			return 1
+			return resp.VideoId
 		},
 	)
 }

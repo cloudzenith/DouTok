@@ -5,6 +5,7 @@ import (
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/api/svapi"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/adapter/baseadapter"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/adapter/svcoreadapter"
+	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/adapter/svcoreadapter/dto"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/adapter/svcoreadapter/videooptions"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/utils/claims"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/utils/errorx"
@@ -38,89 +39,120 @@ func (a *Application) FeedShortVideo(ctx context.Context, request *svapi.FeedSho
 		options = append(options, videooptions.FeedWithLatestTime(request.LatestTime))
 	}
 
-	_, err = a.core.Feed(ctx, userId, options...)
+	resp, err := a.core.Feed(ctx, userId, request.FeedNum, options...)
 	if err != nil {
 		log.Context(ctx).Errorf("failed to feed short video: %v", err)
 		return nil, errorx.New(1, "failed to feed short video")
 	}
 
-	// TODO: 视频上传调通后增加返回值内容
-	return &svapi.FeedShortVideoResponse{}, nil
+	return &svapi.FeedShortVideoResponse{
+		Videos: dto.ToPBVideoList(resp.Videos),
+	}, nil
 }
 
 func (a *Application) GetVideoById(ctx context.Context, request *svapi.GetVideoByIdRequest) (*svapi.GetVideoByIdResponse, error) {
-	_, err := a.core.GetVideoById(ctx, request.GetVideoId())
+	video, err := a.core.GetVideoById(ctx, request.GetVideoId())
 	if err != nil {
 		log.Context(ctx).Errorf("failed to get video by id: %v", err)
 		return nil, errorx.New(1, "failed to get video by id")
 	}
 
-	// TODO: 视频上传调通后增加返回值内容
-	return &svapi.GetVideoByIdResponse{}, nil
+	return &svapi.GetVideoByIdResponse{
+		Video: dto.ToPBVideo(video),
+	}, nil
 }
 
 func (a *Application) listPublishedList(ctx context.Context, userId int64, page, size int32) (*svapi.ListPublishedVideoResponse, error) {
-	_, err := a.core.ListUserPublishedList(ctx, userId, page, size)
+	resp, err := a.core.ListUserPublishedList(ctx, userId, page, size)
 	if err != nil {
 		log.Context(ctx).Errorf("failed to list published video: %v", err)
 		return nil, errorx.New(1, "failed to list published video")
 	}
 
-	// TODO: 上传视频调通后完善返回值
-	return &svapi.ListPublishedVideoResponse{}, nil
+	return &svapi.ListPublishedVideoResponse{
+		VideoList: dto.ToPBVideoList(resp.Videos),
+		Pagination: &svapi.PaginationResponse{
+			Page:  resp.Pagination.Page,
+			Total: resp.Pagination.Total,
+			Count: resp.Pagination.Count,
+		},
+	}, nil
 }
 
-//func (a *Application) ListOthersPublishedVideo(ctx context.Context, request *svapi.ListOthersPublishedVideoRequest) (*svapi.ListPublishedVideoResponse, error) {
-//	return a.listPublishedList(ctx, request.AccountId, request.Pagination.Page, request.Pagination.Size)
-//}
-//
-//func (a *Application) ListPublishedVideo(ctx context.Context, request *svapi.ListPublishedVideoRequest) (*svapi.ListPublishedVideoResponse, error) {
-//	userId, err := claims.GetUserId(ctx)
-//	if err != nil {
-//		log.Context(ctx).Errorf("failed to get user id from context: %v", err)
-//		return nil, errorx.New(1, "failed to get user id from context")
-//	}
-//
-//	return a.listPublishedList(ctx, userId, request.Pagination.Page, request.Pagination.Size)
-//}
-//
-//func (a *Application) PreSign4UploadVideo(ctx context.Context, request *svapi.PreSign4UploadVideoRequest) (*svapi.PreSign4UploadVideoResponse, error) {
-//	resp, err := a.base.PreSign4UploadVideo(
-//		ctx,
-//		request.Hash,
-//		request.FileType,
-//		request.Filename,
-//		request.Size,
-//		3600,
-//	)
-//	if err != nil {
-//		log.Context(ctx).Errorf("failed to pre sign for upload video: %v", err)
-//		return nil, errorx.New(1, "failed to pre sign for upload video")
-//	}
-//
-//	// TODO: 通过sv-core预先添加视频基础信息
-//	videoId, err := a.core.PreSaveVideoInfo(ctx, request.Title)
-//	if err != nil {
-//		log.Context(ctx).Errorf("failed to pre save video info: %v", err)
-//		return nil, errorx.New(1, "failed to upload video")
-//	}
-//
-//	return &svapi.PreSign4UploadVideoResponse{
-//		FileId:  resp.FileId,
-//		Url:     resp.Url,
-//		VideoId: videoId,
-//	}, nil
-//}
-//
-//func (a *Application) ReportFinishUpload(ctx context.Context, request *svapi.ReportFinishUploadRequest) (*svapi.ListVideo, error) {
-//	if err := a.base.ReportUploaded(ctx, request.FileId); err != nil {
-//		log.Context(ctx).Errorf("failed to report finish upload: %v", err)
-//		return nil, errorx.New(1, "failed to report finish upload")
-//	}
-//
-//	// TODO：通过sv-core标记视频已被上传成功，并得到视频基础信息
-//
-//	return nil, nil
-//}
-//
-//var _ svapi.ShortVideoCoreVideoServiceHTTPServer = (*Application)(nil)
+func (a *Application) ListPublishedVideo(ctx context.Context, request *svapi.ListPublishedVideoRequest) (*svapi.ListPublishedVideoResponse, error) {
+	userId, err := claims.GetUserId(ctx)
+	if err != nil {
+		log.Context(ctx).Errorf("failed to get user id from context: %v", err)
+		return nil, errorx.New(1, "failed to get user id from context")
+	}
+
+	return a.listPublishedList(ctx, userId, request.Pagination.Page, request.Pagination.Size)
+}
+
+func (a *Application) PreSign4UploadVideo(ctx context.Context, request *svapi.PreSign4UploadVideoRequest) (*svapi.PreSign4UploadVideoResponse, error) {
+	resp, err := a.base.PreSign4Upload(
+		ctx,
+		request.Hash,
+		request.FileType,
+		request.Filename,
+		request.Size,
+		3600,
+	)
+	if err != nil {
+		log.Context(ctx).Errorf("failed to pre sign for upload video: %v", err)
+		return nil, errorx.New(1, "failed to pre sign for upload video")
+	}
+
+	return &svapi.PreSign4UploadVideoResponse{
+		FileId: resp.FileId,
+		Url:    resp.Url,
+	}, nil
+}
+
+func (a *Application) ReportVideoFinishUpload(ctx context.Context, request *svapi.ReportVideoFinishUploadRequest) (*svapi.ReportVideoFinishUploadResponse, error) {
+	resp, err := a.base.ReportUploaded(ctx, request.FileId)
+	if err != nil {
+		log.Context(ctx).Errorf("failed to report finish upload: %v", err)
+		return nil, errorx.New(1, "failed to report finish upload")
+	}
+
+	videoId, err := a.core.SaveVideoInfo(ctx, request.Title, resp.Url, request.CoverUrl, request.Description, request.UserId)
+
+	return &svapi.ReportVideoFinishUploadResponse{
+		VideoId: videoId,
+	}, nil
+}
+
+func (a *Application) ReportFinishUpload(ctx context.Context, request *svapi.ReportFinishUploadRequest) (*svapi.ReportFinishUploadResponse, error) {
+	resp, err := a.base.ReportUploaded(ctx, request.FileId)
+	if err != nil {
+		log.Context(ctx).Errorf("failed to report finish upload: %v", err)
+		return nil, errorx.New(1, "failed to report finish upload")
+	}
+
+	return &svapi.ReportFinishUploadResponse{
+		Url: resp.Url,
+	}, nil
+}
+
+func (a *Application) PreSign4UploadCover(ctx context.Context, request *svapi.PreSign4UploadRequest) (*svapi.PreSign4UploadResponse, error) {
+	resp, err := a.base.PreSign4Upload(
+		ctx,
+		request.Hash,
+		request.FileType,
+		request.Filename,
+		request.Size,
+		3600,
+	)
+	if err != nil {
+		log.Context(ctx).Errorf("failed to pre sign for upload cover: %v", err)
+		return nil, errorx.New(1, "failed to pre sign for upload cover")
+	}
+
+	return &svapi.PreSign4UploadResponse{
+		FileId: resp.FileId,
+		Url:    resp.Url,
+	}, nil
+}
+
+var _ svapi.ShortVideoCoreVideoServiceHTTPServer = (*Application)(nil)

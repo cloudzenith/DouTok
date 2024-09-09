@@ -7,7 +7,7 @@ info:
     version: 0.0.1
 paths:
     /cover/upload:
-        put:
+        post:
             tags:
                 - ShortVideoCoreVideoService
             description: 预注册上传封面
@@ -16,7 +16,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/svapi.PreSign4UploadFileRequest'
+                            $ref: '#/components/schemas/svapi.PreSign4UploadRequest'
                 required: true
             responses:
                 "200":
@@ -24,7 +24,33 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/svapi.PreSign4UploadFileResponse'
+                                $ref: '#/components/schemas/svapi.PreSign4UploadResponse'
+    /file/{fileId}/finish:
+        post:
+            tags:
+                - ShortVideoCoreVideoService
+            description: 通用确认上传完成
+            operationId: ShortVideoCoreVideoService_ReportFinishUpload
+            parameters:
+                - name: fileId
+                  in: path
+                  description: 文件id
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/svapi.ReportFinishUploadRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/svapi.ReportFinishUploadResponse'
     /user/code:
         post:
             tags:
@@ -118,26 +144,7 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/svapi.RegisterResponse'
-    /video/upload:
-        post:
-            tags:
-                - ShortVideoCoreVideoService
-            description: 预注册上传视频
-            operationId: ShortVideoCoreVideoService_PreSign4UploadFile
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/svapi.PreSign4UploadVideoRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/svapi.PreSign4UploadVideoResponse'
-    /videos/feed:
+    /video/feed:
         post:
             tags:
                 - ShortVideoCoreVideoService
@@ -156,27 +163,18 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/svapi.FeedShortVideoResponse'
-    /videos/list:
-        get:
+    /video/list:
+        post:
             tags:
                 - ShortVideoCoreVideoService
             description: 获取当前用户的发布视频列表
             operationId: ShortVideoCoreVideoService_ListPublishedVideo
-            parameters:
-                - name: userId
-                  in: query
-                  schema:
-                    type: string
-                - name: pagination.page
-                  in: query
-                  schema:
-                    type: integer
-                    format: int32
-                - name: pagination.size
-                  in: query
-                  schema:
-                    type: integer
-                    format: int32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/svapi.ListPublishedVideoRequest'
+                required: true
             responses:
                 "200":
                     description: OK
@@ -184,8 +182,27 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/svapi.ListPublishedVideoResponse'
-    /videos/{fileId}/finish:
-        put:
+    /video/upload:
+        post:
+            tags:
+                - ShortVideoCoreVideoService
+            description: 预注册上传视频
+            operationId: ShortVideoCoreVideoService_PreSign4UploadVideo
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/svapi.PreSign4UploadVideoRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/svapi.PreSign4UploadVideoResponse'
+    /video/{fileId}/finish:
+        post:
             tags:
                 - ShortVideoCoreVideoService
             description: 确认视频上传完成
@@ -210,7 +227,7 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/svapi.ReportVideoFinishUploadResponse'
-    /videos/{videoId}:
+    /video/{videoId}:
         get:
             tags:
                 - ShortVideoCoreVideoService
@@ -276,6 +293,14 @@ components:
                 video:
                     $ref: '#/components/schemas/svapi.Video'
             description: 获取视频信息响应消息类型
+        svapi.ListPublishedVideoRequest:
+            type: object
+            properties:
+                userId:
+                    type: string
+                pagination:
+                    $ref: '#/components/schemas/svapi.PaginationRequest'
+            description: 获取当前用户的发布视频列表请求消息类型
         svapi.ListPublishedVideoResponse:
             type: object
             properties:
@@ -314,6 +339,19 @@ components:
                     type: array
                     items:
                         type: string
+        svapi.PaginationRequest:
+            type: object
+            properties:
+                page:
+                    type: integer
+                    format: int32
+                size:
+                    type: integer
+                    format: int32
+                sort:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/svapi.SortField'
         svapi.PaginationResponse:
             type: object
             properties:
@@ -326,7 +364,7 @@ components:
                 count:
                     type: integer
                     format: int32
-        svapi.PreSign4UploadFileRequest:
+        svapi.PreSign4UploadRequest:
             type: object
             properties:
                 hash:
@@ -342,7 +380,7 @@ components:
                     type: string
                     description: 文件名
             description: 通用小文件单次上传请求消息类型
-        svapi.PreSign4UploadFileResponse:
+        svapi.PreSign4UploadResponse:
             type: object
             properties:
                 url:
@@ -396,14 +434,14 @@ components:
             properties:
                 userId:
                     type: string
-        svapi.ReportFileFinishUploadRequest:
+        svapi.ReportFinishUploadRequest:
             type: object
             properties:
                 fileId:
                     type: string
                     description: 文件id
             description: 通用确认上传完成请求消息类型
-        svapi.ReportFileFinishUploadResponse:
+        svapi.ReportFinishUploadResponse:
             type: object
             properties:
                 url:
@@ -416,9 +454,6 @@ components:
                 fileId:
                     type: string
                     description: 文件id
-                videoId:
-                    type: string
-                    description: 视频id
                 title:
                     type: string
                     description: 视频标题
@@ -435,10 +470,18 @@ components:
         svapi.ReportVideoFinishUploadResponse:
             type: object
             properties:
-                url:
+                videoId:
                     type: string
-                    description: 视频播放地址
+                    description: 视频id
             description: 确认视频上传完成响应消息类型
+        svapi.SortField:
+            type: object
+            properties:
+                field:
+                    type: string
+                order:
+                    type: integer
+                    format: enum
         svapi.UpdateUserInfoRequest:
             type: object
             properties:

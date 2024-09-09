@@ -9,7 +9,7 @@ import "svapi/base.proto";
 
 service ShortVideoCoreVideoService {
     // 预注册上传视频
-    rpc PreSign4UploadFile(PreSign4UploadVideoRequest) returns (PreSign4UploadVideoResponse) {
+    rpc PreSign4UploadVideo(PreSign4UploadVideoRequest) returns (PreSign4UploadVideoResponse) {
         option (google.api.http) = {
             post: "/video/upload"
             body: "*"
@@ -17,17 +17,17 @@ service ShortVideoCoreVideoService {
     };
 
     // 预注册上传封面
-    rpc PreSign4UploadCover(PreSign4UploadFileRequest) returns (PreSign4UploadFileResponse) {
+    rpc PreSign4UploadCover(PreSign4UploadRequest) returns (PreSign4UploadResponse) {
         option (google.api.http) = {
-            put: "/cover/upload"
+            post: "/cover/upload"
             body: "*"
         };
     };
 
     // 通用确认上传完成
-    rpc ReportFinishUpload(ReportFileFinishUploadRequest) returns (ReportFileFinishUploadResponse) {
+    rpc ReportFinishUpload(ReportFinishUploadRequest) returns (ReportFinishUploadResponse) {
         option (google.api.http) = {
-            put: "/videos/{file_id}/finish"
+            post: "/file/{file_id}/finish"
             body: "*"
         };
     };
@@ -35,7 +35,7 @@ service ShortVideoCoreVideoService {
     // 确认视频上传完成
     rpc ReportVideoFinishUpload(ReportVideoFinishUploadRequest) returns (ReportVideoFinishUploadResponse) {
         option (google.api.http) = {
-            put: "/videos/{file_id}/finish"
+            post: "/video/{file_id}/finish"
             body: "*"
         };
     };
@@ -43,7 +43,7 @@ service ShortVideoCoreVideoService {
     // 刷视频
     rpc FeedShortVideo(FeedShortVideoRequest) returns (FeedShortVideoResponse) {
         option (google.api.http) = {
-            post: "/videos/feed"
+            post: "/video/feed"
             body: "*"
         };
     };
@@ -51,14 +51,15 @@ service ShortVideoCoreVideoService {
     // 获取视频信息
     rpc GetVideoById(GetVideoByIdRequest) returns (GetVideoByIdResponse) {
         option (google.api.http) = {
-            get: "/videos/{video_id}"
+            get: "/video/{video_id}"
         };
     };
 
     // 获取当前用户的发布视频列表
     rpc ListPublishedVideo(ListPublishedVideoRequest) returns (ListPublishedVideoResponse) {
         option (google.api.http) = {
-            get: "/videos/list"
+            post: "/video/list"
+            body: "*"
         };
     };
 }
@@ -102,7 +103,7 @@ message PreSign4UploadVideoResponse {
 }
 
 // 通用小文件单次上传请求消息类型
-message PreSign4UploadFileRequest {
+message PreSign4UploadRequest {
     // md5 hash
     string hash = 1;
     // 文件类型，默认mp4
@@ -114,7 +115,7 @@ message PreSign4UploadFileRequest {
 }
 
 // 通用小文件单次上传响应消息类型
-message PreSign4UploadFileResponse {
+message PreSign4UploadResponse {
     // minio上传地址
     string url = 1;
     // 文件id
@@ -125,8 +126,6 @@ message PreSign4UploadFileResponse {
 message ReportVideoFinishUploadRequest {
     // 文件id
     int64 file_id = 1;
-    // 视频id
-    int64 video_id = 2;
     // 视频标题
     string title = 3;
     // 视频封面地址
@@ -139,18 +138,18 @@ message ReportVideoFinishUploadRequest {
 
 // 确认视频上传完成响应消息类型
 message ReportVideoFinishUploadResponse {
-    // 视频播放地址
-    string url = 1;
+    // 视频id
+    int64 video_id = 1;
 }
 
 // 通用确认上传完成请求消息类型
-message ReportFileFinishUploadRequest {
+message ReportFinishUploadRequest {
     // 文件id
     int64 file_id = 1;
 }
 
 // 通用确认上传完成响应消息类型
-message ReportFileFinishUploadResponse {
+message ReportFinishUploadResponse {
     // url
     string url = 1;
 }
