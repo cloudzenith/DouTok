@@ -37,7 +37,6 @@ jobs:
             - name: Create or update a comment for start checking
               uses: thollander/actions-comment-pull-request@v2
               with:
-                  uniqueIdentifier: ${{ github.workflow }}
                   body: |
                       **Checking...**
 
@@ -243,7 +242,6 @@ jobs:
             - name: Create or update a comment for result
               uses: thollander/actions-comment-pull-request@v2
               with:
-                  uniqueIdentifier: ${{ github.workflow }}
                   body: |
                       ## Eslint Check Result
 
