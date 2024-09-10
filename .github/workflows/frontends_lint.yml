@@ -10,6 +10,10 @@ concurrency:
     group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
     cancel-in-progress: true
 
+permissions:
+    actions: write
+    pull-requests: write
+
 jobs:
     replyChecking:
         runs-on: ubuntu-latest
@@ -41,11 +45,13 @@ jobs:
               uses: actions/checkout@v4
               with:
                   lfs: true
+                  dir: 'frontend/doutok'
 
             - name: Init pnpm
               uses: pnpm/action-setup@v2
               with:
                   version: 8
+                  dir: 'frontend/doutok'
 
             - name: Init node
               id: node
@@ -53,10 +59,13 @@ jobs:
               with:
                   node-version: 20
                   cache: 'pnpm'
+                  dir: 'frontend/doutok'
 
             - name: Install dependencies
               if: steps.node.outputs.cache-hit != 'true'
               run: pnpm install
+              with:
+                  dir: 'frontend/doutok'
 
     eslint:
         runs-on: ubuntu-latest
@@ -69,26 +78,32 @@ jobs:
               with:
                   lfs: true
                   fetch-depth: 0
+                  dir: 'frontend/doutok'
 
             - name: Init pnpm
               uses: pnpm/action-setup@v2
               with:
                   version: 8
+                  dir: 'frontend/doutok'
 
             - name: Init node
               uses: actions/setup-node@v4
               with:
                   node-version: 20
                   cache: 'pnpm'
+                  dir: 'frontend/doutok'
 
             - name: Install dependencies
               run: pnpm install
+              with:
+                  dir: 'frontend/doutok'
 
             - name: Run lint
               id: lint
               uses: actions/github-script@v7
               with:
                   result-encoding: string
+                  dir: 'frontend/doutok'
                   script: |
                       let output = '';
                       let outerr = '';
@@ -165,26 +180,32 @@ jobs:
               uses: actions/checkout@v4
               with:
                   lfs: true
+                  dir: 'frontend/doutok'
 
             - name: Init pnpm
               uses: pnpm/action-setup@v2
               with:
                   version: 8
+                  dir: 'frontend/doutok'
 
             - name: Init node
               uses: actions/setup-node@v4
               with:
                   node-version: 20
                   cache: 'pnpm'
+                  dir: 'frontend/doutok'
 
             - name: Install dependencies
               run: pnpm install
+              with:
+                dir: 'frontend/doutok'
 
             - name: Run lint
               id: lint
               uses: actions/github-script@v7
               with:
                   result-encoding: string
+                  dir: 'frontend/doutok'
                   script: |
                       let output = '';
                       let outerr = '';
@@ -240,26 +261,32 @@ jobs:
               uses: actions/checkout@v4
               with:
                   lfs: true
+                  dir: 'frontend/doutok'
 
             - name: Init pnpm
               uses: pnpm/action-setup@v2
               with:
                   version: 8
+                  dir: 'frontend/doutok'
 
             - name: Init node
               uses: actions/setup-node@v4
               with:
                   node-version: 20
                   cache: 'pnpm'
+                  dir: 'frontend/doutok'
 
             - name: Install dependencies
               run: pnpm install
+              with:
+                dir: 'frontend/doutok'
 
             - name: Run lint
               id: lint
               uses: actions/github-script@v7
               with:
                   result-encoding: string
+                  dir: 'frontend/doutok'
                   script: |
                       let output = '';
                       let outerr = '';
