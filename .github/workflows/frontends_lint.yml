@@ -15,19 +15,26 @@ permissions:
     pull-requests: write
 
 jobs:
-    replyChecking:
+    lint:
         runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                project: ['frontend/doutok']
         steps:
             - name: Checkout
               uses: actions/checkout@v4
               with:
                   lfs: true
 
+            - name: cd
+              run: |
+                  cd ${{ matrix.project }}
+
             - name: Get date time
               id: getDateTime
               run: echo "result=$(TZ=Asia/Shanghai date)" >> "$GITHUB_OUTPUT"
 
-            - name: Create or update a comment
+            - name: Create or update a comment for start checking
               uses: taoliujun/action-unique-comment@v1
               with:
                   uniqueIdentifier: ${{ github.workflow }}
@@ -38,20 +45,10 @@ jobs:
 
                       Commented by Action [${{github.workflow}} #${{ github.event.pull_request.number }}](${{github.event.repository.html_url}}/actions/runs/${{github.run_id}}), last updated on ${{steps.getDateTime.outputs.result}}.
 
-    init:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Init repo
-              uses: actions/checkout@v4
-              with:
-                  lfs: true
-                  dir: 'frontend/doutok'
-
             - name: Init pnpm
               uses: pnpm/action-setup@v2
               with:
                   version: 8
-                  dir: 'frontend/doutok'
 
             - name: Init node
               id: node
@@ -59,51 +56,16 @@ jobs:
               with:
                   node-version: 20
                   cache: 'pnpm'
-                  dir: 'frontend/doutok'
 
             - name: Install dependencies
               if: steps.node.outputs.cache-hit != 'true'
               run: pnpm install
-              with:
-                  dir: 'frontend/doutok'
 
-    eslint:
-        runs-on: ubuntu-latest
-        needs: [init]
-        outputs:
-            result: ${{ steps.lint.outputs.result }}
-        steps:
-            - name: Init repo
-              uses: actions/checkout@v4
-              with:
-                  lfs: true
-                  fetch-depth: 0
-                  dir: 'frontend/doutok'
-
-            - name: Init pnpm
-              uses: pnpm/action-setup@v2
-              with:
-                  version: 8
-                  dir: 'frontend/doutok'
-
-            - name: Init node
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 20
-                  cache: 'pnpm'
-                  dir: 'frontend/doutok'
-
-            - name: Install dependencies
-              run: pnpm install
-              with:
-                  dir: 'frontend/doutok'
-
-            - name: Run lint
+            - name: Run ES lint
               id: lint
               uses: actions/github-script@v7
               with:
                   result-encoding: string
-                  dir: 'frontend/doutok'
                   script: |
                       let output = '';
                       let outerr = '';
@@ -170,42 +132,11 @@ jobs:
 
                       return `:white_check_mark: ${errorMatch?.[0] || '0 error'} ${warnMatch?.[0] || '0 warning'}.`;
 
-    typescript:
-        runs-on: ubuntu-latest
-        needs: [init]
-        outputs:
-            result: ${{ steps.lint.outputs.result }}
-        steps:
-            - name: Init repo
-              uses: actions/checkout@v4
-              with:
-                  lfs: true
-                  dir: 'frontend/doutok'
-
-            - name: Init pnpm
-              uses: pnpm/action-setup@v2
-              with:
-                  version: 8
-                  dir: 'frontend/doutok'
-
-            - name: Init node
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 20
-                  cache: 'pnpm'
-                  dir: 'frontend/doutok'
-
-            - name: Install dependencies
-              run: pnpm install
-              with:
-                dir: 'frontend/doutok'
-
-            - name: Run lint
+            - name: Run Typescript lint
               id: lint
               uses: actions/github-script@v7
               with:
                   result-encoding: string
-                  dir: 'frontend/doutok'
                   script: |
                       let output = '';
                       let outerr = '';
@@ -236,14 +167,14 @@ jobs:
                       if (errorMatch) {
                         return `
                         :x: ${errorMatch?.length} errors.
-                        
+
                         <details><summary>Details</summary>
                         <p>
 
                         \`\`\`shell
                         ${output}
                         \`\`\`
-                        
+
                         </p>
                         </details>
                         `;
@@ -251,42 +182,11 @@ jobs:
 
                       return `:white_check_mark: ${'0 error'}.`;
 
-    unitTest:
-        runs-on: ubuntu-latest
-        needs: [init]
-        outputs:
-            result: ${{ steps.lint.outputs.result }}
-        steps:
-            - name: Init repo
-              uses: actions/checkout@v4
-              with:
-                  lfs: true
-                  dir: 'frontend/doutok'
-
-            - name: Init pnpm
-              uses: pnpm/action-setup@v2
-              with:
-                  version: 8
-                  dir: 'frontend/doutok'
-
-            - name: Init node
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 20
-                  cache: 'pnpm'
-                  dir: 'frontend/doutok'
-
-            - name: Install dependencies
-              run: pnpm install
-              with:
-                dir: 'frontend/doutok'
-
-            - name: Run lint
+            - name: Unit Test
               id: lint
               uses: actions/github-script@v7
               with:
                   result-encoding: string
-                  dir: 'frontend/doutok'
                   script: |
                       let output = '';
                       let outerr = '';
@@ -315,10 +215,10 @@ jobs:
                       if (failMatch) {
                         return `
                         :x: ${failMatch?.[0]}.
-                        
+                      
                         <details><summary>Details</summary>
                         <p>
-                        
+                      
                         \`\`\`shell
                         ${outerr.substring(outerr.indexOf('Summary of all failing tests'))}
                         \`\`\`
@@ -336,20 +236,11 @@ jobs:
 
                       return `:white_check_mark: passed.`;
 
-    replyResult:
-        runs-on: ubuntu-latest
-        needs: [eslint, typescript, unitTest]
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-              with:
-                  lfs: true
-
-            - name: Get date time
+            - name: Get date time for finishing
               id: getDateTime
               run: echo "result=$(TZ=Asia/Shanghai date)" >> "$GITHUB_OUTPUT"
 
-            - name: Create or update a comment
+            - name: Create or update a comment for result
               uses: taoliujun/action-unique-comment@v1
               with:
                   uniqueIdentifier: ${{ github.workflow }}
