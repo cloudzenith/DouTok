@@ -36,7 +36,7 @@ jobs:
             - name: Create or update a comment for start checking
               uses: thollander/actions-comment-pull-request@v2
               with:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  GITHUB_TOKEN: ${{ secrets.COMMENT_TOKEN }}
                   message: |
                       **Checking...**
 
