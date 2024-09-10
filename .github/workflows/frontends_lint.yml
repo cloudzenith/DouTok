@@ -37,7 +37,7 @@ jobs:
             - name: Create or update a comment for start checking
               uses: thollander/actions-comment-pull-request@v2
               with:
-                  body: |
+                  message: |
                       **Checking...**
 
                       ---
@@ -242,7 +242,7 @@ jobs:
             - name: Create or update a comment for result
               uses: thollander/actions-comment-pull-request@v2
               with:
-                  body: |
+                  message: |
                       ## Eslint Check Result
 
                       ${{needs.eslint.outputs.result}}
