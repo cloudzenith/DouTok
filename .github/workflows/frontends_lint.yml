@@ -237,7 +237,7 @@ jobs:
                       return `:white_check_mark: passed.`;
 
             - name: Get date time for finishing
-              id: getDateTime
+              id: getDateTimeForFinishing
               run: echo "result=$(TZ=Asia/Shanghai date)" >> "$GITHUB_OUTPUT"
 
             - name: Create or update a comment for result
