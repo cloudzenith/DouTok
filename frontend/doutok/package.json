@@ -6,13 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "gen-svapi": "restful-react import --file ../../backend/shortVideoApiService/openapi.yaml --output ./api/svapi/api.tsx && prettier ./api/svapi/api.tsx --write"
   },
   "dependencies": {
     "@ant-design/nextjs-registry": "^1.0.0",
     "antd": "^5.19.4",
+    "axios": "^1.7.7",
     "doutok": "file:",
     "next": "14.2.4",
+    "openapi-fetch": "^0.12.0",
+    "openapi-typescript": "^7.4.0",
     "react": "^18",
     "react-dom": "^18",
     "restful-react": "^15.9.4"

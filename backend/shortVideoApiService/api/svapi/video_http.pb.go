@@ -93,8 +93,7 @@ func _ShortVideoCoreVideoService_PreSign4UploadCover0_HTTP_Handler(srv ShortVide
 		if err != nil {
 			return err
 		}
-		reply := out.(*PreSign4UploadResponse)
-		return ctx.Result(200, reply)
+		return ctx.Result(200, out)
 	}
 }
 
@@ -118,8 +117,7 @@ func _ShortVideoCoreVideoService_ReportFinishUpload0_HTTP_Handler(srv ShortVideo
 		if err != nil {
 			return err
 		}
-		reply := out.(*ReportFinishUploadResponse)
-		return ctx.Result(200, reply)
+		return ctx.Result(200, out)
 	}
 }
 

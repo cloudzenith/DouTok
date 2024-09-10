@@ -6,6 +6,7 @@ import Avatar from "antd/es/avatar/avatar";
 import { UserOutlined } from "@ant-design/icons";
 import { MainSearch } from "@/components/MainSearch/MainSearch";
 import { Image } from "antd";
+import {SvapiFeedShortVideoRequest, useUserServiceGetUserInfo} from "@/api/svapi/api";
 
 export function PageHeader() {
   return (

@@ -32,7 +32,41 @@ paths:
                                         type: string
                                         description: Status message. Could be displayed to user.
                                     data:
-                                        $ref: '#/components/schemas/svapi.PreSign4UploadFileResponse'
+                                        $ref: '#/components/schemas/svapi.PreSign4UploadResponse'
+    /file/{fileId}/finish:
+        post:
+            tags:
+                - ShortVideoCoreVideoService
+            description: 通用确认上传完成
+            operationId: ShortVideoCoreVideoService_ReportFinishUpload
+            parameters:
+                - name: fileId
+                  in: path
+                  description: 文件id
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/svapi.ReportFinishUploadRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                properties:
+                                    code:
+                                        type: integer
+                                        description: Status code. Zero means success.
+                                    msg:
+                                        type: string
+                                        description: Status message. Could be displayed to user.
+                                    data:
+                                        $ref: '#/components/schemas/svapi.ReportFinishUploadResponse'
     /user/code:
         post:
             tags:
@@ -166,7 +200,7 @@ paths:
                                         description: Status message. Could be displayed to user.
                                     data:
                                         $ref: '#/components/schemas/svapi.RegisterResponse'
-    /video/upload:
+    /video/feed:
         post:
             tags:
                 - ShortVideoCoreVideoService
@@ -192,8 +226,8 @@ paths:
                                         type: string
                                         description: Status message. Could be displayed to user.
                                     data:
-                                        $ref: '#/components/schemas/svapi.PreSign4UploadVideoResponse'
-    /videos/feed:
+                                        $ref: '#/components/schemas/svapi.FeedShortVideoResponse'
+    /video/list:
         post:
             tags:
                 - ShortVideoCoreVideoService
@@ -219,9 +253,9 @@ paths:
                                         type: string
                                         description: Status message. Could be displayed to user.
                                     data:
-                                        $ref: '#/components/schemas/svapi.FeedShortVideoResponse'
-    /videos/list:
-        get:
+                                        $ref: '#/components/schemas/svapi.ListPublishedVideoResponse'
+    /video/upload:
+        post:
             tags:
                 - ShortVideoCoreVideoService
             description: 预注册上传视频
@@ -246,9 +280,9 @@ paths:
                                         type: string
                                         description: Status message. Could be displayed to user.
                                     data:
-                                        $ref: '#/components/schemas/svapi.ListPublishedVideoResponse'
-    /videos/{fileId}/finish:
-        put:
+                                        $ref: '#/components/schemas/svapi.PreSign4UploadVideoResponse'
+    /video/{fileId}/finish:
+        post:
             tags:
                 - ShortVideoCoreVideoService
             description: 确认视频上传完成
@@ -281,7 +315,7 @@ paths:
                                         description: Status message. Could be displayed to user.
                                     data:
                                         $ref: '#/components/schemas/svapi.ReportVideoFinishUploadResponse'
-    /videos/{videoId}:
+    /video/{videoId}:
         get:
             tags:
                 - ShortVideoCoreVideoService
