@@ -35,7 +35,7 @@ jobs:
               run: echo "result=$(TZ=Asia/Shanghai date)" >> "$GITHUB_OUTPUT"
 
             - name: Create or update a comment for start checking
-              uses: taoliujun/action-unique-comment@v1
+              uses: thollander/actions-comment-pull-request@v2
               with:
                   uniqueIdentifier: ${{ github.workflow }}
                   body: |
@@ -241,7 +241,7 @@ jobs:
               run: echo "result=$(TZ=Asia/Shanghai date)" >> "$GITHUB_OUTPUT"
 
             - name: Create or update a comment for result
-              uses: taoliujun/action-unique-comment@v1
+              uses: thollander/actions-comment-pull-request@v2
               with:
                   uniqueIdentifier: ${{ github.workflow }}
                   body: |
