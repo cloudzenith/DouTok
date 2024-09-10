@@ -17,7 +17,6 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v4
               with:
-                  ref: ${{github.head_ref}}
                   lfs: true
 
             - name: Get date time
@@ -41,7 +40,6 @@ jobs:
             - name: Init repo
               uses: actions/checkout@v4
               with:
-                  ref: ${{github.head_ref}}
                   lfs: true
 
             - name: Init pnpm
@@ -69,7 +67,6 @@ jobs:
             - name: Init repo
               uses: actions/checkout@v4
               with:
-                  ref: ${{github.head_ref}}
                   lfs: true
                   fetch-depth: 0
 
@@ -167,7 +164,6 @@ jobs:
             - name: Init repo
               uses: actions/checkout@v4
               with:
-                  ref: ${{github.head_ref}}
                   lfs: true
 
             - name: Init pnpm
@@ -243,7 +239,6 @@ jobs:
             - name: Init repo
               uses: actions/checkout@v4
               with:
-                  ref: ${{github.head_ref}}
                   lfs: true
 
             - name: Init pnpm
@@ -321,7 +316,6 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v4
               with:
-                  ref: ${{github.head_ref}}
                   lfs: true
 
             - name: Get date time
