@@ -62,7 +62,7 @@ jobs:
               run: pnpm install
 
             - name: Run ES lint
-              id: lint
+              id: eslint
               uses: actions/github-script@v7
               with:
                   result-encoding: string
@@ -133,7 +133,7 @@ jobs:
                       return `:white_check_mark: ${errorMatch?.[0] || '0 error'} ${warnMatch?.[0] || '0 warning'}.`;
 
             - name: Run Typescript lint
-              id: lint
+              id: tslint
               uses: actions/github-script@v7
               with:
                   result-encoding: string
@@ -183,7 +183,7 @@ jobs:
                       return `:white_check_mark: ${'0 error'}.`;
 
             - name: Unit Test
-              id: lint
+              id: ut
               uses: actions/github-script@v7
               with:
                   result-encoding: string
