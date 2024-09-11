@@ -22,6 +22,7 @@ func NewVideoApplication(video videodomain.VideoUsecase) *VideoApplication {
 
 func (s *VideoApplication) PublishVideo(ctx context.Context, in *v1.PublishVideoRequest) (*v1.PublishVideoResponse, error) {
 	videoId, err := s.videoUsecase.PublishVideo(ctx, &domain_dto.PublishVideoRequest{
+		UserId:      in.UserId,
 		Title:       in.Title,
 		Description: in.Description,
 		VideoURL:    in.PlayUrl,
