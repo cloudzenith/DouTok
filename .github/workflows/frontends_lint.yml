@@ -72,6 +72,12 @@ jobs:
                       let diffFiles = '';
 
                       await exec.exec(
+                        `git fetch`,
+                        [],
+                        {}
+                      );
+
+                      await exec.exec(
                         `git diff --name-only --diff-filter=d origin/${{github.base_ref}}`,
                         [],
                         {
