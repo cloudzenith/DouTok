@@ -52,6 +52,7 @@ jobs:
             - name: Init node
               id: node
               uses: actions/setup-node@v4
+              working-directory: ${{ matrix.project }}
               with:
                   node-version: 20
                   cache: 'pnpm'
