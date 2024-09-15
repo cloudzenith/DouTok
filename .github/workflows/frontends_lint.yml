@@ -148,7 +148,7 @@ jobs:
                       let outerr = '';
 
                       await exec.exec(
-                        `pnpm run -r lint:ts`,
+                        `pnpm run -r lint`,
                         [],
                         {
                           // silent: true,
