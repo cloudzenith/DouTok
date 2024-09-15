@@ -1,0 +1,14 @@
+/dist/*
+/build
+.local
+.next
+/node_modules/**
+
+**/*.svg
+**/*.sh
+
+/public/*
+*.yaml
+*.json
+*.md
+.prettierrc

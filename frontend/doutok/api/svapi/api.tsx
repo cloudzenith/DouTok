@@ -9,7 +9,7 @@ import {
   Mutate,
   MutateProps,
   useMutate,
-  UseMutateProps,
+  UseMutateProps
 } from "restful-react";
 export const SPEC_VERSION = "0.0.1";
 /**
@@ -311,7 +311,7 @@ export type ShortVideoCoreVideoServicePreSign4UploadCoverProps = Omit<
  * 预注册上传封面
  */
 export const ShortVideoCoreVideoServicePreSign4UploadCover = (
-  props: ShortVideoCoreVideoServicePreSign4UploadCoverProps,
+  props: ShortVideoCoreVideoServicePreSign4UploadCoverProps
 ) => (
   <Mutate<
     ShortVideoCoreVideoServicePreSign4UploadCoverResponse,
@@ -341,7 +341,7 @@ export type UseShortVideoCoreVideoServicePreSign4UploadCoverProps = Omit<
  * 预注册上传封面
  */
 export const useShortVideoCoreVideoServicePreSign4UploadCover = (
-  props: UseShortVideoCoreVideoServicePreSign4UploadCoverProps,
+  props: UseShortVideoCoreVideoServicePreSign4UploadCoverProps
 ) =>
   useMutate<
     ShortVideoCoreVideoServicePreSign4UploadCoverResponse,
@@ -431,7 +431,7 @@ export const useShortVideoCoreVideoServiceReportFinishUpload = ({
     "POST",
     (paramsInPath: ShortVideoCoreVideoServiceReportFinishUploadPathParams) =>
       `/file/${paramsInPath.fileId}/finish`,
-    { pathParams: { fileId }, ...props },
+    { pathParams: { fileId }, ...props }
   );
 
 export interface UserServiceGetVerificationCodeResponse {
@@ -461,7 +461,7 @@ export type UserServiceGetVerificationCodeProps = Omit<
  * 获取验证码
  */
 export const UserServiceGetVerificationCode = (
-  props: UserServiceGetVerificationCodeProps,
+  props: UserServiceGetVerificationCodeProps
 ) => (
   <Mutate<
     UserServiceGetVerificationCodeResponse,
@@ -491,7 +491,7 @@ export type UseUserServiceGetVerificationCodeProps = Omit<
  * 获取验证码
  */
 export const useUserServiceGetVerificationCode = (
-  props: UseUserServiceGetVerificationCodeProps,
+  props: UseUserServiceGetVerificationCodeProps
 ) =>
   useMutate<
     UserServiceGetVerificationCodeResponse,
@@ -556,7 +556,7 @@ export type UseUserServiceGetUserInfoProps = Omit<
  * 获取用户信息
  */
 export const useUserServiceGetUserInfo = (
-  props: UseUserServiceGetUserInfoProps,
+  props: UseUserServiceGetUserInfoProps
 ) =>
   useGet<
     UserServiceGetUserInfoResponse,
@@ -592,7 +592,7 @@ export type UserServiceUpdateUserInfoProps = Omit<
  * 更新用户信息
  */
 export const UserServiceUpdateUserInfo = (
-  props: UserServiceUpdateUserInfoProps,
+  props: UserServiceUpdateUserInfoProps
 ) => (
   <Mutate<
     UserServiceUpdateUserInfoResponse,
@@ -622,7 +622,7 @@ export type UseUserServiceUpdateUserInfoProps = Omit<
  * 更新用户信息
  */
 export const useUserServiceUpdateUserInfo = (
-  props: UseUserServiceUpdateUserInfoProps,
+  props: UseUserServiceUpdateUserInfoProps
 ) =>
   useMutate<
     UserServiceUpdateUserInfoResponse,
@@ -678,7 +678,7 @@ export const useUserServiceLogin = (props: UseUserServiceLoginProps) =>
   useMutate<UserServiceLoginResponse, unknown, void, SvapiLoginRequest, void>(
     "POST",
     `/user/login`,
-    props,
+    props
   );
 
 export interface UserServiceRegisterResponse {
@@ -771,7 +771,7 @@ export type ShortVideoCoreVideoServiceFeedShortVideoProps = Omit<
  * 刷视频
  */
 export const ShortVideoCoreVideoServiceFeedShortVideo = (
-  props: ShortVideoCoreVideoServiceFeedShortVideoProps,
+  props: ShortVideoCoreVideoServiceFeedShortVideoProps
 ) => (
   <Mutate<
     ShortVideoCoreVideoServiceFeedShortVideoResponse,
@@ -801,7 +801,7 @@ export type UseShortVideoCoreVideoServiceFeedShortVideoProps = Omit<
  * 刷视频
  */
 export const useShortVideoCoreVideoServiceFeedShortVideo = (
-  props: UseShortVideoCoreVideoServiceFeedShortVideoProps,
+  props: UseShortVideoCoreVideoServiceFeedShortVideoProps
 ) =>
   useMutate<
     ShortVideoCoreVideoServiceFeedShortVideoResponse,
@@ -838,7 +838,7 @@ export type ShortVideoCoreVideoServiceListPublishedVideoProps = Omit<
  * 获取当前用户的发布视频列表
  */
 export const ShortVideoCoreVideoServiceListPublishedVideo = (
-  props: ShortVideoCoreVideoServiceListPublishedVideoProps,
+  props: ShortVideoCoreVideoServiceListPublishedVideoProps
 ) => (
   <Mutate<
     ShortVideoCoreVideoServiceListPublishedVideoResponse,
@@ -868,7 +868,7 @@ export type UseShortVideoCoreVideoServiceListPublishedVideoProps = Omit<
  * 获取当前用户的发布视频列表
  */
 export const useShortVideoCoreVideoServiceListPublishedVideo = (
-  props: UseShortVideoCoreVideoServiceListPublishedVideoProps,
+  props: UseShortVideoCoreVideoServiceListPublishedVideoProps
 ) =>
   useMutate<
     ShortVideoCoreVideoServiceListPublishedVideoResponse,
@@ -905,7 +905,7 @@ export type ShortVideoCoreVideoServicePreSign4UploadVideoProps = Omit<
  * 预注册上传视频
  */
 export const ShortVideoCoreVideoServicePreSign4UploadVideo = (
-  props: ShortVideoCoreVideoServicePreSign4UploadVideoProps,
+  props: ShortVideoCoreVideoServicePreSign4UploadVideoProps
 ) => (
   <Mutate<
     ShortVideoCoreVideoServicePreSign4UploadVideoResponse,
@@ -935,7 +935,7 @@ export type UseShortVideoCoreVideoServicePreSign4UploadVideoProps = Omit<
  * 预注册上传视频
  */
 export const useShortVideoCoreVideoServicePreSign4UploadVideo = (
-  props: UseShortVideoCoreVideoServicePreSign4UploadVideoProps,
+  props: UseShortVideoCoreVideoServicePreSign4UploadVideoProps
 ) =>
   useMutate<
     ShortVideoCoreVideoServicePreSign4UploadVideoResponse,
@@ -1024,9 +1024,9 @@ export const useShortVideoCoreVideoServiceReportVideoFinishUpload = ({
   >(
     "POST",
     (
-      paramsInPath: ShortVideoCoreVideoServiceReportVideoFinishUploadPathParams,
+      paramsInPath: ShortVideoCoreVideoServiceReportVideoFinishUploadPathParams
     ) => `/video/${paramsInPath.fileId}/finish`,
-    { pathParams: { fileId }, ...props },
+    { pathParams: { fileId }, ...props }
   );
 
 export interface ShortVideoCoreVideoServiceGetVideoByIdResponse {
@@ -1100,5 +1100,5 @@ export const useShortVideoCoreVideoServiceGetVideoById = ({
   >(
     (paramsInPath: ShortVideoCoreVideoServiceGetVideoByIdPathParams) =>
       `/video/${paramsInPath.videoId}`,
-    { pathParams: { videoId }, ...props },
+    { pathParams: { videoId }, ...props }
   );

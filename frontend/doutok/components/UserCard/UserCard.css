@@ -1,45 +1,45 @@
 .user-card-container {
-    margin-left: 20px;
-    margin-right: 100px;
-    width: 30%;
+  margin-left: 20px;
+  margin-right: 100px;
+  width: 30%;
 }
 
 .username {
-    font-size: 30px;
-    font-weight: lighter;
+  font-size: 30px;
+  font-weight: lighter;
 }
 
 .user-stats {
-    margin-top: 10%;
-    font-size: 20px;
-    font-weight: lighter;
-    color: black;
+  margin-top: 10%;
+  font-size: 20px;
+  font-weight: lighter;
+  color: black;
 }
 
 .divider {
-    float: left;
+  float: left;
 }
 
 .following-num {
-    float: left;
+  float: left;
 }
 
 .fans-num {
-    float: left;
+  float: left;
 }
 
 .likes-num {
-    float: left;
+  float: left;
 }
 
 .doutok-id {
-    float: left;
+  float: left;
 }
 
 .edit-button {
-    float: right;
+  float: right;
 }
 
 .buttons {
-    margin-top: 5%;
+  margin-top: 5%;
 }

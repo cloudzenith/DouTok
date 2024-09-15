@@ -1,24 +1,23 @@
 .search {
-
 }
 
 .ant-input-group-addon {
-    border: white 1px solid !important;
+  border: white 1px solid !important;
 }
 
 .ant-input-affix-wrapper {
-    background-color: transparent !important;
-    border: white 2px solid !important;
+  background-color: transparent !important;
+  border: white 2px solid !important;
 }
 
 .ant-input::placeholder {
-    color: white !important;
+  color: white !important;
 }
 
 .ant-btn {
-    background-color: transparent !important;
+  background-color: transparent !important;
 }
 
 .search-button {
-    color: white;
+  color: white;
 }
