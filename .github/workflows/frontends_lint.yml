@@ -58,6 +58,7 @@ jobs:
                   cache-dependency-path: ${{ matrix.project }}/pnpm-lock.yaml
 
             - name: Install dependencies
+              working-directory: ${{ matrix.project }}
               if: steps.node.outputs.cache-hit != 'true'
               run: pnpm install
 
