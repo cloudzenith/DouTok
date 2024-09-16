@@ -59,7 +59,5 @@ Content {
 }
 
 #content {
-  background: linear-gradient(
-          160deg, #363741 90%, #14F1DA
-  );
+  background: linear-gradient(160deg, #363741 90%, #14f1da);
 }

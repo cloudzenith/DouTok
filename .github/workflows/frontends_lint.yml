@@ -2,7 +2,8 @@ name: Lint Frontend Code
 run-name: 'Lint Frontend Code ${{github.workflow}} #${{ github.event.pull_request.number }}'
 on:
     pull_request:
-        types: [opened, synchronize, reopened]
+        types: [assigned, opened, synchronize, reopened]
+        branches: [main, master]
         paths:
             - 'frontend/**'
 
@@ -10,39 +11,38 @@ concurrency:
     group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
     cancel-in-progress: true
 
+permissions: write-all
+
 jobs:
-    replyChecking:
+    lint:
         runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                project: ['frontend/doutok']
         steps:
             - name: Checkout
               uses: actions/checkout@v4
               with:
-                  ref: ${{github.head_ref}}
                   lfs: true
+
+            - name: cd
+              run: |
+                  cd ${{ matrix.project }}
 
             - name: Get date time
               id: getDateTime
               run: echo "result=$(TZ=Asia/Shanghai date)" >> "$GITHUB_OUTPUT"
 
-            - name: Create or update a comment
-              uses: taoliujun/action-unique-comment@v1
+            - name: Create or update a comment for start checking
+              uses: thollander/actions-comment-pull-request@v2
               with:
-                  uniqueIdentifier: ${{ github.workflow }}
-                  body: |
+                  GITHUB_TOKEN: ${{ secrets.COMMENT_TOKEN }}
+                  message: |
                       **Checking...**
 
                       ---
 
                       Commented by Action [${{github.workflow}} #${{ github.event.pull_request.number }}](${{github.event.repository.html_url}}/actions/runs/${{github.run_id}}), last updated on ${{steps.getDateTime.outputs.result}}.
-
-    init:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Init repo
-              uses: actions/checkout@v4
-              with:
-                  ref: ${{github.head_ref}}
-                  lfs: true
 
             - name: Init pnpm
               uses: pnpm/action-setup@v2
@@ -55,40 +55,14 @@ jobs:
               with:
                   node-version: 20
                   cache: 'pnpm'
+                  cache-dependency-path: ${{ matrix.project }}/pnpm-lock.yaml
 
             - name: Install dependencies
               if: steps.node.outputs.cache-hit != 'true'
-              run: pnpm install
+              run: cd ${{ matrix.project }} && pnpm install
 
-    eslint:
-        runs-on: ubuntu-latest
-        needs: [init]
-        outputs:
-            result: ${{ steps.lint.outputs.result }}
-        steps:
-            - name: Init repo
-              uses: actions/checkout@v4
-              with:
-                  ref: ${{github.head_ref}}
-                  lfs: true
-                  fetch-depth: 0
-
-            - name: Init pnpm
-              uses: pnpm/action-setup@v2
-              with:
-                  version: 8
-
-            - name: Init node
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 20
-                  cache: 'pnpm'
-
-            - name: Install dependencies
-              run: pnpm install
-
-            - name: Run lint
-              id: lint
+            - name: Run ES lint
+              id: eslint
               uses: actions/github-script@v7
               with:
                   result-encoding: string
@@ -96,6 +70,12 @@ jobs:
                       let output = '';
                       let outerr = '';
                       let diffFiles = '';
+
+                      await exec.exec(
+                        `git fetch`,
+                        [],
+                        {}
+                      );
 
                       await exec.exec(
                         `git diff --name-only --diff-filter=d origin/${{github.base_ref}}`,
@@ -158,34 +138,8 @@ jobs:
 
                       return `:white_check_mark: ${errorMatch?.[0] || '0 error'} ${warnMatch?.[0] || '0 warning'}.`;
 
-    typescript:
-        runs-on: ubuntu-latest
-        needs: [init]
-        outputs:
-            result: ${{ steps.lint.outputs.result }}
-        steps:
-            - name: Init repo
-              uses: actions/checkout@v4
-              with:
-                  ref: ${{github.head_ref}}
-                  lfs: true
-
-            - name: Init pnpm
-              uses: pnpm/action-setup@v2
-              with:
-                  version: 8
-
-            - name: Init node
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 20
-                  cache: 'pnpm'
-
-            - name: Install dependencies
-              run: pnpm install
-
-            - name: Run lint
-              id: lint
+            - name: Run Typescript lint
+              id: tslint
               uses: actions/github-script@v7
               with:
                   result-encoding: string
@@ -194,7 +148,7 @@ jobs:
                       let outerr = '';
 
                       await exec.exec(
-                        `pnpm run -r lint:ts`,
+                        `pnpm run -r lint`,
                         [],
                         {
                           // silent: true,
@@ -219,14 +173,14 @@ jobs:
                       if (errorMatch) {
                         return `
                         :x: ${errorMatch?.length} errors.
-                        
+
                         <details><summary>Details</summary>
                         <p>
 
                         \`\`\`shell
                         ${output}
                         \`\`\`
-                        
+
                         </p>
                         </details>
                         `;
@@ -234,34 +188,8 @@ jobs:
 
                       return `:white_check_mark: ${'0 error'}.`;
 
-    unitTest:
-        runs-on: ubuntu-latest
-        needs: [init]
-        outputs:
-            result: ${{ steps.lint.outputs.result }}
-        steps:
-            - name: Init repo
-              uses: actions/checkout@v4
-              with:
-                  ref: ${{github.head_ref}}
-                  lfs: true
-
-            - name: Init pnpm
-              uses: pnpm/action-setup@v2
-              with:
-                  version: 8
-
-            - name: Init node
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 20
-                  cache: 'pnpm'
-
-            - name: Install dependencies
-              run: pnpm install
-
-            - name: Run lint
-              id: lint
+            - name: Unit Test
+              id: ut
               uses: actions/github-script@v7
               with:
                   result-encoding: string
@@ -293,10 +221,10 @@ jobs:
                       if (failMatch) {
                         return `
                         :x: ${failMatch?.[0]}.
-                        
+                      
                         <details><summary>Details</summary>
                         <p>
-                        
+                      
                         \`\`\`shell
                         ${outerr.substring(outerr.indexOf('Summary of all failing tests'))}
                         \`\`\`
@@ -314,25 +242,14 @@ jobs:
 
                       return `:white_check_mark: passed.`;
 
-    replyResult:
-        runs-on: ubuntu-latest
-        needs: [eslint, typescript, unitTest]
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-              with:
-                  ref: ${{github.head_ref}}
-                  lfs: true
-
-            - name: Get date time
-              id: getDateTime
+            - name: Get date time for finishing
+              id: getDateTimeForFinishing
               run: echo "result=$(TZ=Asia/Shanghai date)" >> "$GITHUB_OUTPUT"
 
-            - name: Create or update a comment
-              uses: taoliujun/action-unique-comment@v1
+            - name: Create or update a comment for result
+              uses: thollander/actions-comment-pull-request@v2
               with:
-                  uniqueIdentifier: ${{ github.workflow }}
-                  body: |
+                  message: |
                       ## Eslint Check Result
 
                       ${{needs.eslint.outputs.result}}

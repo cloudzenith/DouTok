@@ -6,9 +6,7 @@
 }
 
 #header-container {
-  background: linear-gradient(
-      1deg, #363741 60%, #E12056
-  );
+  background: linear-gradient(1deg, #363741 60%, #e12056);
 }
 
 .logo {
