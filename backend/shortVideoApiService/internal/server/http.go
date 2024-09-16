@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"github.com/cloudzenith/DouTok/backend/gopkgs/middlewares/httprespwrapper"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/api/svapi"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/utils/claims"
 	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
@@ -37,9 +38,7 @@ func NewHttpServer() *http.Server {
 					}),
 				),
 			).Match(TokenParseWhiteList()).Build(),
-			// 这个中间件包装返回值之后，会导致返回值的类型不匹配，所以暂时注释掉
-			// 详见断言：backend/shortVideoApiService/api/svapi/user_http.pb.go:67
-			//middlewares.ResponseWrapper(),
+			httprespwrapper.HttpResponseWrapper(),
 		),
 		http.Address("0.0.0.0:22000"),
 	}

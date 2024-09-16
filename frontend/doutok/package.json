@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 23000",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -14,6 +14,8 @@
   "dependencies": {
     "@ant-design/icons": "^5.4.0",
     "@ant-design/nextjs-registry": "^1.0.0",
+    "@ant-design/pro-components": "^2.7.18",
+    "@ant-design/pro-form": "^2.30.2",
     "@next/eslint-plugin-next": "^14.2.11",
     "@typescript-eslint/eslint-plugin": "^8.5.0",
     "antd": "^5.19.4",

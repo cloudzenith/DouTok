@@ -10,6 +10,7 @@ services:
     image: base-service
     volumes:
       - ./configs/baseservice:/app/configs
+      - ./entrypoint.sh:/app/entrypoint.sh
     networks:
       - total
 
@@ -18,6 +19,7 @@ services:
     image: sv-api-service
     volumes:
       - ./configs/svapiservice:/app/configs
+      - ./entrypoint.sh:/app/entrypoint.sh
     environment:
       - GOLANG_PROTOBUF_REGISTRATION_CONFLICT=warn
     ports:
