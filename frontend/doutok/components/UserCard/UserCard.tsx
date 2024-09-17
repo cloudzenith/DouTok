@@ -115,6 +115,7 @@ export function UserCard(props: UserCardProps) {
       { openLoginModal && <LoginModal
           open={openLoginModal}
           onCancel={() => setOpenLoginModal(false)}
+          type={"login"}
       />}
     </div>
   );

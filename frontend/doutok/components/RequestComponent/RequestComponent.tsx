@@ -25,7 +25,7 @@ export function RequestComponent(props: RequestProps) {
     >
       {(headers || props.noAuth ) && props.children}
       {!(headers || props.noAuth ) && (
-        <LoginModal open={true} />
+        <LoginModal open={true} type={"login"} />
       )}
     </RestfulProvider>
   );

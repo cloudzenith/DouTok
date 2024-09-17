@@ -6,6 +6,7 @@ gen-proto:
 		--go-http_out=paths=source_relative:./api \
 		--openapi_out=fq_schema_naming=true,default_response=false:. \
 		./api/svapi/*.proto
+	protoc-go-inject-tag -input="./api/svapi/*.pb.go"
 
 build:
 	docker build -t sv-api-service .

@@ -9,6 +9,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/selector"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	jwt5 "github.com/golang-jwt/jwt/v5"
+	"github.com/gorilla/handlers"
 )
 
 func TokenParseWhiteList() selector.MatchFunc {
@@ -27,6 +28,14 @@ func TokenParseWhiteList() selector.MatchFunc {
 
 func NewHttpServer() *http.Server {
 	var opts = []http.ServerOption{
+		http.Filter(
+			//跨域处理
+			handlers.CORS(
+				handlers.AllowedHeaders([]string{"Content-Type", "x-token"}),
+				handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS", "DELETE"}),
+				handlers.AllowedOrigins([]string{"*"}),
+			),
+		),
 		http.Middleware(
 			selector.Server(
 				jwt.Server(

@@ -27,7 +27,8 @@ type VideoAuthor struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id          int64  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	// @gotags: json:"id,omitempty,string"
+	Id          int64  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty,string"`
 	Name        string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Avatar      string `protobuf:"bytes,3,opt,name=avatar,proto3" json:"avatar,omitempty"`
 	IsFollowing bool   `protobuf:"varint,4,opt,name=is_following,json=isFollowing,proto3" json:"is_following,omitempty"`
@@ -98,14 +99,17 @@ type Video struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id            int64        `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                            // 视频唯一标识
-	Author        *VideoAuthor `protobuf:"bytes,2,opt,name=author,proto3" json:"author,omitempty"`                                     // 视频作者信息
-	PlayUrl       string       `protobuf:"bytes,3,opt,name=play_url,json=playUrl,proto3" json:"play_url,omitempty"`                    // 视频播放地址
-	CoverUrl      string       `protobuf:"bytes,4,opt,name=cover_url,json=coverUrl,proto3" json:"cover_url,omitempty"`                 // 视频封面地址
-	FavoriteCount int64        `protobuf:"varint,5,opt,name=favorite_count,json=favoriteCount,proto3" json:"favorite_count,omitempty"` // 视频的点赞总数
-	CommentCount  int64        `protobuf:"varint,6,opt,name=comment_count,json=commentCount,proto3" json:"comment_count,omitempty"`    // 视频的评论总数
-	IsFavorite    bool         `protobuf:"varint,7,opt,name=is_favorite,json=isFavorite,proto3" json:"is_favorite,omitempty"`          // true-已点赞，false-未点赞
-	Title         string       `protobuf:"bytes,8,opt,name=title,proto3" json:"title,omitempty"`                                       // 视频标题
+	// @gotags: json:"id,omitempty,string"
+	Id       int64        `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty,string"`                            // 视频唯一标识
+	Author   *VideoAuthor `protobuf:"bytes,2,opt,name=author,proto3" json:"author,omitempty"`                     // 视频作者信息
+	PlayUrl  string       `protobuf:"bytes,3,opt,name=play_url,json=playUrl,proto3" json:"play_url,omitempty"`    // 视频播放地址
+	CoverUrl string       `protobuf:"bytes,4,opt,name=cover_url,json=coverUrl,proto3" json:"cover_url,omitempty"` // 视频封面地址
+	// @gotags: json:"favorite_count,omitempty,string"
+	FavoriteCount int64 `protobuf:"varint,5,opt,name=favorite_count,json=favoriteCount,proto3" json:"favorite_count,omitempty,string"` // 视频的点赞总数
+	// @gotags: json:"comment_count,omitempty,string"
+	CommentCount int64  `protobuf:"varint,6,opt,name=comment_count,json=commentCount,proto3" json:"comment_count,omitempty,string"` // 视频的评论总数
+	IsFavorite   bool   `protobuf:"varint,7,opt,name=is_favorite,json=isFavorite,proto3" json:"is_favorite,omitempty"`       // true-已点赞，false-未点赞
+	Title        string `protobuf:"bytes,8,opt,name=title,proto3" json:"title,omitempty"`                                    // 视频标题
 }
 
 func (x *Video) Reset() {
@@ -207,7 +211,8 @@ type PreSign4UploadVideoRequest struct {
 	// 文件类型，默认mp4
 	FileType string `protobuf:"bytes,2,opt,name=file_type,json=fileType,proto3" json:"file_type,omitempty"`
 	// 文件大小，单位byte
-	Size int64 `protobuf:"varint,3,opt,name=size,proto3" json:"size,omitempty"`
+	// @gotags: json:"size,omitempty,string"
+	Size int64 `protobuf:"varint,3,opt,name=size,proto3" json:"size,omitempty,string"`
 	// 文件名
 	Filename string `protobuf:"bytes,4,opt,name=filename,proto3" json:"filename,omitempty"`
 }
@@ -281,7 +286,8 @@ type PreSign4UploadVideoResponse struct {
 	// minio上传地址
 	Url string `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
 	// 文件id
-	FileId int64 `protobuf:"varint,2,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty"`
+	// @gotags: json:"file_id,omitempty,string"
+	FileId int64 `protobuf:"varint,2,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty,string"`
 }
 
 func (x *PreSign4UploadVideoResponse) Reset() {
@@ -341,7 +347,8 @@ type PreSign4UploadRequest struct {
 	// 文件类型，默认mp4
 	FileType string `protobuf:"bytes,2,opt,name=file_type,json=fileType,proto3" json:"file_type,omitempty"`
 	// 文件大小，单位byte
-	Size int64 `protobuf:"varint,3,opt,name=size,proto3" json:"size,omitempty"`
+	// @gotags: json:"size,omitempty,string"
+	Size int64 `protobuf:"varint,3,opt,name=size,proto3" json:"size,omitempty,string"`
 	// 文件名
 	Filename string `protobuf:"bytes,4,opt,name=filename,proto3" json:"filename,omitempty"`
 }
@@ -415,7 +422,8 @@ type PreSign4UploadResponse struct {
 	// minio上传地址
 	Url string `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
 	// 文件id
-	FileId int64 `protobuf:"varint,2,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty"`
+	// @gotags: json:"file_id,omitempty,string"
+	FileId int64 `protobuf:"varint,2,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty,string"`
 }
 
 func (x *PreSign4UploadResponse) Reset() {
@@ -471,7 +479,8 @@ type ReportVideoFinishUploadRequest struct {
 	unknownFields protoimpl.UnknownFields
 
 	// 文件id
-	FileId int64 `protobuf:"varint,1,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty"`
+	// @gotags: json:"file_id,omitempty,string"
+	FileId int64 `protobuf:"varint,1,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty,string"`
 	// 视频标题
 	Title string `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
 	// 视频封面地址
@@ -479,7 +488,8 @@ type ReportVideoFinishUploadRequest struct {
 	// 视频描述
 	Description string `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`
 	// 视频作者id
-	UserId int64 `protobuf:"varint,6,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// @gotags: json:"user_id,omitempty,string"
+	UserId int64 `protobuf:"varint,6,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty,string"`
 }
 
 func (x *ReportVideoFinishUploadRequest) Reset() {
@@ -556,7 +566,8 @@ type ReportVideoFinishUploadResponse struct {
 	unknownFields protoimpl.UnknownFields
 
 	// 视频id
-	VideoId int64 `protobuf:"varint,1,opt,name=video_id,json=videoId,proto3" json:"video_id,omitempty"`
+	// @gotags: json:"video_id,omitempty,string"
+	VideoId int64 `protobuf:"varint,1,opt,name=video_id,json=videoId,proto3" json:"video_id,omitempty,string"`
 }
 
 func (x *ReportVideoFinishUploadResponse) Reset() {
@@ -605,7 +616,8 @@ type ReportFinishUploadRequest struct {
 	unknownFields protoimpl.UnknownFields
 
 	// 文件id
-	FileId int64 `protobuf:"varint,1,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty"`
+	// @gotags: json:"file_id,omitempty,string"
+	FileId int64 `protobuf:"varint,1,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty,string"`
 }
 
 func (x *ReportFinishUploadRequest) Reset() {
@@ -702,9 +714,12 @@ type FeedShortVideoRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	LatestTime int64 `protobuf:"varint,1,opt,name=latest_time,json=latestTime,proto3" json:"latest_time,omitempty"` // 可选参数，限制返回视频的最新投稿时间戳，精确到秒，不填表示当前时间
-	UserId     int64 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	FeedNum    int64 `protobuf:"varint,3,opt,name=feed_num,json=feedNum,proto3" json:"feed_num,omitempty"` // 返回视频的数量
+	// @gotags: json:"latest_time,omitempty,string"
+	LatestTime int64 `protobuf:"varint,1,opt,name=latest_time,json=latestTime,proto3" json:"latest_time,omitempty,string"` // 可选参数，限制返回视频的最新投稿时间戳，精确到秒，不填表示当前时间
+	// @gotags: json:"user_id,omitempty,string"
+	UserId int64 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty,string"`
+	// @gotags: json:"feed_num,omitempty,string"
+	FeedNum int64 `protobuf:"varint,3,opt,name=feed_num,json=feedNum,proto3" json:"feed_num,omitempty,string"` // 返回视频的数量
 }
 
 func (x *FeedShortVideoRequest) Reset() {
@@ -766,9 +781,10 @@ type FeedShortVideoResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Meta     *Metadata `protobuf:"bytes,1,opt,name=meta,proto3" json:"meta,omitempty"`
-	Videos   []*Video  `protobuf:"bytes,2,rep,name=videos,proto3" json:"videos,omitempty"`
-	NextTime int64     `protobuf:"varint,3,opt,name=next_time,json=nextTime,proto3" json:"next_time,omitempty"` // 本次返回的视频中，发布最早的时间，作为下次请求时的latest_time
+	Meta   *Metadata `protobuf:"bytes,1,opt,name=meta,proto3" json:"meta,omitempty"`
+	Videos []*Video  `protobuf:"bytes,2,rep,name=videos,proto3" json:"videos,omitempty"`
+	// @gotags: json:"next_time,omitempty,string"
+	NextTime int64 `protobuf:"varint,3,opt,name=next_time,json=nextTime,proto3" json:"next_time,omitempty,string"` // 本次返回的视频中，发布最早的时间，作为下次请求时的latest_time
 }
 
 func (x *FeedShortVideoResponse) Reset() {
@@ -830,7 +846,8 @@ type GetVideoByIdRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	VideoId int64 `protobuf:"varint,1,opt,name=video_id,json=videoId,proto3" json:"video_id,omitempty"`
+	// @gotags: json:"video_id,omitempty,string"
+	VideoId int64 `protobuf:"varint,1,opt,name=video_id,json=videoId,proto3" json:"video_id,omitempty,string"`
 }
 
 func (x *GetVideoByIdRequest) Reset() {
@@ -926,7 +943,8 @@ type ListPublishedVideoRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	UserId     int64              `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// @gotags: json:"user_id,omitempty,string"
+	UserId     int64              `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty,string"`
 	Pagination *PaginationRequest `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 

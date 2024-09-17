@@ -4,5 +4,5 @@ import React from "react";
 import {LoginModal} from "@/components/LoginModal/LoginModal";
 
 export function Index() {
-  return <LoginModal />;
+  return <div>Index</div>;
 }

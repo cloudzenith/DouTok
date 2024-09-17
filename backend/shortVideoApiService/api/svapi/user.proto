@@ -49,6 +49,7 @@ service UserService {
 }
 
 message User {
+    // @gotags: json:"id,omitempty,string"
     int64 id = 1; // 用户id
     string name = 2; // 用户名称
     string avatar = 3; // 用户头像Url
@@ -56,10 +57,15 @@ message User {
     string signature = 5; // 个人简介
     string mobile = 6; // 手机号
     string email = 7; // 邮箱
+    // @gotags: json:"follow_count,omitempty,string"
     int64 follow_count = 8; // 关注总数
+    // @gotags: json:"follower_count,omitempty,string"
     int64 follower_count = 9; // 粉丝总数
+    // @gotags: json:"total_favorited,omitempty,string"
     int64 total_favorited = 10; // 获赞数量
+    // @gotags: json:"work_count,omitempty,string"
     int64 work_count = 11; // 作品数量
+    // @gotags: json:"favorite_count,omitempty,string"
     int64 favorite_count = 12; // 点赞数量
 }
 
@@ -69,21 +75,24 @@ message GetVerificationCodeRequest {
 }
 
 message GetVerificationCodeResponse {
+    // @gotags: json:"code_id,omitempty,string"
     int64 code_id = 1;
 }
 
 message RegisterRequest {
-    string mobile = 1 [(buf.validate.field).string.pattern = "^\\+?[1-9]\\d{1,14}$"];
-    string email = 2 [(buf.validate.field).string.email = true];
+    string mobile = 1;
+    string email = 2;
     string password = 3 [
-        (buf.validate.field).string.min_len = 8,
+        (buf.validate.field).string.min_len = 6,
         (buf.validate.field).string.max_len = 50
     ];
+    // @gotags: json:"code_id,omitempty,string"
     int64 code_id = 4;
     string code = 5;
 }
 
 message RegisterResponse {
+    // @gotags: json:"user_id,omitempty,string"
     int64 user_id = 1;
 }
 
@@ -101,6 +110,7 @@ message LoginResponse {
 }
 
 message GetUserInfoRequest {
+    // @gotags: json:"user_id,omitempty,string"
     int64 user_id = 1;
 }
 
@@ -109,6 +119,7 @@ message GetUserInfoResponse {
 }
 
 message UpdateUserInfoRequest {
+    // @gotags: json:"user_id,omitempty,string"
     int64 user_id = 1 [(buf.validate.field).int64 = {gt: 0}];
     string name = 2 [
         (buf.validate.field).string.min_len = 1,

@@ -14,6 +14,15 @@ services:
     networks:
       - total
 
+  sv-core-service:
+    container_name: sv-core-service
+    image: sv-core-service
+    volumes:
+      - ./configs/svcoreservice:/app/configs
+      - ./entrypoint.sh:/app/entrypoint.sh
+    networks:
+      - total
+
   sv-api-service:
     container_name: sv-api-service
     image: sv-api-service
