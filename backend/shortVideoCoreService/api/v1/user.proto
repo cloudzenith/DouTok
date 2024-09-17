@@ -44,8 +44,8 @@ message User {
 }
 
 message CreateUserRequest {
-    string mobile = 1 [(validate.rules).string.pattern = "^\\+?[1-9]\\d{1,14}$"];
-    string email = 2 [(validate.rules).string.email = true];
+    string mobile = 1;
+    string email = 2;
     int64 account_id = 3 [(validate.rules).int64 = {gt: 0}];
 }
 

@@ -1,32 +1,29 @@
-"use client"
+"use client";
 
-import {RestfulProvider} from "restful-react";
-import {useState} from "react";
-import {useRouter} from "next/router";
-import {LoginModal} from "@/components/LoginModal/LoginModal";
+import { RestfulProvider } from "restful-react";
+import { LoginModal } from "@/components/LoginModal/LoginModal";
+import useUserStore from "@/components/UserStore/useUserStore";
 
 export interface RequestProps {
-  children: React.ReactNode
-  noAuth?: boolean
+  children: React.ReactNode;
+  noAuth?: boolean;
 }
 
 export function RequestComponent(props: RequestProps) {
-  const [headers, setHeaders] = useState<
-    {authorization: string} | undefined
-  >();
-
-  // const router = useRouter();
+  const token = useUserStore(state => state.token);
 
   return (
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
     <RestfulProvider
       base={"http://localhost:22000"}
-      requestOptions={{ headers: { ...headers } }}
+      resolve={async res => {
+        return res;
+      }}
+      requestOptions={() => ({ headers: { Authorization: `Bearer ${token}` } })}
     >
-      {(headers || props.noAuth ) && props.children}
-      {!(headers || props.noAuth ) && (
-        <LoginModal open={true} type={"login"} />
-      )}
+      {(token || props.noAuth) && props.children}
+      {!(token || props.noAuth) && <LoginModal open={true} type={"login"} />}
     </RestfulProvider>
   );
 }

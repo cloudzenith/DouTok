@@ -31,7 +31,7 @@ func NewHttpServer() *http.Server {
 		http.Filter(
 			//跨域处理
 			handlers.CORS(
-				handlers.AllowedHeaders([]string{"Content-Type", "x-token"}),
+				handlers.AllowedHeaders([]string{"Content-Type", "x-token", "Authorization"}),
 				handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS", "DELETE"}),
 				handlers.AllowedOrigins([]string{"*"}),
 			),

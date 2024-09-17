@@ -23,7 +23,15 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/shortVideoCoreService.api.v1.UpdateUserInfoResponse'
+                                properties:
+                                    code:
+                                        type: integer
+                                        description: Status code. Zero means success.
+                                    msg:
+                                        type: string
+                                        description: Status message. Could be displayed to user.
+                                    data:
+                                        $ref: '#/components/schemas/shortVideoCoreService.api.v1.UpdateUserInfoResponse'
         post:
             tags:
                 - UserService
@@ -40,7 +48,15 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/shortVideoCoreService.api.v1.CreateUserResponse'
+                                properties:
+                                    code:
+                                        type: integer
+                                        description: Status code. Zero means success.
+                                    msg:
+                                        type: string
+                                        description: Status message. Could be displayed to user.
+                                    data:
+                                        $ref: '#/components/schemas/shortVideoCoreService.api.v1.CreateUserResponse'
     /v1/user/info:
         get:
             tags:
@@ -61,7 +77,15 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/shortVideoCoreService.api.v1.GetUserInfoResponse'
+                                properties:
+                                    code:
+                                        type: integer
+                                        description: Status code. Zero means success.
+                                    msg:
+                                        type: string
+                                        description: Status message. Could be displayed to user.
+                                    data:
+                                        $ref: '#/components/schemas/shortVideoCoreService.api.v1.GetUserInfoResponse'
     /v1/video/feed:
         post:
             tags:
@@ -79,7 +103,15 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/shortVideoCoreService.api.v1.FeedShortVideoResponse'
+                                properties:
+                                    code:
+                                        type: integer
+                                        description: Status code. Zero means success.
+                                    msg:
+                                        type: string
+                                        description: Status message. Could be displayed to user.
+                                    data:
+                                        $ref: '#/components/schemas/shortVideoCoreService.api.v1.FeedShortVideoResponse'
     /v1/video/list:
         post:
             tags:
@@ -97,7 +129,15 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/shortVideoCoreService.api.v1.ListPublishedVideoResponse'
+                                properties:
+                                    code:
+                                        type: integer
+                                        description: Status code. Zero means success.
+                                    msg:
+                                        type: string
+                                        description: Status message. Could be displayed to user.
+                                    data:
+                                        $ref: '#/components/schemas/shortVideoCoreService.api.v1.ListPublishedVideoResponse'
     /v1/video/publish:
         post:
             tags:
@@ -115,7 +155,15 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/shortVideoCoreService.api.v1.PublishVideoResponse'
+                                properties:
+                                    code:
+                                        type: integer
+                                        description: Status code. Zero means success.
+                                    msg:
+                                        type: string
+                                        description: Status message. Could be displayed to user.
+                                    data:
+                                        $ref: '#/components/schemas/shortVideoCoreService.api.v1.PublishVideoResponse'
     /v1/video/{videoId}:
         get:
             tags:
@@ -133,7 +181,15 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/shortVideoCoreService.api.v1.GetVideoByIdResponse'
+                                properties:
+                                    code:
+                                        type: integer
+                                        description: Status code. Zero means success.
+                                    msg:
+                                        type: string
+                                        description: Status message. Could be displayed to user.
+                                    data:
+                                        $ref: '#/components/schemas/shortVideoCoreService.api.v1.GetVideoByIdResponse'
 components:
     schemas:
         shortVideoCoreService.api.v1.Author:

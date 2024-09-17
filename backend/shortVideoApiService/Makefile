@@ -1,3 +1,7 @@
+install:
+	go install github.com/favadi/protoc-go-inject-tag@latest
+	go install github.com/cloudzenith/DouTok/backend/gopkgs/tools/protoc-gen-go-http@latest
+
 gen-proto:
 	protoc \
 		--proto_path=./api \
@@ -11,5 +15,5 @@ gen-proto:
 build:
 	docker build -t sv-api-service .
 
-install:
-	go install github.com/cloudzenith/DouTok/backend/gopkgs/tools/protoc-gen-go-http@latest
+build1:
+	 docker build --build-arg proxy="https://goproxy.cn" -t sv-api-service .

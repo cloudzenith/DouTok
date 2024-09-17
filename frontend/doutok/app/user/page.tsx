@@ -1,11 +1,11 @@
 import React from "react";
 import { UserCard } from "@/components/UserCard/UserCard";
-import {RequestComponent} from "@/components/RequestComponent/RequestComponent";
+import { RequestComponent } from "@/components/RequestComponent/RequestComponent";
 
 const User = () => {
   return (
     <RequestComponent noAuth={true}>
-      <UserCard/>
+      <UserCard />
     </RequestComponent>
   );
 };

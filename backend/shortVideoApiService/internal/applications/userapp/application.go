@@ -31,8 +31,21 @@ func New(
 	}
 }
 
-func (a *Application) GetUserInfo(ctx context.Context, request *svapi.GetUserInfoRequest) (*svapi.GetUserInfoResponse, error) {
-	userInfo, err := a.core.GetUserInfo(ctx, useroptions.GetUserInfoWithUserId(request.UserId))
+func (a *Application) checkUserId(ctx context.Context, receivedUserId int64) (int64, error) {
+	if receivedUserId != 0 {
+		return receivedUserId, nil
+	}
+
+	return claims.GetUserId(ctx)
+}
+
+func (a *Application) GetUserInfo(ctx context.Context, request *svapi.GetUserInfoRequest) (resp *svapi.GetUserInfoResponse, err error) {
+	userId, err := a.checkUserId(ctx, request.UserId)
+	if err != nil {
+		return nil, errorx.New(1, "failed to parse user id when getting user info from token")
+	}
+
+	userInfo, err := a.core.GetUserInfo(ctx, useroptions.GetUserInfoWithUserId(userId))
 	if err != nil {
 		log.Context(ctx).Error("failed to get user info")
 		log.Context(ctx).Errorw("error", err, "user_id", request.UserId)
@@ -69,18 +82,19 @@ func (a *Application) GetVerificationCode(ctx context.Context, request *svapi.Ge
 	}, nil
 }
 
-func (a *Application) setToken2Header(ctx context.Context, claim *claims.Claims) error {
+func (a *Application) setToken2Header(ctx context.Context, claim *claims.Claims) (string, error) {
 	token := jwtv5.NewWithClaims(jwtv5.SigningMethodHS256, claim)
 	tokenString, err := token.SignedString([]byte("token"))
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	if header, ok := transport.FromServerContext(ctx); ok {
 		header.ReplyHeader().Set("Authorization", "Bearer "+tokenString)
+		return tokenString, nil
 	}
 
-	return jwt.ErrWrongContext
+	return "", jwt.ErrWrongContext
 }
 
 func (a *Application) Login(ctx context.Context, request *svapi.LoginRequest) (*svapi.LoginResponse, error) {
@@ -100,8 +114,7 @@ func (a *Application) Login(ctx context.Context, request *svapi.LoginRequest) (*
 		return nil, errorx.New(1, "failed to get user info")
 	}
 
-	//a.setToken2Header(ctx, claims.New(userId))
-	token, err := claims.GenerateToken(claims.New(user.Id))
+	token, err := a.setToken2Header(ctx, claims.New(user.Id))
 	if err != nil {
 		log.Context(ctx).Error("failed to generate token: %v", err)
 		return nil, errorx.New(1, "failed to generate token")
@@ -147,9 +160,14 @@ func (a *Application) Register(ctx context.Context, request *svapi.RegisterReque
 }
 
 func (a *Application) UpdateUserInfo(ctx context.Context, request *svapi.UpdateUserInfoRequest) (*svapi.UpdateUserInfoResponse, error) {
+	userId, err := a.checkUserId(ctx, request.UserId)
+	if err != nil {
+		return nil, errorx.New(1, "failed to parse user id when getting user info from token")
+	}
+
 	if err := a.core.UpdateUserInfo(
 		ctx,
-		useroptions.UpdateUserInfoWithUserId(request.UserId),
+		useroptions.UpdateUserInfoWithUserId(userId),
 		useroptions.UpdateUserInfoWithName(request.Name),
 		useroptions.UpdateUserInfoWithAvatar(request.Avatar),
 		useroptions.UpdateUserInfoWithBackgroundImage(request.BackgroundImage),

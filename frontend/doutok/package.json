@@ -29,7 +29,9 @@
     "openapi-typescript": "^7.4.0",
     "react": "^18",
     "react-dom": "^18",
-    "restful-react": "^15.9.4"
+    "react-redux": "^9.1.2",
+    "restful-react": "^15.9.4",
+    "zustand": "5.0.0-rc.2"
   },
   "devDependencies": {
     "@types/node": "^20",

@@ -50,6 +50,9 @@ api:
 build:
 	docker build -t sv-core-service .
 
+build1:
+	 docker build --build-arg proxy="https://goproxy.cn" -t sv-core-service .
+
 .PHONY: generate
 # generate
 generate:
