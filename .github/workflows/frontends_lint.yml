@@ -1,7 +1,8 @@
 name: Lint Frontend Code
 run-name: 'Lint Frontend Code ${{github.workflow}} #${{ github.event.pull_request.number }}'
 on:
-    pull_request_target:
+    pull_request:
+        types: [assigned, opened, synchronize, reopened]
         branches: [main, master]
         paths:
             - 'frontend/**'
@@ -33,15 +34,15 @@ jobs:
               id: getDateTime
               run: echo "result=$(TZ=Asia/Shanghai date)" >> "$GITHUB_OUTPUT"
 
-            - name: Create or update a comment for start checking
-              uses: thollander/actions-comment-pull-request@v2
-              with:
-                  message: |
-                      **Checking...**
-
-                      ---
-
-                      Commented by Action [${{github.workflow}} #${{ github.event.pull_request.number }}](${{github.event.repository.html_url}}/actions/runs/${{github.run_id}}), last updated on ${{steps.getDateTime.outputs.result}}.
+#            - name: Create or update a comment for start checking
+#              uses: thollander/actions-comment-pull-request@v2
+#              with:
+#                  message: |
+#                      **Checking...**
+#
+#                      ---
+#
+#                      Commented by Action [${{github.workflow}} #${{ github.event.pull_request.number }}](${{github.event.repository.html_url}}/actions/runs/${{github.run_id}}), last updated on ${{steps.getDateTime.outputs.result}}.
 
             - name: Init pnpm
               uses: pnpm/action-setup@v2
@@ -245,22 +246,22 @@ jobs:
               id: getDateTimeForFinishing
               run: echo "result=$(TZ=Asia/Shanghai date)" >> "$GITHUB_OUTPUT"
 
-            - name: Create or update a comment for result
-              uses: thollander/actions-comment-pull-request@v2
-              with:
-                  message: |
-                      ## Eslint Check Result
-
-                      ${{needs.eslint.outputs.result}}
-
-                      ## Typescript Check Result
-
-                      ${{needs.typescript.outputs.result}}
-
-                      ## UnitTest Check Result
-
-                      ${{needs.unitTest.outputs.result}}
-
-                      ---
-
-                      Commented by Action [${{github.workflow}} #${{ github.event.pull_request.number }}](${{github.event.repository.html_url}}/actions/runs/${{github.run_id}}), last updated on ${{steps.getDateTime.outputs.result}}.
+#            - name: Create or update a comment for result
+#              uses: thollander/actions-comment-pull-request@v2
+#              with:
+#                  message: |
+#                      ## Eslint Check Result
+#
+#                      ${{needs.eslint.outputs.result}}
+#
+#                      ## Typescript Check Result
+#
+#                      ${{needs.typescript.outputs.result}}
+#
+#                      ## UnitTest Check Result
+#
+#                      ${{needs.unitTest.outputs.result}}
+#
+#                      ---
+#
+#                      Commented by Action [${{github.workflow}} #${{ github.event.pull_request.number }}](${{github.event.repository.html_url}}/actions/runs/${{github.run_id}}), last updated on ${{steps.getDateTime.outputs.result}}.
