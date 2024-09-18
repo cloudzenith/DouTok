@@ -42,7 +42,9 @@ paths:
             parameters:
                 - name: fileId
                   in: path
-                  description: 文件id
+                  description: |-
+                    文件id
+                     @gotags: json:"file_id,omitempty,string"
                   required: true
                   schema:
                     type: string
@@ -103,6 +105,7 @@ paths:
             parameters:
                 - name: userId
                   in: query
+                  description: '@gotags: json:"user_id,omitempty,string"'
                   schema:
                     type: string
             responses:
@@ -290,7 +293,9 @@ paths:
             parameters:
                 - name: fileId
                   in: path
-                  description: 文件id
+                  description: |-
+                    文件id
+                     @gotags: json:"file_id,omitempty,string"
                   required: true
                   schema:
                     type: string
@@ -324,6 +329,7 @@ paths:
             parameters:
                 - name: videoId
                   in: path
+                  description: '@gotags: json:"video_id,omitempty,string"'
                   required: true
                   schema:
                     type: string
@@ -349,10 +355,13 @@ components:
             properties:
                 latestTime:
                     type: string
+                    description: '@gotags: json:"latest_time,omitempty,string"'
                 userId:
                     type: string
+                    description: '@gotags: json:"user_id,omitempty,string"'
                 feedNum:
                     type: string
+                    description: '@gotags: json:"feed_num,omitempty,string"'
             description: 刷视频请求消息类型
         svapi.FeedShortVideoResponse:
             type: object
@@ -365,6 +374,7 @@ components:
                         $ref: '#/components/schemas/svapi.Video'
                 nextTime:
                     type: string
+                    description: '@gotags: json:"next_time,omitempty,string"'
             description: 刷视频响应消息类型
         svapi.GetUserInfoResponse:
             type: object
@@ -383,6 +393,7 @@ components:
             properties:
                 codeId:
                     type: string
+                    description: '@gotags: json:"code_id,omitempty,string"'
         svapi.GetVideoByIdResponse:
             type: object
             properties:
@@ -394,6 +405,7 @@ components:
             properties:
                 userId:
                     type: string
+                    description: '@gotags: json:"user_id,omitempty,string"'
                 pagination:
                     $ref: '#/components/schemas/svapi.PaginationRequest'
             description: 获取当前用户的发布视频列表请求消息类型
@@ -471,7 +483,9 @@ components:
                     description: 文件类型，默认mp4
                 size:
                     type: string
-                    description: 文件大小，单位byte
+                    description: |-
+                        文件大小，单位byte
+                         @gotags: json:"size,omitempty,string"
                 filename:
                     type: string
                     description: 文件名
@@ -484,7 +498,9 @@ components:
                     description: minio上传地址
                 fileId:
                     type: string
-                    description: 文件id
+                    description: |-
+                        文件id
+                         @gotags: json:"file_id,omitempty,string"
             description: 通用小文件单次上传响应消息类型
         svapi.PreSign4UploadVideoRequest:
             type: object
@@ -497,7 +513,9 @@ components:
                     description: 文件类型，默认mp4
                 size:
                     type: string
-                    description: 文件大小，单位byte
+                    description: |-
+                        文件大小，单位byte
+                         @gotags: json:"size,omitempty,string"
                 filename:
                     type: string
                     description: 文件名
@@ -510,7 +528,9 @@ components:
                     description: minio上传地址
                 fileId:
                     type: string
-                    description: 文件id
+                    description: |-
+                        文件id
+                         @gotags: json:"file_id,omitempty,string"
             description: 预注册上传视频响应消息类型
         svapi.RegisterRequest:
             type: object
@@ -523,6 +543,7 @@ components:
                     type: string
                 codeId:
                     type: string
+                    description: '@gotags: json:"code_id,omitempty,string"'
                 code:
                     type: string
         svapi.RegisterResponse:
@@ -530,12 +551,15 @@ components:
             properties:
                 userId:
                     type: string
+                    description: '@gotags: json:"user_id,omitempty,string"'
         svapi.ReportFinishUploadRequest:
             type: object
             properties:
                 fileId:
                     type: string
-                    description: 文件id
+                    description: |-
+                        文件id
+                         @gotags: json:"file_id,omitempty,string"
             description: 通用确认上传完成请求消息类型
         svapi.ReportFinishUploadResponse:
             type: object
@@ -549,7 +573,9 @@ components:
             properties:
                 fileId:
                     type: string
-                    description: 文件id
+                    description: |-
+                        文件id
+                         @gotags: json:"file_id,omitempty,string"
                 title:
                     type: string
                     description: 视频标题
@@ -561,14 +587,18 @@ components:
                     description: 视频描述
                 userId:
                     type: string
-                    description: 视频作者id
+                    description: |-
+                        视频作者id
+                         @gotags: json:"user_id,omitempty,string"
             description: 确认视频上传完成请求消息类型
         svapi.ReportVideoFinishUploadResponse:
             type: object
             properties:
                 videoId:
                     type: string
-                    description: 视频id
+                    description: |-
+                        视频id
+                         @gotags: json:"video_id,omitempty,string"
             description: 确认视频上传完成响应消息类型
         svapi.SortField:
             type: object
@@ -583,6 +613,7 @@ components:
             properties:
                 userId:
                     type: string
+                    description: '@gotags: json:"user_id,omitempty,string"'
                 name:
                     type: string
                 avatar:
@@ -599,6 +630,7 @@ components:
             properties:
                 id:
                     type: string
+                    description: '@gotags: json:"id,omitempty,string"'
                 name:
                     type: string
                 avatar:
@@ -613,19 +645,25 @@ components:
                     type: string
                 followCount:
                     type: string
+                    description: '@gotags: json:"follow_count,omitempty,string"'
                 followerCount:
                     type: string
+                    description: '@gotags: json:"follower_count,omitempty,string"'
                 totalFavorited:
                     type: string
+                    description: '@gotags: json:"total_favorited,omitempty,string"'
                 workCount:
                     type: string
+                    description: '@gotags: json:"work_count,omitempty,string"'
                 favoriteCount:
                     type: string
+                    description: '@gotags: json:"favorite_count,omitempty,string"'
         svapi.Video:
             type: object
             properties:
                 id:
                     type: string
+                    description: '@gotags: json:"id,omitempty,string"'
                 author:
                     $ref: '#/components/schemas/svapi.VideoAuthor'
                 playUrl:
@@ -634,8 +672,10 @@ components:
                     type: string
                 favoriteCount:
                     type: string
+                    description: '@gotags: json:"favorite_count,omitempty,string"'
                 commentCount:
                     type: string
+                    description: '@gotags: json:"comment_count,omitempty,string"'
                 isFavorite:
                     type: boolean
                 title:
@@ -645,6 +685,7 @@ components:
             properties:
                 id:
                     type: string
+                    description: '@gotags: json:"id,omitempty,string"'
                 name:
                     type: string
                 avatar:

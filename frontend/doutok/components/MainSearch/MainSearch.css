@@ -1,21 +1,20 @@
 .search {
-}
+  .ant-input-group-addon {
+    border: white 1px solid !important;
+  }
 
-.ant-input-group-addon {
-  border: white 1px solid !important;
-}
+  .ant-input-affix-wrapper {
+    background-color: transparent !important;
+    border: white 2px solid !important;
+  }
 
-.ant-input-affix-wrapper {
-  background-color: transparent !important;
-  border: white 2px solid !important;
-}
+  .ant-btn {
+    background-color: transparent !important;
+  }
 
-.ant-input::placeholder {
-  color: white !important;
-}
-
-.ant-btn {
-  background-color: transparent !important;
+  .ant-input::placeholder {
+    color: white !important;
+  }
 }
 
 .search-button {

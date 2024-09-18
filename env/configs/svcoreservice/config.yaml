@@ -1,0 +1,29 @@
+app:
+  name: short-video-core-service
+  version: 0.0.1-test
+  node: 2
+
+server:
+  grpc:
+    addr: 0.0.0.0:8001
+
+components:
+  mysql:
+    default:
+      host: mysql
+      port: 3306
+      db_name: doutok
+      user: root
+      password: root
+  redis:
+    default:
+      dsn: redis:6379
+      password: root
+  consul:
+    default:
+      address: consul:8500
+
+auth:
+  jwt:
+    access_expire: 720 # 30 days
+    access_secret: "secret-key"

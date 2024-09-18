@@ -9,13 +9,7 @@ import "buf/validate/validate.proto";
 // 手机号和邮箱至少要存在一个
 message RegisterRequest {
     string mobile = 1;
-    string email = 2[
-        (buf.validate.field).cel = {
-            id: "email",
-            message: "必须输入正确格式的邮箱",
-            expression: "this.isEmail()"
-        }
-    ];
+    string email = 2;
     string password = 3;
 }
 

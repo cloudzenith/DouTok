@@ -1,16 +1,12 @@
 import React from "react";
 import { UserCard } from "@/components/UserCard/UserCard";
+import { RequestComponent } from "@/components/RequestComponent/RequestComponent";
 
 const User = () => {
   return (
-    <UserCard
-      avatar={"no-login.svg"}
-      doutok_id={undefined}
-      username={undefined}
-      following={undefined}
-      fans={undefined}
-      likes={undefined}
-    />
+    <RequestComponent noAuth={true}>
+      <UserCard />
+    </RequestComponent>
   );
 };
 

@@ -1,7 +1,7 @@
 .user-card-container {
   margin-left: 20px;
   margin-right: 100px;
-  width: 30%;
+  width: 40%;
 }
 
 .username {
@@ -37,6 +37,10 @@
 }
 
 .edit-button {
+  float: right;
+}
+
+.logout-button {
   float: right;
 }
 
