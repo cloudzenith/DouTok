@@ -1,10 +1,13 @@
 import { RequestComponent } from "@/components/RequestComponent/RequestComponent";
 import { message, notification, Upload, UploadProps } from "antd";
-import React from "react";
+import React, { useEffect } from "react";
 import { RcFile, UploadChangeParam, UploadListType } from "antd/es/upload/interface";
 import {
+  FileServiceReportPublicFileUploadedResponse,
   ShortVideoCoreVideoServicePreSign4UploadCoverResponse,
-  useShortVideoCoreVideoServicePreSign4UploadCover
+  useFileServicePreSignUploadingPublicFile,
+  useFileServiceReportPublicFileUploaded,
+  useUserServiceUpdateUserInfo
 } from "@/api/svapi/api";
 import SparkMD5 from "spark-md5";
 
@@ -21,10 +24,35 @@ export interface SimpleUploadProps {
 
 export function SimpleUpload(props: SimpleUploadProps) {
   const [fileId, setFileId] = React.useState<string>();
+  const [uploadFile, setUploadFile] = React.useState<RcFile>();
   const [uploadUrl, setUploadUrl] = React.useState<string>();
   const [fileHash, setFileHash] = React.useState<string>();
+  const [fileBin, setFileBin] = React.useState<ArrayBuffer>();
 
-  const preSignUploadMutate = useShortVideoCoreVideoServicePreSign4UploadCover({})
+  const preSignUploadMutate = useFileServicePreSignUploadingPublicFile({});
+  const reportUploadedMutate = useFileServiceReportPublicFileUploaded({});
+  const updateUserInfoMutate = useUserServiceUpdateUserInfo({});
+
+  const reportUpload = () => {
+    reportUploadedMutate.mutate({
+      fileId: fileId,
+    }).then((result: FileServiceReportPublicFileUploadedResponse) => {
+      console.log("result", result);
+      if (result?.code !== 0 || result?.data?.objectName === undefined) {
+        message.error("上传失败，请重试")
+        return ;
+      }
+
+      updateUserInfoMutate.mutate({
+        avatar: result.data.objectName,
+      }).then(() => {
+        notification.success({
+          message: "上传成功",
+          description: "头像已更新",
+        })
+      })
+    })
+  };
 
   const beforeUpload: UploadProps['beforeUpload'] = (file: RcFile) => {
     const fileReader = new FileReader();
@@ -34,16 +62,32 @@ export function SimpleUpload(props: SimpleUploadProps) {
         return ;
       }
 
+      setFileBin(event.target.result as ArrayBuffer);
+
       const hashHandle = new SparkMD5();
       hashHandle.append(event.target.result as string);
       setFileHash(hashHandle.end());
+      setUploadFile(file);
+    }
+
+    if (fileHash === undefined) {
+      console.log("fileHash is undefined");
+      message.error("文件上传失败，请重试");
+      return false;
+    }
+
+    return false;
+  }
+
+  useEffect(() => {
+    if (fileHash === undefined || uploadFile === undefined) {
+      return ;
     }
 
     preSignUploadMutate.mutate({
       hash: fileHash,
-      fileType: file.type,
-      size: file.size.toString(),
-      filename: file.name
+      fileType: uploadFile.type,
+      size: uploadFile.size.toString(),
     }).then((result: ShortVideoCoreVideoServicePreSign4UploadCoverResponse) => {
       if (result?.code !== 0 || result.data === undefined) {
         message.error("上传失败，请重试")
@@ -54,15 +98,21 @@ export function SimpleUpload(props: SimpleUploadProps) {
       setUploadUrl(result.data.url);
 
       if (props.onFilePreSigned) {
-        props.onFilePreSigned(file);
+        props.onFilePreSigned(uploadFile);
       }
-    })
 
-    return false;
-  }
+      const url = result.data.url as string;
+      fetch(url.replace("minio", "localhost"), {
+        method: "PUT",
+        body: uploadFile,
+      }).then((response) => {
+        console.log("response", response);
+      })
+    })
+  }, [fileHash, uploadFile]);
 
   const onChange = (info: UploadChangeParam) => {
-    console.log("info", info);
+
   };
 
   return (

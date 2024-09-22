@@ -16,8 +16,17 @@ export const SPEC_VERSION = "0.0.1";
  * 刷视频请求消息类型
  */
 export interface SvapiFeedShortVideoRequest {
+  /**
+   * @gotags: json:"latest_time,omitempty,string"
+   */
   latestTime?: string;
+  /**
+   * @gotags: json:"user_id,omitempty,string"
+   */
   userId?: string;
+  /**
+   * @gotags: json:"feed_num,omitempty,string"
+   */
   feedNum?: string;
 }
 
@@ -27,6 +36,9 @@ export interface SvapiFeedShortVideoRequest {
 export interface SvapiFeedShortVideoResponse {
   meta?: SvapiMetadata;
   videos?: SvapiVideo[];
+  /**
+   * @gotags: json:"next_time,omitempty,string"
+   */
   nextTime?: string;
 }
 
@@ -40,6 +52,9 @@ export interface SvapiGetVerificationCodeRequest {
 }
 
 export interface SvapiGetVerificationCodeResponse {
+  /**
+   * @gotags: json:"code_id,omitempty,string"
+   */
   codeId?: string;
 }
 
@@ -54,6 +69,9 @@ export interface SvapiGetVideoByIdResponse {
  * 获取当前用户的发布视频列表请求消息类型
  */
 export interface SvapiListPublishedVideoRequest {
+  /**
+   * @gotags: json:"user_id,omitempty,string"
+   */
   userId?: string;
   pagination?: SvapiPaginationRequest;
 }
@@ -109,6 +127,7 @@ export interface SvapiPreSign4UploadRequest {
   fileType?: string;
   /**
    * 文件大小，单位byte
+   *  @gotags: json:"size,omitempty,string"
    */
   size?: string;
   /**
@@ -127,6 +146,7 @@ export interface SvapiPreSign4UploadResponse {
   url?: string;
   /**
    * 文件id
+   *  @gotags: json:"file_id,omitempty,string"
    */
   fileId?: string;
 }
@@ -145,6 +165,7 @@ export interface SvapiPreSign4UploadVideoRequest {
   fileType?: string;
   /**
    * 文件大小，单位byte
+   *  @gotags: json:"size,omitempty,string"
    */
   size?: string;
   /**
@@ -163,6 +184,24 @@ export interface SvapiPreSign4UploadVideoResponse {
   url?: string;
   /**
    * 文件id
+   *  @gotags: json:"file_id,omitempty,string"
+   */
+  fileId?: string;
+}
+
+export interface SvapiPreSignUploadPublicFileRequest {
+  hash?: string;
+  fileType?: string;
+  /**
+   * gotags: json`size,omitempty,string`
+   */
+  size?: string;
+}
+
+export interface SvapiPreSignUploadPublicFileResponse {
+  url?: string;
+  /**
+   * @gotags: json:"file_id,omitempty,string"
    */
   fileId?: string;
 }
@@ -171,11 +210,17 @@ export interface SvapiRegisterRequest {
   mobile?: string;
   email?: string;
   password?: string;
+  /**
+   * @gotags: json:"code_id,omitempty,string"
+   */
   codeId?: string;
   code?: string;
 }
 
 export interface SvapiRegisterResponse {
+  /**
+   * @gotags: json:"user_id,omitempty,string"
+   */
   userId?: string;
 }
 
@@ -185,6 +230,7 @@ export interface SvapiRegisterResponse {
 export interface SvapiReportFinishUploadRequest {
   /**
    * 文件id
+   *  @gotags: json:"file_id,omitempty,string"
    */
   fileId?: string;
 }
@@ -199,12 +245,21 @@ export interface SvapiReportFinishUploadResponse {
   url?: string;
 }
 
+export interface SvapiReportPublicFileUploadedRequest {
+  fileId?: string;
+}
+
+export interface SvapiReportPublicFileUploadedResponse {
+  objectName?: string;
+}
+
 /**
  * 确认视频上传完成请求消息类型
  */
 export interface SvapiReportVideoFinishUploadRequest {
   /**
    * 文件id
+   *  @gotags: json:"file_id,omitempty,string"
    */
   fileId?: string;
   /**
@@ -221,6 +276,7 @@ export interface SvapiReportVideoFinishUploadRequest {
   description?: string;
   /**
    * 视频作者id
+   *  @gotags: json:"user_id,omitempty,string"
    */
   userId?: string;
 }
@@ -231,6 +287,7 @@ export interface SvapiReportVideoFinishUploadRequest {
 export interface SvapiReportVideoFinishUploadResponse {
   /**
    * 视频id
+   *  @gotags: json:"video_id,omitempty,string"
    */
   videoId?: string;
 }
@@ -241,6 +298,9 @@ export interface SvapiSortField {
 }
 
 export interface SvapiUpdateUserInfoRequest {
+  /**
+   * @gotags: json:"user_id,omitempty,string"
+   */
   userId?: string;
   name?: string;
   avatar?: string;
@@ -252,6 +312,9 @@ export interface SvapiUpdateUserInfoRequest {
 export interface SvapiUpdateUserInfoResponse {}
 
 export interface SvapiUser {
+  /**
+   * @gotags: json:"id,omitempty,string"
+   */
   id?: string;
   name?: string;
   avatar?: string;
@@ -259,25 +322,52 @@ export interface SvapiUser {
   signature?: string;
   mobile?: string;
   email?: string;
+  /**
+   * @gotags: json:"follow_count,omitempty,string"
+   */
   followCount?: string;
+  /**
+   * @gotags: json:"follower_count,omitempty,string"
+   */
   followerCount?: string;
+  /**
+   * @gotags: json:"total_favorited,omitempty,string"
+   */
   totalFavorited?: string;
+  /**
+   * @gotags: json:"work_count,omitempty,string"
+   */
   workCount?: string;
+  /**
+   * @gotags: json:"favorite_count,omitempty,string"
+   */
   favoriteCount?: string;
 }
 
 export interface SvapiVideo {
+  /**
+   * @gotags: json:"id,omitempty,string"
+   */
   id?: string;
   author?: SvapiVideoAuthor;
   playUrl?: string;
   coverUrl?: string;
+  /**
+   * @gotags: json:"favorite_count,omitempty,string"
+   */
   favoriteCount?: string;
+  /**
+   * @gotags: json:"comment_count,omitempty,string"
+   */
   commentCount?: string;
   isFavorite?: boolean;
   title?: string;
 }
 
 export interface SvapiVideoAuthor {
+  /**
+   * @gotags: json:"id,omitempty,string"
+   */
   id?: string;
   name?: string;
   avatar?: string;
@@ -366,6 +456,7 @@ export interface ShortVideoCoreVideoServiceReportFinishUploadResponse {
 export interface ShortVideoCoreVideoServiceReportFinishUploadPathParams {
   /**
    * 文件id
+   *  @gotags: json:"file_id,omitempty,string"
    */
   fileId: string;
 }
@@ -514,6 +605,9 @@ export interface UserServiceGetUserInfoResponse {
 }
 
 export interface UserServiceGetUserInfoQueryParams {
+  /**
+   * @gotags: json:"user_id,omitempty,string"
+   */
   userId?: string;
 }
 
@@ -960,6 +1054,7 @@ export interface ShortVideoCoreVideoServiceReportVideoFinishUploadResponse {
 export interface ShortVideoCoreVideoServiceReportVideoFinishUploadPathParams {
   /**
    * 文件id
+   *  @gotags: json:"file_id,omitempty,string"
    */
   fileId: string;
 }
@@ -1042,6 +1137,9 @@ export interface ShortVideoCoreVideoServiceGetVideoByIdResponse {
 }
 
 export interface ShortVideoCoreVideoServiceGetVideoByIdPathParams {
+  /**
+   * @gotags: json:"video_id,omitempty,string"
+   */
   videoId: string;
 }
 
@@ -1102,3 +1200,125 @@ export const useShortVideoCoreVideoServiceGetVideoById = ({
       `/video/${paramsInPath.videoId}`,
     { pathParams: { videoId }, ...props }
   );
+
+export interface FileServicePreSignUploadingPublicFileResponse {
+  /**
+   * Status code. Zero means success.
+   */
+  code?: number;
+  /**
+   * Status message. Could be displayed to user.
+   */
+  msg?: string;
+  data?: SvapiPreSignUploadPublicFileResponse;
+}
+
+export type FileServicePreSignUploadingPublicFileProps = Omit<
+  MutateProps<
+    FileServicePreSignUploadingPublicFileResponse,
+    unknown,
+    void,
+    SvapiPreSignUploadPublicFileRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+export const FileServicePreSignUploadingPublicFile = (
+  props: FileServicePreSignUploadingPublicFileProps
+) => (
+  <Mutate<
+    FileServicePreSignUploadingPublicFileResponse,
+    unknown,
+    void,
+    SvapiPreSignUploadPublicFileRequest,
+    void
+  >
+    verb="POST"
+    path={`file`}
+    {...props}
+  />
+);
+
+export type UseFileServicePreSignUploadingPublicFileProps = Omit<
+  UseMutateProps<
+    FileServicePreSignUploadingPublicFileResponse,
+    unknown,
+    void,
+    SvapiPreSignUploadPublicFileRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+export const useFileServicePreSignUploadingPublicFile = (
+  props: UseFileServicePreSignUploadingPublicFileProps
+) =>
+  useMutate<
+    FileServicePreSignUploadingPublicFileResponse,
+    unknown,
+    void,
+    SvapiPreSignUploadPublicFileRequest,
+    void
+  >("POST", `file`, props);
+
+export interface FileServiceReportPublicFileUploadedResponse {
+  /**
+   * Status code. Zero means success.
+   */
+  code?: number;
+  /**
+   * Status message. Could be displayed to user.
+   */
+  msg?: string;
+  data?: SvapiReportPublicFileUploadedResponse;
+}
+
+export type FileServiceReportPublicFileUploadedProps = Omit<
+  MutateProps<
+    FileServiceReportPublicFileUploadedResponse,
+    unknown,
+    void,
+    SvapiReportPublicFileUploadedRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+export const FileServiceReportPublicFileUploaded = (
+  props: FileServiceReportPublicFileUploadedProps
+) => (
+  <Mutate<
+    FileServiceReportPublicFileUploadedResponse,
+    unknown,
+    void,
+    SvapiReportPublicFileUploadedRequest,
+    void
+  >
+    verb="POST"
+    path={`file/report`}
+    {...props}
+  />
+);
+
+export type UseFileServiceReportPublicFileUploadedProps = Omit<
+  UseMutateProps<
+    FileServiceReportPublicFileUploadedResponse,
+    unknown,
+    void,
+    SvapiReportPublicFileUploadedRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+export const useFileServiceReportPublicFileUploaded = (
+  props: UseFileServiceReportPublicFileUploadedProps
+) =>
+  useMutate<
+    FileServiceReportPublicFileUploadedResponse,
+    unknown,
+    void,
+    SvapiReportPublicFileUploadedRequest,
+    void
+  >("POST", `file/report`, props);

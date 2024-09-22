@@ -18,15 +18,6 @@ export interface UpdateUserInfoFormProps {
   backgroundImage?: string;
 }
 
-const beforeUpload = (file: RcFile, fileList: RcFile[]) => {
-    console.log(file);
-    console.log(fileList);
-}
-
-const avatarUploadOnChange = () => {
-  console.log("get")
-}
-
 export function UpdateUserInfoForm(props: UpdateUserInfoFormProps) {
   const [open, setOpen] = useState(props.open);
   const [name, setName] = useState(props.name);
@@ -39,7 +30,6 @@ export function UpdateUserInfoForm(props: UpdateUserInfoFormProps) {
   const updateUserInfo = useUserServiceUpdateUserInfo({});
 
   const submit4ModifyUserInfo = (formData: Record<string, string>) => {
-    console.log(formData);
     updateUserInfo
       .mutate({
         name: formData?.name,

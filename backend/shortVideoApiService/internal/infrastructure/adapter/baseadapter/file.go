@@ -80,3 +80,16 @@ func (a *Adapter) ReportUploaded(ctx context.Context, fileId int64) (*ReportUplo
 func (a *Adapter) ReportPublicUploaded(ctx context.Context, fileId int64) (*ReportUploadedResp, error) {
 	return a.reportUploaded(ctx, DomainName, Public, fileId)
 }
+
+func (a *Adapter) GetFileInfoById(ctx context.Context, fileId int64) (*api.GetFileInfoByIdResponse, error) {
+	req := &api.GetFileInfoByIdRequest{
+		FileId: fileId,
+	}
+	resp, err := a.file.GetFileInfoById(ctx, req)
+	return respcheck.CheckT[*api.GetFileInfoByIdResponse, *api.Metadata](
+		resp, err,
+		func() *api.GetFileInfoByIdResponse {
+			return resp
+		},
+	)
+}

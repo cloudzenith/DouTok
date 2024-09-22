@@ -19,3 +19,8 @@ func initVideoApp() *userapp.Application {
 	wire.Build(videoappproviders.VideoAppProviderSet)
 	return &userapp.Application{}
 }
+
+func initFileApp() *userapp.Application {
+	wire.Build(videoappproviders.VideoAppProviderSet)
+	return &userapp.Application{}
+}

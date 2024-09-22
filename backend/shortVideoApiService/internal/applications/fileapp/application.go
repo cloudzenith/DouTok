@@ -12,8 +12,10 @@ type Application struct {
 	base *baseadapter.Adapter
 }
 
-func New() *Application {
-	return &Application{}
+func New(base *baseadapter.Adapter) *Application {
+	return &Application{
+		base: base,
+	}
 }
 
 func (a *Application) PreSignUploadingPublicFile(ctx context.Context, request *svapi.PreSignUploadPublicFileRequest) (*svapi.PreSignUploadPublicFileResponse, error) {
@@ -43,7 +45,15 @@ func (a *Application) ReportPublicFileUploaded(ctx context.Context, request *sva
 		return nil, errorx.New(1, "failed to report uploaded")
 	}
 
-	return nil, nil
+	info, err := a.base.GetFileInfoById(ctx, request.FileId)
+	if err != nil {
+		log.Context(ctx).Errorf("failed to get file info: %v", err)
+		return nil, errorx.New(1, "failed to get file info")
+	}
+
+	return &svapi.ReportPublicFileUploadedResponse{
+		ObjectName: info.ObjectName,
+	}, nil
 }
 
 var _ svapi.FileServiceHTTPServer = (*Application)(nil)
