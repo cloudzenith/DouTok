@@ -13,7 +13,6 @@ import "./UserCard.css";
 import { LoginModal } from "@/components/LoginModal/LoginModal";
 import useUserStore from "@/components/UserStore/useUserStore";
 import { UpdateUserInfoForm } from "@/components/UpdateUserInfoForm/UpdateUserInfoForm";
-import { set } from "yaml/dist/schema/yaml-1.1/set";
 import { RcFile } from "antd/es/upload/interface";
 import { SimpleUpload } from "@/components/SimpleUpload/SimpleUpload";
 
@@ -45,13 +44,19 @@ export function UserCard() {
       }
 
       // TODO: 暂时写死，未来整理成读取配置
-      setAvatar(data.user?.avatar !== undefined ? "http://localhost:9000/shortvideo/" + data.user.avatar : "no-login.svg");
+      setAvatar(
+        data.user?.avatar !== undefined
+          ? "http://localhost:9000/shortvideo/" + data.user.avatar
+          : "no-login.svg"
+      );
       setUsername(data.user?.name);
       setFollowing(data.user?.followCount ? data.user?.followCount : "0");
       setFans(data.user?.followerCount ? data.user?.followerCount : "0");
       setDouTokId(data.user?.id);
       setLikes("0");
-      setSignature(data.user?.signature ? data.user?.signature : "这个人很懒，什么都没写");
+      setSignature(
+        data.user?.signature ? data.user?.signature : "这个人很懒，什么都没写"
+      );
       return resp;
     }
   });
@@ -78,8 +83,12 @@ export function UserCard() {
                 };
               }}
             >
-              {avatarBase64 && <Avatar src={avatarBase64} alt={"avatar"} size={100} />}
-              {!avatarBase64 && avatar && <Avatar src={avatar} alt={"avatar"} size={100} />}
+              {avatarBase64 && (
+                <Avatar src={avatarBase64} alt={"avatar"} size={100} />
+              )}
+              {!avatarBase64 && avatar && (
+                <Avatar src={avatar} alt={"avatar"} size={100} />
+              )}
             </SimpleUpload>
           }
           title={
@@ -95,8 +104,8 @@ export function UserCard() {
           description={
             <>
               <div className={"user-stats"}>
-              <div className={"following-num"}>
-              <span>关注: {following != undefined ? following : "-"}</span>
+                <div className={"following-num"}>
+                  <span>关注: {following != undefined ? following : "-"}</span>
                 </div>
                 <Divider className={"divider"} type={"vertical"} />
                 <div className={"fans-num"}>

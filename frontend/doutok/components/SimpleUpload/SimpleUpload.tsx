@@ -1,7 +1,10 @@
 import { RequestComponent } from "@/components/RequestComponent/RequestComponent";
 import { message, notification, Upload, UploadProps } from "antd";
 import React, { useEffect } from "react";
-import { RcFile, UploadChangeParam, UploadListType } from "antd/es/upload/interface";
+import {
+  RcFile,
+  UploadListType
+} from "antd/es/upload/interface";
 import {
   FileServiceReportPublicFileUploadedResponse,
   ShortVideoCoreVideoServicePreSign4UploadCoverResponse,
@@ -21,107 +24,106 @@ export interface SimpleUploadProps {
   onFilePreSigned?: (file: RcFile) => void;
 }
 
-
 export function SimpleUpload(props: SimpleUploadProps) {
-  const [fileId, setFileId] = React.useState<string>();
   const [reportFileId, setReportFileId] = React.useState<string>();
   const [uploadFile, setUploadFile] = React.useState<RcFile>();
   const [uploadUrl, setUploadUrl] = React.useState<string>();
   const [fileHash, setFileHash] = React.useState<string>();
-  const [fileBin, setFileBin] = React.useState<ArrayBuffer>();
 
   const preSignUploadMutate = useFileServicePreSignUploadingPublicFile({});
   const reportUploadedMutate = useFileServiceReportPublicFileUploaded({});
   const updateUserInfoMutate = useUserServiceUpdateUserInfo({});
 
-  const beforeUpload: UploadProps['beforeUpload'] = (file: RcFile) => {
+  const beforeUpload: UploadProps["beforeUpload"] = (file: RcFile) => {
     const fileReader = new FileReader();
     fileReader.readAsArrayBuffer(file);
     fileReader.onload = (event: ProgressEvent<FileReader>) => {
       if (event === null || event.target === null) {
-        return ;
+        return;
       }
 
       const hashHandle = new SparkMD5.ArrayBuffer();
       hashHandle.append(event.target.result as ArrayBuffer);
       setFileHash(hashHandle.end());
       setUploadFile(file);
-    }
+    };
 
     return false;
-  }
+  };
 
   useEffect(() => {
     if (fileHash === undefined || uploadFile === undefined) {
-      return ;
+      return;
     }
 
-    preSignUploadMutate.mutate({
-      hash: fileHash,
-      fileType: uploadFile.type,
-      size: uploadFile.size.toString(),
-    }).then((result: ShortVideoCoreVideoServicePreSign4UploadCoverResponse) => {
-      if (result?.code !== 0 || result.data === undefined) {
-        message.error("上传失败，请重试")
-        return ;
-      }
-
-      setFileId(result.data.fileId);
-      setUploadUrl(result.data.url);
-
-      if (props.onFilePreSigned) {
-        props.onFilePreSigned(uploadFile);
-      }
-
-      if (result.data.url === undefined) {
-        // 触发秒传
-        setReportFileId(result.data.file_id);
-        return ;
-      }
-
-      fetch(result.data.url as string, {
-        method: "PUT",
-        body: uploadFile,
-      }).then((response) => {
-        console.log(response)
-        if (response.status !== 200) {
+    preSignUploadMutate
+      .mutate({
+        hash: fileHash,
+        fileType: uploadFile.type,
+        size: uploadFile.size.toString()
+      })
+      .then((result: ShortVideoCoreVideoServicePreSign4UploadCoverResponse) => {
+        if (result?.code !== 0 || result.data === undefined) {
           message.error("上传失败，请重试");
-          return ;
+          return;
         }
 
-        setReportFileId(result.data?.file_id);
-      })
-    })
-  }, [fileHash, uploadFile]);
+        setUploadUrl(result.data.url);
+
+        if (props.onFilePreSigned) {
+          props.onFilePreSigned(uploadFile);
+        }
+
+        if (result.data.url === undefined) {
+          // 触发秒传
+          setReportFileId(result.data.file_id);
+          return;
+        }
+
+        fetch(result.data.url as string, {
+          method: "PUT",
+          body: uploadFile
+        }).then(response => {
+          if (response.status !== 200) {
+            message.error("上传失败，请重试");
+            return;
+          }
+
+          setReportFileId(result.data?.file_id);
+        });
+      });
+  }, [fileHash, uploadFile, preSignUploadMutate, props]);
 
   useEffect(() => {
     if (reportFileId === undefined) {
-      return ;
+      return;
     }
 
-    reportUploadedMutate.mutate({
-      fileId: reportFileId,
-    }).then((result: FileServiceReportPublicFileUploadedResponse) => {
-      if (result?.code !== 0 || result?.data === undefined) {
-        message.error("上传失败，请重试")
-        return ;
-      }
-
-      updateUserInfoMutate.mutate({
-        avatar: result.data.object_name,
-      }).then(() => {
-        notification.success({
-          message: "上传成功",
-          description: "头像已更新",
-        })
+    reportUploadedMutate
+      .mutate({
+        fileId: reportFileId
       })
-    })
-  }, [reportFileId]);
+      .then((result: FileServiceReportPublicFileUploadedResponse) => {
+        if (result?.code !== 0 || result?.data === undefined) {
+          message.error("上传失败，请重试");
+          return;
+        }
+
+        updateUserInfoMutate
+          .mutate({
+            avatar: result.data.object_name
+          })
+          .then(() => {
+            notification.success({
+              message: "上传成功",
+              description: "头像已更新"
+            });
+          });
+      });
+  }, [reportFileId, reportUploadedMutate, updateUserInfoMutate]);
 
   return (
-    <RequestComponent
-      noAuth={false}
-    >
+    <RequestComponent noAuth={false}>
       <Upload
         action={uploadUrl}
         className={props.className}

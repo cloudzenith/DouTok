@@ -1,12 +1,14 @@
-import { ProForm, ProFormText, ProFormTextArea, ProFormUploadButton, ProFormUploadDragger } from "@ant-design/pro-form";
+import {
+  ProForm,
+  ProFormText,
+  ProFormTextArea,
+} from "@ant-design/pro-form";
 import {
   UserServiceUpdateUserInfoResponse,
   useUserServiceUpdateUserInfo
 } from "@/api/svapi/api";
-import { Form, Modal, notification, Upload } from "antd";
+import { Form, Modal, notification } from "antd";
 import { useState } from "react";
-import { FileType } from "next/dist/lib/file-exists";
-import { RcFile } from "antd/es/upload/interface";
 import { SimpleUpload } from "@/components/SimpleUpload/SimpleUpload";
 
 export interface UpdateUserInfoFormProps {
@@ -20,10 +22,14 @@ export interface UpdateUserInfoFormProps {
 
 export function UpdateUserInfoForm(props: UpdateUserInfoFormProps) {
   const [open, setOpen] = useState(props.open);
-  const [name, setName] = useState(props.name);
-  const [signature, setSignature] = useState(props.signature);
-  const [avatar, setAvatar] = useState(props.avatar ? props.avatar : "no-login.svg");
-  const [backgroundImage, setBackgroundImage] = useState(props.backgroundImage ? props.backgroundImage : "no-login.svg");
+  const [name] = useState(props.name);
+  const [signature] = useState(props.signature);
+  const [avatar] = useState(
+    props.avatar ? props.avatar : "no-login.svg"
+  );
+  const [backgroundImage] = useState(
+    props.backgroundImage ? props.backgroundImage : "no-login.svg"
+  );
 
   const [formRef] = Form.useForm();
 
@@ -34,7 +40,7 @@ export function UpdateUserInfoForm(props: UpdateUserInfoFormProps) {
       .mutate({
         name: formData?.name,
         signature: formData?.signature,
-        avatar: formData?.avatar,
+        avatar: formData?.avatar
       })
       .then((r: UserServiceUpdateUserInfoResponse) => {
         setOpen(false);
@@ -61,9 +67,9 @@ export function UpdateUserInfoForm(props: UpdateUserInfoFormProps) {
           submitButtonProps: {},
           resetButtonProps: {
             style: {
-              display: 'none',
-            },
-          },
+              display: "none"
+            }
+          }
         }}
       >
         <SimpleUpload
@@ -73,7 +79,9 @@ export function UpdateUserInfoForm(props: UpdateUserInfoFormProps) {
           className={"avatar-uploader"}
           showUploadList={false}
         >
-          {avatar ? <img src={backgroundImage} alt={"background"} /> : undefined}
+          {avatar ? (
+            <img src={backgroundImage} alt={"background"} />
+          ) : undefined}
         </SimpleUpload>
         <ProFormText
           name="name"
