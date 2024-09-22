@@ -92,7 +92,7 @@ export function SimpleUpload(props: SimpleUploadProps) {
           setReportFileId(result.data?.file_id);
         });
       });
-  }, [fileHash, uploadFile, preSignUploadMutate, props]);
+  }, [fileHash, uploadFile]);
 
   useEffect(() => {
     if (reportFileId === undefined) {
@@ -120,7 +120,7 @@ export function SimpleUpload(props: SimpleUploadProps) {
             });
           });
       });
-  }, [reportFileId, reportUploadedMutate, updateUserInfoMutate]);
+  }, [reportFileId]);
 
   return (
     <RequestComponent noAuth={false}>
