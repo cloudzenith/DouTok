@@ -48,7 +48,7 @@ export function UpdateUserInfoForm(props: UpdateUserInfoFormProps) {
           return;
         }
 
-        // window.location.reload();
+        window.location.reload();
       });
   };
 

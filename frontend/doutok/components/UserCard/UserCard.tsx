@@ -44,7 +44,8 @@ export function UserCard() {
         return resp;
       }
 
-      setAvatar(data.user?.avatar !== undefined ? data.user.avatar : "no-login.svg");
+      // TODO: 暂时写死，未来整理成读取配置
+      setAvatar(data.user?.avatar !== undefined ? "http://localhost:9000/shortvideo/" + data.user.avatar : "no-login.svg");
       setUsername(data.user?.name);
       setFollowing(data.user?.followCount ? data.user?.followCount : "0");
       setFans(data.user?.followerCount ? data.user?.followerCount : "0");

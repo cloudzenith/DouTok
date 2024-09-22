@@ -56,8 +56,8 @@ func (a *Adapter) PreSign4PublicUpload(ctx context.Context, hash, fileType, file
 func (a *Adapter) reportUploaded(ctx context.Context, domainName, bizName string, fileId int64) (*ReportUploadedResp, error) {
 	req := &api.ReportUploadedRequest{
 		FileContext: &api.FileContext{
-			BizName:       domainName,
-			Domain:        bizName,
+			BizName:       bizName,
+			Domain:        domainName,
 			FileId:        fileId,
 			ExpireSeconds: 7200,
 		},
@@ -83,7 +83,9 @@ func (a *Adapter) ReportPublicUploaded(ctx context.Context, fileId int64) (*Repo
 
 func (a *Adapter) GetFileInfoById(ctx context.Context, fileId int64) (*api.GetFileInfoByIdResponse, error) {
 	req := &api.GetFileInfoByIdRequest{
-		FileId: fileId,
+		DomainName: DomainName,
+		BizName:    Public,
+		FileId:     fileId,
 	}
 	resp, err := a.file.GetFileInfoById(ctx, req)
 	return respcheck.CheckT[*api.GetFileInfoByIdResponse, *api.Metadata](

@@ -387,7 +387,7 @@ class Hash:
 if __name__ == '__main__':
 
 
-    strFileAbsolutePath = os.path.join("D:\Share/data.mp4")
+    strFileAbsolutePath = os.path.join("../frontend/doutok/public/logo.png")
     # strFileAbsolutePath = os.path.join("./total.pdf")
 
 

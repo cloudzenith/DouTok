@@ -26,8 +26,6 @@ service UserService {
             body: "*"
         };
     };
-
-    rpc UpdateUserImage(UpdateUserImageRequest) returns (UpdateUserImageResponse);
 }
 
 message User {
@@ -68,10 +66,7 @@ message GetUserInfoResponse {
 
 message UpdateUserInfoRequest {
     int64 user_id = 1 [(validate.rules).int64 = {gt: 0}];
-    string name = 2 [
-        (validate.rules).string.min_len = 1,
-        (validate.rules).string.max_len = 50
-    ];
+    string name = 2;
     string avatar = 3;
     string background_image = 4;
     string signature = 5;
@@ -84,14 +79,4 @@ message UpdateUserInfoResponse {
 enum UpdateUserImageType {
     AVATAR = 0;
     BACKGROUND_IMAGE = 1;
-}
-
-message UpdateUserImageRequest {
-    int64 file_id = 1;
-    int64 user_id = 2;
-    UpdateUserImageType type = 3;
-}
-
-message UpdateUserImageResponse {
-    Metadata meta = 1;
 }
