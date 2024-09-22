@@ -36,6 +36,7 @@ type FileServiceClient interface {
 	MergeFileParts(ctx context.Context, in *MergeFilePartsRequest, opts ...grpc.CallOption) (*MergeFilePartsResponse, error)
 	// remove a file
 	RemoveFile(ctx context.Context, in *RemoveFileRequest, opts ...grpc.CallOption) (*RemoveFileResponse, error)
+	GetFileInfoById(ctx context.Context, in *GetFileInfoByIdRequest, opts ...grpc.CallOption) (*GetFileInfoByIdResponse, error)
 }
 
 type fileServiceClient struct {
@@ -109,6 +110,15 @@ func (c *fileServiceClient) RemoveFile(ctx context.Context, in *RemoveFileReques
 	return out, nil
 }
 
+func (c *fileServiceClient) GetFileInfoById(ctx context.Context, in *GetFileInfoByIdRequest, opts ...grpc.CallOption) (*GetFileInfoByIdResponse, error) {
+	out := new(GetFileInfoByIdResponse)
+	err := c.cc.Invoke(ctx, "/api.FileService/GetFileInfoById", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FileServiceServer is the server API for FileService service.
 // All implementations should embed UnimplementedFileServiceServer
 // for forward compatibility
@@ -127,6 +137,7 @@ type FileServiceServer interface {
 	MergeFileParts(context.Context, *MergeFilePartsRequest) (*MergeFilePartsResponse, error)
 	// remove a file
 	RemoveFile(context.Context, *RemoveFileRequest) (*RemoveFileResponse, error)
+	GetFileInfoById(context.Context, *GetFileInfoByIdRequest) (*GetFileInfoByIdResponse, error)
 }
 
 // UnimplementedFileServiceServer should be embedded to have forward compatible implementations.
@@ -153,6 +164,9 @@ func (UnimplementedFileServiceServer) MergeFileParts(context.Context, *MergeFile
 }
 func (UnimplementedFileServiceServer) RemoveFile(context.Context, *RemoveFileRequest) (*RemoveFileResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveFile not implemented")
+}
+func (UnimplementedFileServiceServer) GetFileInfoById(context.Context, *GetFileInfoByIdRequest) (*GetFileInfoByIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFileInfoById not implemented")
 }
 
 // UnsafeFileServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -292,6 +306,24 @@ func _FileService_RemoveFile_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FileService_GetFileInfoById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetFileInfoByIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FileServiceServer).GetFileInfoById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.FileService/GetFileInfoById",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FileServiceServer).GetFileInfoById(ctx, req.(*GetFileInfoByIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FileService_ServiceDesc is the grpc.ServiceDesc for FileService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -326,6 +358,10 @@ var FileService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RemoveFile",
 			Handler:    _FileService_RemoveFile_Handler,
+		},
+		{
+			MethodName: "GetFileInfoById",
+			Handler:    _FileService_GetFileInfoById_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

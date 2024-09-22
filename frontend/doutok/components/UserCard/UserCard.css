@@ -9,6 +9,15 @@
   font-weight: lighter;
 }
 
+.signature {
+  font-size: 15px;
+  font-weight: lighter;
+}
+
+.background-uploader {
+  width: 500px;
+}
+
 .user-stats {
   margin-top: 10%;
   font-size: 20px;

@@ -17,6 +17,7 @@
     "@ant-design/pro-components": "^2.7.18",
     "@ant-design/pro-form": "^2.30.2",
     "@next/eslint-plugin-next": "^14.2.11",
+    "@types/spark-md5": "^3.0.4",
     "@typescript-eslint/eslint-plugin": "^8.5.0",
     "antd": "^5.19.4",
     "axios": "^1.7.7",
@@ -31,6 +32,7 @@
     "react-dom": "^18",
     "react-redux": "^9.1.2",
     "restful-react": "^15.9.4",
+    "spark-md5": "^3.0.2",
     "zustand": "5.0.0-rc.2"
   },
   "devDependencies": {

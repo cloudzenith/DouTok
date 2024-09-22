@@ -1,3 +1,11 @@
-# 安装docker插件用于收集容器内的日志
-install:
-	docker plugin install registry.docker.com/grafana/loki-docker-driver:main --alias loki --grant-all-permissions
+basic:
+	docker-compose -f basic.yml up -d
+
+mq:
+	docker-compose -f rocketmq.yml up -d
+
+trace:
+	docker-compose -f trace.yml up -d
+
+bk:
+	docker-compose -f backends.yml up -d

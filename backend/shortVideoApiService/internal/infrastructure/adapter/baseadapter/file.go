@@ -9,6 +9,7 @@ import (
 const (
 	DomainName = "shortvideo"
 	BizName    = "short_video"
+	Public     = "public"
 )
 
 type PreSign4UploadResp struct {
@@ -20,11 +21,11 @@ type ReportUploadedResp struct {
 	Url string
 }
 
-func (a *Adapter) PreSign4Upload(ctx context.Context, hash, fileType, fileName string, size, expireSeconds int64) (*PreSign4UploadResp, error) {
+func (a *Adapter) preSign4Upload(ctx context.Context, domainName, bizName, hash, fileType, fileName string, size, expireSeconds int64) (*PreSign4UploadResp, error) {
 	req := &api.PreSignPutRequest{
 		FileContext: &api.FileContext{
-			Domain:        DomainName,
-			BizName:       BizName,
+			Domain:        domainName,
+			BizName:       bizName,
 			Hash:          hash,
 			FileType:      fileType,
 			Size:          size,
@@ -44,11 +45,19 @@ func (a *Adapter) PreSign4Upload(ctx context.Context, hash, fileType, fileName s
 	)
 }
 
-func (a *Adapter) ReportUploaded(ctx context.Context, fileId int64) (*ReportUploadedResp, error) {
+func (a *Adapter) PreSign4Upload(ctx context.Context, hash, fileType, fileName string, size, expireSeconds int64) (*PreSign4UploadResp, error) {
+	return a.preSign4Upload(ctx, DomainName, BizName, hash, fileType, fileName, size, expireSeconds)
+}
+
+func (a *Adapter) PreSign4PublicUpload(ctx context.Context, hash, fileType, fileName string, size, expireSeconds int64) (*PreSign4UploadResp, error) {
+	return a.preSign4Upload(ctx, DomainName, Public, hash, fileType, fileName, size, expireSeconds)
+}
+
+func (a *Adapter) reportUploaded(ctx context.Context, domainName, bizName string, fileId int64) (*ReportUploadedResp, error) {
 	req := &api.ReportUploadedRequest{
 		FileContext: &api.FileContext{
-			BizName:       BizName,
-			Domain:        DomainName,
+			BizName:       domainName,
+			Domain:        bizName,
 			FileId:        fileId,
 			ExpireSeconds: 7200,
 		},
@@ -62,4 +71,12 @@ func (a *Adapter) ReportUploaded(ctx context.Context, fileId int64) (*ReportUplo
 			}
 		},
 	)
+}
+
+func (a *Adapter) ReportUploaded(ctx context.Context, fileId int64) (*ReportUploadedResp, error) {
+	return a.reportUploaded(ctx, DomainName, BizName, fileId)
+}
+
+func (a *Adapter) ReportPublicUploaded(ctx context.Context, fileId int64) (*ReportUploadedResp, error) {
+	return a.reportUploaded(ctx, DomainName, Public, fileId)
 }

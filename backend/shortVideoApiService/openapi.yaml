@@ -348,6 +348,58 @@ paths:
                                         description: Status message. Could be displayed to user.
                                     data:
                                         $ref: '#/components/schemas/svapi.GetVideoByIdResponse'
+    file:
+        post:
+            tags:
+                - FileService
+            operationId: FileService_PreSignUploadingPublicFile
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/svapi.PreSignUploadPublicFileRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                properties:
+                                    code:
+                                        type: integer
+                                        description: Status code. Zero means success.
+                                    msg:
+                                        type: string
+                                        description: Status message. Could be displayed to user.
+                                    data:
+                                        $ref: '#/components/schemas/svapi.PreSignUploadPublicFileResponse'
+    file/report:
+        post:
+            tags:
+                - FileService
+            operationId: FileService_ReportPublicFileUploaded
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/svapi.ReportPublicFileUploadedRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                properties:
+                                    code:
+                                        type: integer
+                                        description: Status code. Zero means success.
+                                    msg:
+                                        type: string
+                                        description: Status message. Could be displayed to user.
+                                    data:
+                                        $ref: '#/components/schemas/svapi.ReportPublicFileUploadedResponse'
 components:
     schemas:
         svapi.FeedShortVideoRequest:
@@ -532,6 +584,24 @@ components:
                         文件id
                          @gotags: json:"file_id,omitempty,string"
             description: 预注册上传视频响应消息类型
+        svapi.PreSignUploadPublicFileRequest:
+            type: object
+            properties:
+                hash:
+                    type: string
+                fileType:
+                    type: string
+                size:
+                    type: string
+                    description: 'gotags: json`size,omitempty,string`'
+        svapi.PreSignUploadPublicFileResponse:
+            type: object
+            properties:
+                url:
+                    type: string
+                fileId:
+                    type: string
+                    description: '@gotags: json:"file_id,omitempty,string"'
         svapi.RegisterRequest:
             type: object
             properties:
@@ -568,6 +638,16 @@ components:
                     type: string
                     description: url
             description: 通用确认上传完成响应消息类型
+        svapi.ReportPublicFileUploadedRequest:
+            type: object
+            properties:
+                fileId:
+                    type: string
+        svapi.ReportPublicFileUploadedResponse:
+            type: object
+            properties:
+                objectName:
+                    type: string
         svapi.ReportVideoFinishUploadRequest:
             type: object
             properties:
@@ -693,5 +773,6 @@ components:
                 isFollowing:
                     type: boolean
 tags:
+    - name: FileService
     - name: ShortVideoCoreVideoService
     - name: UserService

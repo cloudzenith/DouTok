@@ -21,6 +21,7 @@ service FileService {
   rpc MergeFileParts(MergeFilePartsRequest) returns (MergeFilePartsResponse);
   // remove a file
   rpc RemoveFile(RemoveFileRequest) returns (RemoveFileResponse);
+  rpc GetFileInfoById(GetFileInfoByIdRequest) returns (GetFileInfoByIdResponse);
 }
 
 message FileContext {
@@ -122,4 +123,16 @@ message RemoveFileRequest {
 
 message RemoveFileResponse {
   api.Metadata meta = 1;
+}
+
+message GetFileInfoByIdRequest {
+  int64 file_id = 1;
+  string domain_name = 2;
+  string biz_name = 3;
+}
+
+message GetFileInfoByIdResponse {
+  api.Metadata meta = 1;
+  string object_name = 2;
+  string hash = 3;
 }

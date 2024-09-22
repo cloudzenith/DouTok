@@ -25,6 +25,7 @@ type UserServiceClient interface {
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
 	GetUserInfo(ctx context.Context, in *GetUserInfoRequest, opts ...grpc.CallOption) (*GetUserInfoResponse, error)
 	UpdateUserInfo(ctx context.Context, in *UpdateUserInfoRequest, opts ...grpc.CallOption) (*UpdateUserInfoResponse, error)
+	UpdateUserImage(ctx context.Context, in *UpdateUserImageRequest, opts ...grpc.CallOption) (*UpdateUserImageResponse, error)
 }
 
 type userServiceClient struct {
@@ -62,6 +63,15 @@ func (c *userServiceClient) UpdateUserInfo(ctx context.Context, in *UpdateUserIn
 	return out, nil
 }
 
+func (c *userServiceClient) UpdateUserImage(ctx context.Context, in *UpdateUserImageRequest, opts ...grpc.CallOption) (*UpdateUserImageResponse, error) {
+	out := new(UpdateUserImageResponse)
+	err := c.cc.Invoke(ctx, "/shortVideoCoreService.api.v1.UserService/UpdateUserImage", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -69,6 +79,7 @@ type UserServiceServer interface {
 	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
 	GetUserInfo(context.Context, *GetUserInfoRequest) (*GetUserInfoResponse, error)
 	UpdateUserInfo(context.Context, *UpdateUserInfoRequest) (*UpdateUserInfoResponse, error)
+	UpdateUserImage(context.Context, *UpdateUserImageRequest) (*UpdateUserImageResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -84,6 +95,9 @@ func (UnimplementedUserServiceServer) GetUserInfo(context.Context, *GetUserInfoR
 }
 func (UnimplementedUserServiceServer) UpdateUserInfo(context.Context, *UpdateUserInfoRequest) (*UpdateUserInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserInfo not implemented")
+}
+func (UnimplementedUserServiceServer) UpdateUserImage(context.Context, *UpdateUserImageRequest) (*UpdateUserImageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserImage not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -152,6 +166,24 @@ func _UserService_UpdateUserInfo_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_UpdateUserImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserImageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UpdateUserImage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/shortVideoCoreService.api.v1.UserService/UpdateUserImage",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UpdateUserImage(ctx, req.(*UpdateUserImageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -170,6 +202,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateUserInfo",
 			Handler:    _UserService_UpdateUserInfo_Handler,
+		},
+		{
+			MethodName: "UpdateUserImage",
+			Handler:    _UserService_UpdateUserImage_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

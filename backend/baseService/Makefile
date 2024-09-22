@@ -11,3 +11,6 @@ gen-db:
 
 build:
 	docker build -t base-service .
+
+build1:
+	 docker build --build-arg proxy="https://goproxy.cn" -t base-service .

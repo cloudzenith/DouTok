@@ -68,3 +68,7 @@ func (s *UserApplication) GetUserInfo(ctx context.Context, in *v1.GetUserInfoReq
 		},
 	}, nil
 }
+
+func (s *UserApplication) UpdateUserImage(context.Context, *v1.UpdateUserImageRequest) (*v1.UpdateUserImageResponse, error) {
+
+}
