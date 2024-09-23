@@ -6,13 +6,12 @@ import (
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/data/userdata"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/data/videodata"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/videodomain"
-	"github.com/go-kratos/kratos/v2/log"
 )
 
-func InitVideoApplication(config *conf.Config, logger log.Logger) *videoapp.VideoApplication {
-	videoRepo := videodata.NewVideoRepo(logger)
-	userRepo := userdata.NewUserRepo(logger)
-	videoUsecase := videodomain.NewVideoUseCase(config, userRepo, videoRepo, logger)
+func InitVideoApplication(config *conf.Config) *videoapp.VideoApplication {
+	videoRepo := videodata.NewVideoRepo()
+	userRepo := userdata.NewUserRepo()
+	videoUsecase := videodomain.NewVideoUseCase(config, userRepo, videoRepo)
 	videoApp := videoapp.NewVideoApplication(videoUsecase)
 	return videoApp
 }

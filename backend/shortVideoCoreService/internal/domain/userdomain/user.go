@@ -22,11 +22,9 @@ type UserUsecase struct {
 
 func NewUserUsecase(
 	repo userdata.IUserRepo,
-	logger log.Logger,
 ) *UserUsecase {
 	return &UserUsecase{
 		repo: repo,
-		log:  log.NewHelper(logger),
 	}
 }
 
@@ -68,11 +66,13 @@ func (uc *UserUsecase) GetUserInfo(ctx context.Context, req dto.GetUserInfoReque
 		if err != nil {
 			return nil, err
 		}
+		log.Infof("user_id: %v\n", user.ID)
 		return entity.FromUserModel(user), err
 	}
 	user, err = uc.repo.FindByAccountID(ctx, query.Q, req.AccountId)
 	if err != nil {
 		return nil, err
 	}
+
 	return entity.FromUserModel(user), err
 }

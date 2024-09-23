@@ -21,20 +21,17 @@ type VideoUseCase struct {
 	config    *conf.Config
 	videoRepo videodata.IVideoRepo
 	userRepo  userdata.IUserRepo
-	log       *log.Helper
 }
 
 func NewVideoUseCase(
 	config *conf.Config,
 	userRepo userdata.IUserRepo,
 	videoRepo videodata.IVideoRepo,
-	logger log.Logger,
 ) *VideoUseCase {
 	return &VideoUseCase{
 		config:    config,
 		videoRepo: videoRepo,
 		userRepo:  userRepo,
-		log:       log.NewHelper(logger),
 	}
 }
 
@@ -75,7 +72,7 @@ func (uc *VideoUseCase) FeedShortVideo(ctx context.Context, request *service_dto
 		videoEntity := entity.FromVideoModel(videoModel)
 		authorModel, ok := userMap[videoModel.UserID]
 		if !ok {
-			uc.log.Warnf("user not found: %d", videoModel.UserID)
+			log.Warnf("user not found: %d", videoModel.UserID)
 		}
 		videoEntity.Author = entity.ToAuthorEntity(authorModel)
 		videoList = append(videoList, videoEntity)

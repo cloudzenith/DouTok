@@ -5,19 +5,15 @@ import (
 	infra_dto "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/dto"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/model"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/query"
-	"github.com/go-kratos/kratos/v2/log"
 	"time"
 )
 
 type VideoRepo struct {
-	log *log.Helper
 }
 
 // NewVideoRepo .
-func NewVideoRepo(logger log.Logger) *VideoRepo {
-	return &VideoRepo{
-		log: log.NewHelper(logger),
-	}
+func NewVideoRepo() *VideoRepo {
+	return &VideoRepo{}
 }
 
 func (r *VideoRepo) Save(ctx context.Context, tx *query.Query, v *model.Video) error {

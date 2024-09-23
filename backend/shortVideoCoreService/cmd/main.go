@@ -28,9 +28,8 @@ func main() {
 			// init global resources
 			utils.InitDefaultSnowflakeNode(cfg.App.Node)
 			query.SetDefault(mysqlx.GetDBClient(context.Background()))
-			logger := utils.InitStdLogger(&cfg.App)
 
-			return server.NewGRPCServer(cfg, logger)
+			return server.NewGRPCServer(cfg)
 		}),
 	).Run()
 }

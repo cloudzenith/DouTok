@@ -2,25 +2,12 @@ package utils
 
 import (
 	"context"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/conf"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/dto"
-	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 type DBClient struct {
 	db *gorm.DB
-}
-
-func NewDBClient(c *conf.Components) *DBClient {
-	dsn := c.MySQL.Default.Source
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
-		SkipDefaultTransaction: true,
-	})
-	if err != nil {
-		panic(err)
-	}
-	return &DBClient{db: db}
 }
 
 func (c *DBClient) GetDB() *gorm.DB {
