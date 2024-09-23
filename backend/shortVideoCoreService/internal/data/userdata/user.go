@@ -4,18 +4,14 @@ import (
 	"context"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/model"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/query"
-	"github.com/go-kratos/kratos/v2/log"
 )
 
 type UserRepo struct {
-	log *log.Helper
 }
 
 // NewUserRepo .
-func NewUserRepo(logger log.Logger) *UserRepo {
-	return &UserRepo{
-		log: log.NewHelper(logger),
-	}
+func NewUserRepo() *UserRepo {
+	return &UserRepo{}
 }
 
 func (r *UserRepo) Save(ctx context.Context, tx *query.Query, u *model.User) error {
