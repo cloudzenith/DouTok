@@ -232,3 +232,15 @@ func (s *FileService) RemoveFile(ctx context.Context, fileCtx *api.FileContext) 
 
 	return nil
 }
+
+func (s *FileService) GetInfoById(ctx context.Context, domainName, bizName string, fileId int64) (*file.File, error) {
+	fm := &models.File{}
+	fm.ID = fileId
+	fm.DomainName = domainName
+	fm.BizName = bizName
+	if err := s.fileRepo.Load(ctx, fm, s.fileRepoHelper.GetTableNameById()); err != nil {
+		return nil, err
+	}
+
+	return file.NewWithModel(fm), nil
+}

@@ -7,6 +7,7 @@
 package server
 
 import (
+	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/applications/fileapp"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/applications/userapp"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/applications/videoapp"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/adapter/baseadapter"
@@ -26,5 +27,11 @@ func initVideoApp() *videoapp.Application {
 	adapter := baseadapter.New()
 	svcoreadapterAdapter := svcoreadapter.New()
 	application := videoapp.New(adapter, svcoreadapterAdapter)
+	return application
+}
+
+func initFileApp() *fileapp.Application {
+	adapter := baseadapter.New()
+	application := fileapp.New(adapter)
 	return application
 }

@@ -47,4 +47,7 @@ COPY ./promtail.yaml /app/promtail.yaml
 
 COPY --from=promtail-builder /build/loki-3.1.1/promtail /app/promtail
 
+RUN wget https://dl.min.io/client/mc/release/linux-amd64/mc
+RUN chmod -R 777 mc
+
 ENTRYPOINT ["./entrypoint.sh"]

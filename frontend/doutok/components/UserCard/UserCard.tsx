@@ -13,6 +13,8 @@ import "./UserCard.css";
 import { LoginModal } from "@/components/LoginModal/LoginModal";
 import useUserStore from "@/components/UserStore/useUserStore";
 import { UpdateUserInfoForm } from "@/components/UpdateUserInfoForm/UpdateUserInfoForm";
+import { RcFile } from "antd/es/upload/interface";
+import { SimpleUpload } from "@/components/SimpleUpload/SimpleUpload";
 
 const failedGetUserInfo = () => {
   message.error("获取用户信息失败，请重新登录");
@@ -23,12 +25,15 @@ export function UserCard() {
 
   const removeToken = useUserStore(state => state.removeToken);
 
-  const [avatar, setAvatar] = useState<string | undefined>("no-login.svg");
+  const [avatar, setAvatar] = useState<string>("no-login.svg");
   const [username, setUsername] = useState<string | undefined>();
   const [following, setFollowing] = useState<string | undefined>();
   const [fans, setFans] = useState<string | undefined>();
   const [likes, setLikes] = useState<string | undefined>();
   const [doutokId, setDouTokId] = useState<string | undefined>();
+  const [signature, setSignature] = useState<string>();
+
+  const [avatarBase64, setAvatarBase64] = useState<string>();
 
   useUserServiceGetUserInfo({
     resolve: (resp: UserServiceGetUserInfoResponse) => {
@@ -38,12 +43,20 @@ export function UserCard() {
         return resp;
       }
 
-      setAvatar(data.user?.avatar);
+      // TODO: 暂时写死，未来整理成读取配置
+      setAvatar(
+        data.user?.avatar !== undefined
+          ? "http://localhost:9000/shortvideo/" + data.user.avatar
+          : "no-login.svg"
+      );
       setUsername(data.user?.name);
       setFollowing(data.user?.followCount ? data.user?.followCount : "0");
       setFans(data.user?.followerCount ? data.user?.followerCount : "0");
       setDouTokId(data.user?.id);
       setLikes("0");
+      setSignature(
+        data.user?.signature ? data.user?.signature : "这个人很懒，什么都没写"
+      );
       return resp;
     }
   });
@@ -56,19 +69,37 @@ export function UserCard() {
       <Card>
         <Meta
           avatar={
-            <Avatar
-              src={
-                avatar != undefined && avatar.length != 0
-                  ? avatar
-                  : "no-login.svg"
-              }
-              size={150}
-            />
+            <SimpleUpload
+              name={"avatar"}
+              accept={".jpg,.jpeg,.png"}
+              listType={"picture-circle"}
+              className={"avatar-uploader"}
+              showUploadList={false}
+              onFilePreSigned={(file: RcFile) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                  setAvatarBase64(reader.result as string);
+                };
+              }}
+            >
+              {avatarBase64 && (
+                <Avatar src={avatarBase64} alt={"avatar"} size={100} />
+              )}
+              {!avatarBase64 && avatar && (
+                <Avatar src={avatar} alt={"avatar"} size={100} />
+              )}
+            </SimpleUpload>
           }
           title={
-            <span className={"username"}>
-              {username != undefined ? username : "未登录"}
-            </span>
+            <>
+              <span className={"username"}>
+                {username != undefined ? username : "未登录"}
+              </span>
+              <div className={"signature"}>
+                {signature != undefined ? signature : "这个人很懒，什么都没写"}
+              </div>
+            </>
           }
           description={
             <>
@@ -76,11 +107,11 @@ export function UserCard() {
                 <div className={"following-num"}>
                   <span>关注: {following != undefined ? following : "-"}</span>
                 </div>
-                <Divider className={"divider"} type={"horizontal"} />
+                <Divider className={"divider"} type={"vertical"} />
                 <div className={"fans-num"}>
                   <span>粉丝: {fans != undefined ? following : "-"}</span>
                 </div>
-                <Divider className={"divider"} type={"horizontal"} />
+                <Divider className={"divider"} type={"vertical"} />
                 <div className={"likes-num"}>
                   <span>获赞: {likes != undefined ? following : "-"}</span>
                 </div>
@@ -136,6 +167,9 @@ export function UserCard() {
         <UpdateUserInfoForm
           open={oepnEditUserInfoModal}
           onCancel={() => setOpenEditUserInfoModal(false)}
+          avatar={avatar}
+          name={username}
+          signature={signature}
         />
       )}
     </div>

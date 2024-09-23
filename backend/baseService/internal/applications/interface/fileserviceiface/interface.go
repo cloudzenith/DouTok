@@ -3,6 +3,7 @@ package fileserviceiface
 import (
 	"context"
 	"github.com/cloudzenith/DouTok/backend/baseService/api"
+	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/entity/file"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/entity/slicingfile"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/service/fileservice"
 )
@@ -25,6 +26,7 @@ type FileService interface {
 	MergeFileParts(ctx context.Context, uploadId string, fileCtx *api.FileContext) error
 	// RemoveFile removes the file
 	RemoveFile(ctx context.Context, fileCtx *api.FileContext) error
+	GetInfoById(ctx context.Context, domainName, bizName string, fileId int64) (*file.File, error)
 }
 
 var _ FileService = (*fileservice.FileService)(nil)

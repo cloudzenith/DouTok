@@ -66,10 +66,7 @@ message GetUserInfoResponse {
 
 message UpdateUserInfoRequest {
     int64 user_id = 1 [(validate.rules).int64 = {gt: 0}];
-    string name = 2 [
-        (validate.rules).string.min_len = 1,
-        (validate.rules).string.max_len = 50
-    ];
+    string name = 2;
     string avatar = 3;
     string background_image = 4;
     string signature = 5;
@@ -77,4 +74,9 @@ message UpdateUserInfoRequest {
 
 message UpdateUserInfoResponse {
     Metadata meta = 1;
+}
+
+enum UpdateUserImageType {
+    AVATAR = 0;
+    BACKGROUND_IMAGE = 1;
 }

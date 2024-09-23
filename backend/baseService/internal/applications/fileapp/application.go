@@ -5,6 +5,7 @@ import (
 	"github.com/cloudzenith/DouTok/backend/baseService/api"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/applications/interface/fileserviceiface"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/utils"
+	"github.com/go-kratos/kratos/v2/log"
 )
 
 type FileApplication struct {
@@ -164,6 +165,22 @@ func (a *FileApplication) MergeFileParts(ctx context.Context, request *api.Merge
 
 	return &api.MergeFilePartsResponse{
 		Meta: utils.GetSuccessMeta(),
+	}, nil
+}
+
+func (a *FileApplication) GetFileInfoById(ctx context.Context, in *api.GetFileInfoByIdRequest) (*api.GetFileInfoByIdResponse, error) {
+	f, err := a.fileService.GetInfoById(ctx, in.DomainName, in.BizName, in.FileId)
+	if err != nil {
+		log.Context(ctx).Errorf("GetFileInfoById failed: %v", err)
+		return &api.GetFileInfoByIdResponse{
+			Meta: utils.GetMetaWithError(err),
+		}, nil
+	}
+
+	return &api.GetFileInfoByIdResponse{
+		Meta:       utils.GetSuccessMeta(),
+		ObjectName: f.GetObjectName(),
+		Hash:       f.Hash,
 	}, nil
 }
 

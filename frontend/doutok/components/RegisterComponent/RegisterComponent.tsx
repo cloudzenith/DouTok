@@ -58,7 +58,6 @@ export function RegisterComponent(props: RegisterComponentProps) {
         email: registerType === "email" ? data : undefined
       })
       .then((r: UserServiceGetVerificationCodeResponse) => {
-        console.log(r);
         if (r?.code !== 0) {
           return;
         }

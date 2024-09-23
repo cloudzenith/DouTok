@@ -38,11 +38,18 @@ data:
     file_shortvideo_short_video:
       sharding: file_shortvideo_short_video
       sharding_number: 5
+    file_shortvideo_public:
+      sharding: file_shortvideo_public
+      sharding_number: 5
   db_sharding_tables:
     file:
       domain_name: shortvideo
       biz_sharding_field_config:
         short_video:
+          fields:
+            - id
+            - hash
+        public:
           fields:
             - id
             - hash

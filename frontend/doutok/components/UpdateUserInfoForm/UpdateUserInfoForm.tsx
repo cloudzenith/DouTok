@@ -1,18 +1,35 @@
-import { ProForm, ProFormText } from "@ant-design/pro-form";
+import {
+  ProForm,
+  ProFormText,
+  ProFormTextArea,
+} from "@ant-design/pro-form";
 import {
   UserServiceUpdateUserInfoResponse,
   useUserServiceUpdateUserInfo
 } from "@/api/svapi/api";
 import { Form, Modal, notification } from "antd";
 import { useState } from "react";
+import { SimpleUpload } from "@/components/SimpleUpload/SimpleUpload";
 
 export interface UpdateUserInfoFormProps {
   open?: boolean;
   onCancel?: () => void;
+  name?: string;
+  signature?: string;
+  avatar?: string;
+  backgroundImage?: string;
 }
 
 export function UpdateUserInfoForm(props: UpdateUserInfoFormProps) {
   const [open, setOpen] = useState(props.open);
+  const [name] = useState(props.name);
+  const [signature] = useState(props.signature);
+  const [avatar] = useState(
+    props.avatar ? props.avatar : "no-login.svg"
+  );
+  const [backgroundImage] = useState(
+    props.backgroundImage ? props.backgroundImage : "no-login.svg"
+  );
 
   const [formRef] = Form.useForm();
 
@@ -21,7 +38,9 @@ export function UpdateUserInfoForm(props: UpdateUserInfoFormProps) {
   const submit4ModifyUserInfo = (formData: Record<string, string>) => {
     updateUserInfo
       .mutate({
-        name: formData?.name
+        name: formData?.name,
+        signature: formData?.signature,
+        avatar: formData?.avatar
       })
       .then((r: UserServiceUpdateUserInfoResponse) => {
         setOpen(false);
@@ -41,8 +60,41 @@ export function UpdateUserInfoForm(props: UpdateUserInfoFormProps) {
 
   return (
     <Modal open={open} onCancel={props.onCancel} footer={null}>
-      <ProForm form={formRef} onFinish={submit4ModifyUserInfo}>
-        <ProFormText name="name" label="用户昵称" />
+      <ProForm
+        form={formRef}
+        onFinish={submit4ModifyUserInfo}
+        submitter={{
+          submitButtonProps: {},
+          resetButtonProps: {
+            style: {
+              display: "none"
+            }
+          }
+        }}
+      >
+        <SimpleUpload
+          name={"background"}
+          accept={".jpg,.jpeg,.png"}
+          listType={"picture-card"}
+          className={"avatar-uploader"}
+          showUploadList={false}
+        >
+          {avatar ? (
+            <img src={backgroundImage} alt={"background"} />
+          ) : undefined}
+        </SimpleUpload>
+        <ProFormText
+          name="name"
+          label="用户昵称"
+          initialValue={name}
+          placeholder={"给自己一个好听的名字"}
+        />
+        <ProFormTextArea
+          name={"signature"}
+          label={"签名"}
+          initialValue={signature}
+          placeholder={"介绍一下你自己"}
+        />
       </ProForm>
     </Modal>
   );

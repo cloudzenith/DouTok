@@ -160,6 +160,7 @@ func (a *Application) Register(ctx context.Context, request *svapi.RegisterReque
 }
 
 func (a *Application) UpdateUserInfo(ctx context.Context, request *svapi.UpdateUserInfoRequest) (*svapi.UpdateUserInfoResponse, error) {
+	log.Context(ctx).Infof("UpdateUserInfo: %v", request)
 	userId, err := a.checkUserId(ctx, request.UserId)
 	if err != nil {
 		return nil, errorx.New(1, "failed to parse user id when getting user info from token")
@@ -173,7 +174,7 @@ func (a *Application) UpdateUserInfo(ctx context.Context, request *svapi.UpdateU
 		useroptions.UpdateUserInfoWithBackgroundImage(request.BackgroundImage),
 		useroptions.UpdateUserInfoWithSignature(request.Signature),
 	); err != nil {
-		log.Context(ctx).Error("failed to update user info")
+		log.Context(ctx).Errorf("failed to update user info: %v", err)
 		return nil, errorx.New(1, "failed to update user info")
 	}
 

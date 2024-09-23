@@ -1,0 +1,45 @@
+syntax = "proto3";
+package svapi;
+
+option go_package = "github.com/cloudzenith/DouTok/...;svapi";
+
+import "google/api/annotations.proto";
+import "buf/validate/validate.proto";
+import "svapi/base.proto";
+
+service FileService {
+    rpc PreSignUploadingPublicFile(PreSignUploadPublicFileRequest) returns (PreSignUploadPublicFileResponse) {
+        option (google.api.http) = {
+            post: "file"
+            body: "*"
+        };
+    };
+
+    rpc ReportPublicFileUploaded(ReportPublicFileUploadedRequest) returns (ReportPublicFileUploadedResponse) {
+        option (google.api.http) = {
+            post: "file/report"
+            body: "*"
+        };
+    };
+}
+
+message PreSignUploadPublicFileRequest {
+    string hash = 1;
+    string file_type = 2;
+    // gotags: json`size,omitempty,string`
+    int64 size = 3;
+}
+
+message PreSignUploadPublicFileResponse {
+    string url = 1;
+    // @gotags: json:"file_id,omitempty,string"
+    int64 file_id = 2;
+}
+
+message ReportPublicFileUploadedRequest {
+    int64 file_id = 1;
+}
+
+message ReportPublicFileUploadedResponse {
+    string object_name = 1;
+}

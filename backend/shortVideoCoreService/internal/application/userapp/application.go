@@ -6,6 +6,7 @@ import (
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/dto"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/entity"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/userdomain"
+	"github.com/go-kratos/kratos/v2/log"
 )
 
 type UserApplication struct {
@@ -34,6 +35,7 @@ func (s *UserApplication) CreateUser(ctx context.Context, in *v1.CreateUserReque
 }
 
 func (s *UserApplication) UpdateUserInfo(ctx context.Context, in *v1.UpdateUserInfoRequest) (*v1.UpdateUserInfoResponse, error) {
+	log.Context(ctx).Infof("UpdateUserInfo: %v", in)
 	err := s.userUsecase.UpdateUserInfo(ctx, &entity.User{
 		ID:              in.UserId,
 		Name:            in.Name,
