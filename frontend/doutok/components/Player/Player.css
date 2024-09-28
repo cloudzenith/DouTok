@@ -1,0 +1,55 @@
+.player {
+  --plyr-color-main: #e12056;
+}
+
+.player {
+  position: relative;
+}
+
+.content {
+  z-index: 1;
+}
+
+.mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 90%;
+  background-color: rgba(0, 0, 0, 0.01);
+  z-index: 100;
+  pointer-events: none;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  flex-direction: column;
+}
+
+.down-right {
+  float: right;
+  position: absolute;
+  top: 150px;
+  display: flex;
+  flex-direction: column;
+}
+
+.mask-button-container {
+  margin-right: 20px;
+  margin-top: 20px;
+}
+
+.mask-button {
+  pointer-events: all;
+  border: none;
+}
+
+.number-div {
+  text-align: center;
+  margin-top: 5px;
+}
+
+.down-left {
+  color: white;
+  position: absolute;
+  left: 50px;
+}

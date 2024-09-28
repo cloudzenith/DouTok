@@ -35,7 +35,7 @@ service ShortVideoCoreVideoService {
     // 确认视频上传完成
     rpc ReportVideoFinishUpload(ReportVideoFinishUploadRequest) returns (ReportVideoFinishUploadResponse) {
         option (google.api.http) = {
-            post: "/video/{file_id}/finish"
+            post: "/video/finish"
             body: "*"
         };
     };
@@ -141,9 +141,8 @@ message ReportVideoFinishUploadRequest {
     string cover_url = 4;
     // 视频描述
     string description = 5;
-    // 视频作者id
-    // @gotags: json:"user_id,omitempty,string"
-    int64 user_id = 6;
+    // 视频地址
+    string video_url = 6;
 }
 
 // 确认视频上传完成响应消息类型

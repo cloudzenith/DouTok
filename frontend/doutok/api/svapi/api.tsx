@@ -275,10 +275,9 @@ export interface SvapiReportVideoFinishUploadRequest {
    */
   description?: string;
   /**
-   * 视频作者id
-   *  @gotags: json:"user_id,omitempty,string"
+   * 视频地址
    */
-  userId?: string;
+  videoUrl?: string;
 }
 
 /**
@@ -905,6 +904,73 @@ export const useShortVideoCoreVideoServiceFeedShortVideo = (
     void
   >("POST", `/video/feed`, props);
 
+export interface ShortVideoCoreVideoServiceReportVideoFinishUploadResponse {
+  /**
+   * Status code. Zero means success.
+   */
+  code?: number;
+  /**
+   * Status message. Could be displayed to user.
+   */
+  msg?: string;
+  data?: SvapiReportVideoFinishUploadResponse;
+}
+
+export type ShortVideoCoreVideoServiceReportVideoFinishUploadProps = Omit<
+  MutateProps<
+    ShortVideoCoreVideoServiceReportVideoFinishUploadResponse,
+    unknown,
+    void,
+    SvapiReportVideoFinishUploadRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+/**
+ * 确认视频上传完成
+ */
+export const ShortVideoCoreVideoServiceReportVideoFinishUpload = (
+  props: ShortVideoCoreVideoServiceReportVideoFinishUploadProps
+) => (
+  <Mutate<
+    ShortVideoCoreVideoServiceReportVideoFinishUploadResponse,
+    unknown,
+    void,
+    SvapiReportVideoFinishUploadRequest,
+    void
+  >
+    verb="POST"
+    path={`/video/finish`}
+    {...props}
+  />
+);
+
+export type UseShortVideoCoreVideoServiceReportVideoFinishUploadProps = Omit<
+  UseMutateProps<
+    ShortVideoCoreVideoServiceReportVideoFinishUploadResponse,
+    unknown,
+    void,
+    SvapiReportVideoFinishUploadRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+/**
+ * 确认视频上传完成
+ */
+export const useShortVideoCoreVideoServiceReportVideoFinishUpload = (
+  props: UseShortVideoCoreVideoServiceReportVideoFinishUploadProps
+) =>
+  useMutate<
+    ShortVideoCoreVideoServiceReportVideoFinishUploadResponse,
+    unknown,
+    void,
+    SvapiReportVideoFinishUploadRequest,
+    void
+  >("POST", `/video/finish`, props);
+
 export interface ShortVideoCoreVideoServiceListPublishedVideoResponse {
   /**
    * Status code. Zero means success.
@@ -1038,91 +1104,6 @@ export const useShortVideoCoreVideoServicePreSign4UploadVideo = (
     SvapiPreSign4UploadVideoRequest,
     void
   >("POST", `/video/upload`, props);
-
-export interface ShortVideoCoreVideoServiceReportVideoFinishUploadResponse {
-  /**
-   * Status code. Zero means success.
-   */
-  code?: number;
-  /**
-   * Status message. Could be displayed to user.
-   */
-  msg?: string;
-  data?: SvapiReportVideoFinishUploadResponse;
-}
-
-export interface ShortVideoCoreVideoServiceReportVideoFinishUploadPathParams {
-  /**
-   * 文件id
-   *  @gotags: json:"file_id,omitempty,string"
-   */
-  fileId: string;
-}
-
-export type ShortVideoCoreVideoServiceReportVideoFinishUploadProps = Omit<
-  MutateProps<
-    ShortVideoCoreVideoServiceReportVideoFinishUploadResponse,
-    unknown,
-    void,
-    SvapiReportVideoFinishUploadRequest,
-    ShortVideoCoreVideoServiceReportVideoFinishUploadPathParams
-  >,
-  "path" | "verb"
-> &
-  ShortVideoCoreVideoServiceReportVideoFinishUploadPathParams;
-
-/**
- * 确认视频上传完成
- */
-export const ShortVideoCoreVideoServiceReportVideoFinishUpload = ({
-  fileId,
-  ...props
-}: ShortVideoCoreVideoServiceReportVideoFinishUploadProps) => (
-  <Mutate<
-    ShortVideoCoreVideoServiceReportVideoFinishUploadResponse,
-    unknown,
-    void,
-    SvapiReportVideoFinishUploadRequest,
-    ShortVideoCoreVideoServiceReportVideoFinishUploadPathParams
-  >
-    verb="POST"
-    path={`/video/${fileId}/finish`}
-    {...props}
-  />
-);
-
-export type UseShortVideoCoreVideoServiceReportVideoFinishUploadProps = Omit<
-  UseMutateProps<
-    ShortVideoCoreVideoServiceReportVideoFinishUploadResponse,
-    unknown,
-    void,
-    SvapiReportVideoFinishUploadRequest,
-    ShortVideoCoreVideoServiceReportVideoFinishUploadPathParams
-  >,
-  "path" | "verb"
-> &
-  ShortVideoCoreVideoServiceReportVideoFinishUploadPathParams;
-
-/**
- * 确认视频上传完成
- */
-export const useShortVideoCoreVideoServiceReportVideoFinishUpload = ({
-  fileId,
-  ...props
-}: UseShortVideoCoreVideoServiceReportVideoFinishUploadProps) =>
-  useMutate<
-    ShortVideoCoreVideoServiceReportVideoFinishUploadResponse,
-    unknown,
-    void,
-    SvapiReportVideoFinishUploadRequest,
-    ShortVideoCoreVideoServiceReportVideoFinishUploadPathParams
-  >(
-    "POST",
-    (
-      paramsInPath: ShortVideoCoreVideoServiceReportVideoFinishUploadPathParams
-    ) => `/video/${paramsInPath.fileId}/finish`,
-    { pathParams: { fileId }, ...props }
-  );
 
 export interface ShortVideoCoreVideoServiceGetVideoByIdResponse {
   /**
