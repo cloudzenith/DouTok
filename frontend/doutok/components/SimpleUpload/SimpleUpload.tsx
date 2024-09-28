@@ -1,16 +1,12 @@
 import { RequestComponent } from "@/components/RequestComponent/RequestComponent";
-import { message, notification, Upload, UploadProps } from "antd";
+import { message, Upload, UploadProps } from "antd";
 import React, { useEffect } from "react";
-import {
-  RcFile,
-  UploadListType
-} from "antd/es/upload/interface";
+import { RcFile, UploadListType } from "antd/es/upload/interface";
 import {
   FileServiceReportPublicFileUploadedResponse,
   ShortVideoCoreVideoServicePreSign4UploadCoverResponse,
   useFileServicePreSignUploadingPublicFile,
-  useFileServiceReportPublicFileUploaded,
-  useUserServiceUpdateUserInfo
+  useFileServiceReportPublicFileUploaded
 } from "@/api/svapi/api";
 import SparkMD5 from "spark-md5";
 
@@ -22,6 +18,8 @@ export interface SimpleUploadProps {
   showUploadList?: boolean;
   children: React.ReactNode;
   onFilePreSigned?: (file: RcFile) => void;
+  setParentComponentFileObjectName?: (objectName: string) => void;
+  setParentComponentFileId?: (fileId: string) => void;
 }
 
 export function SimpleUpload(props: SimpleUploadProps) {
@@ -32,7 +30,6 @@ export function SimpleUpload(props: SimpleUploadProps) {
 
   const preSignUploadMutate = useFileServicePreSignUploadingPublicFile({});
   const reportUploadedMutate = useFileServiceReportPublicFileUploaded({});
-  const updateUserInfoMutate = useUserServiceUpdateUserInfo({});
 
   const beforeUpload: UploadProps["beforeUpload"] = (file: RcFile) => {
     const fileReader = new FileReader();
@@ -109,16 +106,13 @@ export function SimpleUpload(props: SimpleUploadProps) {
           return;
         }
 
-        updateUserInfoMutate
-          .mutate({
-            avatar: result.data.object_name
-          })
-          .then(() => {
-            notification.success({
-              message: "上传成功",
-              description: "头像已更新"
-            });
-          });
+        if (props.setParentComponentFileObjectName) {
+          props.setParentComponentFileObjectName(result.data.object_name);
+        }
+
+        if (props.setParentComponentFileId) {
+          props.setParentComponentFileId(reportFileId);
+        }
       });
   }, [reportFileId]);
 

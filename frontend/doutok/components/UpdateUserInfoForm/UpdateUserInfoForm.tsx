@@ -1,8 +1,4 @@
-import {
-  ProForm,
-  ProFormText,
-  ProFormTextArea,
-} from "@ant-design/pro-form";
+import { ProForm, ProFormText, ProFormTextArea } from "@ant-design/pro-form";
 import {
   UserServiceUpdateUserInfoResponse,
   useUserServiceUpdateUserInfo
@@ -24,9 +20,7 @@ export function UpdateUserInfoForm(props: UpdateUserInfoFormProps) {
   const [open, setOpen] = useState(props.open);
   const [name] = useState(props.name);
   const [signature] = useState(props.signature);
-  const [avatar] = useState(
-    props.avatar ? props.avatar : "no-login.svg"
-  );
+  const [avatar] = useState(props.avatar ? props.avatar : "no-login.svg");
   const [backgroundImage] = useState(
     props.backgroundImage ? props.backgroundImage : "no-login.svg"
   );

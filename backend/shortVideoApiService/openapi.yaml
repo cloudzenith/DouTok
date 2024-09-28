@@ -230,6 +230,33 @@ paths:
                                         description: Status message. Could be displayed to user.
                                     data:
                                         $ref: '#/components/schemas/svapi.FeedShortVideoResponse'
+    /video/finish:
+        post:
+            tags:
+                - ShortVideoCoreVideoService
+            description: 确认视频上传完成
+            operationId: ShortVideoCoreVideoService_ReportVideoFinishUpload
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/svapi.ReportVideoFinishUploadRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                properties:
+                                    code:
+                                        type: integer
+                                        description: Status code. Zero means success.
+                                    msg:
+                                        type: string
+                                        description: Status message. Could be displayed to user.
+                                    data:
+                                        $ref: '#/components/schemas/svapi.ReportVideoFinishUploadResponse'
     /video/list:
         post:
             tags:
@@ -284,42 +311,6 @@ paths:
                                         description: Status message. Could be displayed to user.
                                     data:
                                         $ref: '#/components/schemas/svapi.PreSign4UploadVideoResponse'
-    /video/{fileId}/finish:
-        post:
-            tags:
-                - ShortVideoCoreVideoService
-            description: 确认视频上传完成
-            operationId: ShortVideoCoreVideoService_ReportVideoFinishUpload
-            parameters:
-                - name: fileId
-                  in: path
-                  description: |-
-                    文件id
-                     @gotags: json:"file_id,omitempty,string"
-                  required: true
-                  schema:
-                    type: string
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/svapi.ReportVideoFinishUploadRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                properties:
-                                    code:
-                                        type: integer
-                                        description: Status code. Zero means success.
-                                    msg:
-                                        type: string
-                                        description: Status message. Could be displayed to user.
-                                    data:
-                                        $ref: '#/components/schemas/svapi.ReportVideoFinishUploadResponse'
     /video/{videoId}:
         get:
             tags:
@@ -665,11 +656,9 @@ components:
                 description:
                     type: string
                     description: 视频描述
-                userId:
+                videoUrl:
                     type: string
-                    description: |-
-                        视频作者id
-                         @gotags: json:"user_id,omitempty,string"
+                    description: 视频地址
             description: 确认视频上传完成请求消息类型
         svapi.ReportVideoFinishUploadResponse:
             type: object

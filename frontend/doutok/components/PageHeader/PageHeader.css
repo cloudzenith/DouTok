@@ -24,3 +24,15 @@
   float: right;
   margin-left: auto;
 }
+
+.header-menu {
+  .ant-btn {
+    color: white;
+    background-color: #e12056;
+  }
+
+  .ant-btn:hover {
+    color: white;
+    background-color: black;
+  }
+}

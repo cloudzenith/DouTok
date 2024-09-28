@@ -49,7 +49,7 @@ func RegisterShortVideoCoreVideoServiceHTTPServer(s *http.Server, srv ShortVideo
 	r.POST("/video/upload", _ShortVideoCoreVideoService_PreSign4UploadVideo0_HTTP_Handler(srv))
 	r.POST("/cover/upload", _ShortVideoCoreVideoService_PreSign4UploadCover0_HTTP_Handler(srv))
 	r.POST("/file/{file_id}/finish", _ShortVideoCoreVideoService_ReportFinishUpload0_HTTP_Handler(srv))
-	r.POST("/video/{file_id}/finish", _ShortVideoCoreVideoService_ReportVideoFinishUpload0_HTTP_Handler(srv))
+	r.POST("/video/finish", _ShortVideoCoreVideoService_ReportVideoFinishUpload0_HTTP_Handler(srv))
 	r.POST("/video/feed", _ShortVideoCoreVideoService_FeedShortVideo0_HTTP_Handler(srv))
 	r.GET("/video/{video_id}", _ShortVideoCoreVideoService_GetVideoById0_HTTP_Handler(srv))
 	r.POST("/video/list", _ShortVideoCoreVideoService_ListPublishedVideo0_HTTP_Handler(srv))
@@ -128,9 +128,6 @@ func _ShortVideoCoreVideoService_ReportVideoFinishUpload0_HTTP_Handler(srv Short
 			return err
 		}
 		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
 		http.SetOperation(ctx, OperationShortVideoCoreVideoServiceReportVideoFinishUpload)
@@ -306,7 +303,7 @@ func (c *ShortVideoCoreVideoServiceHTTPClientImpl) ReportFinishUpload(ctx contex
 
 func (c *ShortVideoCoreVideoServiceHTTPClientImpl) ReportVideoFinishUpload(ctx context.Context, in *ReportVideoFinishUploadRequest, opts ...http.CallOption) (*ReportVideoFinishUploadResponse, error) {
 	var out ReportVideoFinishUploadResponse
-	pattern := "/video/{file_id}/finish"
+	pattern := "/video/finish"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationShortVideoCoreVideoServiceReportVideoFinishUpload))
 	opts = append(opts, http.PathTemplate(pattern))

@@ -1,13 +1,14 @@
 "use client";
 
-import { Button, Card, Divider, message } from "antd";
+import { Button, Card, Divider, message, notification } from "antd";
 import Avatar from "antd/es/avatar/avatar";
 import Meta from "antd/es/card/Meta";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   UserServiceGetUserInfoResponse,
-  useUserServiceGetUserInfo
+  useUserServiceGetUserInfo,
+  useUserServiceUpdateUserInfo
 } from "@/api/svapi/api";
 import "./UserCard.css";
 import { LoginModal } from "@/components/LoginModal/LoginModal";
@@ -34,6 +35,17 @@ export function UserCard() {
   const [signature, setSignature] = useState<string>();
 
   const [avatarBase64, setAvatarBase64] = useState<string>();
+
+  const avatarState = useUserStore(state => state.avatar);
+  const setAvatarState = useUserStore(state => state.setAvatar);
+
+  useEffect(() => {
+    setAvatar(avatarState);
+  }, [avatarState]);
+
+  useEffect(() => {
+    setAvatarState(avatar);
+  }, [avatar]);
 
   useUserServiceGetUserInfo({
     resolve: (resp: UserServiceGetUserInfoResponse) => {
@@ -64,6 +76,25 @@ export function UserCard() {
   const [oepnEditUserInfoModal, setOpenEditUserInfoModal] =
     useState<boolean>(false);
 
+  const updateUserInfoMutate = useUserServiceUpdateUserInfo({});
+  const [avatarObjectName, setAvatarObjectName] = useState<string>();
+  useEffect(() => {
+    if (avatarObjectName === undefined) {
+      return;
+    }
+
+    updateUserInfoMutate
+      .mutate({
+        avatar: avatarObjectName
+      })
+      .then(() => {
+        notification.success({
+          message: "上传成功",
+          description: "头像上传成功"
+        });
+      });
+  }, [avatarObjectName]);
+
   return (
     <div className={"user-card-container"}>
       <Card>
@@ -81,6 +112,9 @@ export function UserCard() {
                 reader.onload = () => {
                   setAvatarBase64(reader.result as string);
                 };
+              }}
+              setParentComponentFileObjectName={(objectName: string) => {
+                setAvatarObjectName(objectName);
               }}
             >
               {avatarBase64 && (

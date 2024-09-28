@@ -110,13 +110,19 @@ func (a *Application) PreSign4UploadVideo(ctx context.Context, request *svapi.Pr
 }
 
 func (a *Application) ReportVideoFinishUpload(ctx context.Context, request *svapi.ReportVideoFinishUploadRequest) (*svapi.ReportVideoFinishUploadResponse, error) {
-	resp, err := a.base.ReportUploaded(ctx, request.FileId)
+	userId, err := claims.GetUserId(ctx)
+	if err != nil {
+		log.Context(ctx).Errorf("failed to get user id from context: %v", err)
+		return nil, errorx.New(1, "failed to get user id from context")
+	}
+
+	_, err = a.base.ReportPublicUploaded(ctx, request.FileId)
 	if err != nil {
 		log.Context(ctx).Errorf("failed to report finish upload: %v", err)
 		return nil, errorx.New(1, "failed to report finish upload")
 	}
 
-	videoId, err := a.core.SaveVideoInfo(ctx, request.Title, resp.Url, request.CoverUrl, request.Description, request.UserId)
+	videoId, err := a.core.SaveVideoInfo(ctx, request.Title, request.VideoUrl, request.CoverUrl, request.Description, userId)
 
 	return &svapi.ReportVideoFinishUploadResponse{
 		VideoId: videoId,

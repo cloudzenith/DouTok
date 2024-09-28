@@ -2,10 +2,11 @@ import React from "react";
 
 import "./PageHeader.css";
 import { Header } from "antd/es/layout/layout";
-import Avatar from "antd/es/avatar/avatar";
-import { UserOutlined } from "@ant-design/icons";
 import { MainSearch } from "@/components/MainSearch/MainSearch";
-import { Image } from "antd";
+import { Divider, Image } from "antd";
+import { UserAvatar } from "@/components/UserAvatar/UserAvatar";
+import { Publish } from "@/components/Publish/Publish";
+import { RequestComponent } from "@/components/RequestComponent/RequestComponent";
 
 export function PageHeader() {
   return (
@@ -18,7 +19,13 @@ export function PageHeader() {
           <MainSearch />
         </div>
         <div className={"header-menu"}>
-          <Avatar icon={<UserOutlined />} className={"user-avatar"} />
+          <RequestComponent noAuth={false}>
+            <Publish />
+          </RequestComponent>
+          <Divider type={"vertical"} />
+          <RequestComponent noAuth={false}>
+            <UserAvatar />
+          </RequestComponent>
         </div>
       </div>
     </Header>
