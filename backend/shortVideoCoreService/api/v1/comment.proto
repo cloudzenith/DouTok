@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package shortVideoCoreService.api.v1;
+
+option go_package = "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1;v1";
+
+import "google/api/annotations.proto";
+import "validate/validate.proto";
+import "v1/base.proto";
+
+message Comment {
+    // @gotags: json:"id,omitempty,string"
+    int64 id = 1; // 评论id
+    // @gotags: json:"videoId,omitempty,string"
+    int64 video_id = 2; // 视频id
+    string content = 3; // 评论内容
+    string date = 4; // 评论日期
+    string like_count = 5; // 点赞数
+    string reply_count = 6; // 回复数
+}
+
+service CommentService {
+    rpc CreateComment(CreateCommentRequest) returns (CreateCommentResponse);
+    rpc RemoveComment(RemoveCommentRequest) returns (RemoveCommentResponse);
+    rpc ListComment4Video(ListComment4VideoRequest) returns (ListComment4VideoResponse);
+    rpc GetCommentById(GetCommentByIdRequest) returns (GetCommentByIdResponse);
+    rpc CountComment4Video(CountComment4VideoRequest) returns (CountComment4VideoResponse);
+    rpc CountComment4User(CountComment4UserRequest) returns (CountComment4UserResponse);
+}
+
+message CreateCommentRequest {
+    int64 video_id = 1; // 视频id
+    int64 user_id = 2; // 用户id
+    string content = 3; // 评论内容
+}
+
+message CreateCommentResponse {
+    Metadata meta = 1;
+    Comment comment = 2;
+}
+
+message RemoveCommentRequest {
+    int64 comment_id = 1; // 评论id
+    int64 user_id = 2; // 用户id
+}
+
+message RemoveCommentResponse {
+    Metadata meta = 1;
+}
+
+message ListComment4VideoRequest {
+    int64 video_id = 1; // 视频id
+    PaginationRequest pagination = 2;
+}
+
+message ListComment4VideoResponse {
+    Metadata meta = 1;
+    repeated Comment comments = 2;
+    PaginationResponse pagination = 3;
+}
+
+message GetCommentByIdRequest {
+    int64 comment_id = 1; // 评论id
+}
+
+message GetCommentByIdResponse {
+    Metadata meta = 1;
+    Comment comment = 2;
+}
+
+message CountComment4VideoRequest {
+    int64 video_id = 1; // 视频id
+}
+
+message CountComment4VideoResponse {
+    Metadata meta = 1;
+    int64 count = 2;
+}
+
+message CountComment4UserRequest {
+    int64 user_id = 1; // 用户id
+}
+
+message CountComment4UserResponse {
+    Metadata meta = 1;
+    int64 count = 2;
+}

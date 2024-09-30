@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package svapi;
+
+option go_package = "github.com/cloudzenith/DouTok/...;svapi";
+
+import "google/api/annotations.proto";
+import "buf/validate/validate.proto";
+import "svapi/base.proto";
+
+// 点赞
+service FavoriteService {
+    rpc AddFavorite(AddFavoriteRequest) returns (AddFavoriteResponse) {
+        option (google.api.http) = {
+            post: "/favorite"
+            body: "*"
+        };
+    };
+
+    rpc RemoveFavorite(RemoveFavoriteRequest) returns (RemoveFavoriteResponse) {
+        option (google.api.http) = {
+            delete: "/favorite"
+            body: "*"
+        };
+    };
+}
+
+enum FavoriteTarget {
+    VIDEO = 0;
+    COMMENT = 1;
+}
+
+enum FavoriteType {
+    FAVORITE = 0; // 点赞
+    UNLIKE = 1; // 点踩
+}
+
+message AddFavoriteRequest {
+    FavoriteTarget target = 1;
+    FavoriteType type = 2;
+    // @gotags: json:"id,omitempty,string"
+    int64 id = 3;
+}
+
+message AddFavoriteResponse {}
+
+message RemoveFavoriteRequest {
+    FavoriteTarget target = 1;
+    FavoriteType type = 2;
+    // @gotags: json:"id,omitempty,string"
+    int64 id = 3;
+}
+
+message RemoveFavoriteResponse {}
