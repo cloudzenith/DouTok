@@ -1,0 +1,144 @@
+syntax = "proto3";
+
+package svapi;
+
+option go_package = "github.com/cloudzenith/DouTok/...;svapi";
+
+import "google/api/annotations.proto";
+import "buf/validate/validate.proto";
+import "svapi/base.proto";
+
+message Collection {
+    // @gotags: json:"id,omitempty,string"
+    int64 id = 1; // 收藏夹id
+    // @gotags: json:"userId,omitempty,string"
+    int64 user_id = 2; // 用户id
+    string name = 3; // 收藏夹名称
+    string description = 4; // 收藏夹描述
+}
+
+message CollectionVideo {
+    // @gotags: json:"id,omitempty,string"
+    int64 id = 2; // 收藏夹id
+    // @gotags: json:"videoId,omitempty,string"
+    int64 video_id = 3; // 视频id
+    string cover_url = 4; // 视频封面地址
+    string title = 5; // 视频标题
+    string description = 6; // 视频描述
+    string video_url = 7; // 视频地址
+}
+
+// 收藏夹服务
+service CollectionService {
+    rpc CreateCollection(CreateCollectionRequest) returns (CreateCollectionResponse) {
+        option (google.api.http) = {
+            post: "/collection"
+            body: "*"
+        };
+    };
+
+    rpc RemoveCollection(RemoveCollectionRequest) returns (RemoveCollectionResponse) {
+        option (google.api.http) = {
+            delete: "/collection"
+            body: "*"
+        };
+    };
+
+    rpc ListCollection(ListCollectionRequest) returns (ListCollectionResponse) {
+        option (google.api.http) = {
+            get: "/collection"
+        };
+    };
+
+    rpc UpdateCollection(UpdateCollectionRequest) returns (UpdateCollectionResponse) {
+        option (google.api.http) = {
+            put: "/collection"
+            body: "*"
+        };
+    };
+
+    rpc AddVideo2Collection(AddVideo2CollectionRequest) returns (AddVideo2CollectionResponse) {
+        option (google.api.http) = {
+            post: "/collection/video"
+            body: "*"
+        };
+    };
+
+    rpc RemoveVideoFromCollection(RemoveVideoFromCollectionRequest) returns (RemoveVideoFromCollectionResponse) {
+        option (google.api.http) = {
+            delete: "/collection/video"
+            body: "*"
+        };
+    };
+
+    rpc ListVideo4Collection(ListVideo4CollectionRequest) returns (ListVideo4CollectionResponse) {
+        option (google.api.http) = {
+            get: "/collection/video"
+        };
+    };
+}
+
+message CreateCollectionRequest {
+    string name = 1; // 收藏夹名称
+    string description = 2; // 收藏夹描述
+}
+
+message CreateCollectionResponse {
+    Collection collection = 1;
+}
+
+message RemoveCollectionRequest {
+    // @gotags: json:"id,omitempty,string"
+    int64 id = 1; // 收藏夹id
+}
+
+message RemoveCollectionResponse {}
+
+message ListCollectionRequest {
+    PaginationRequest pagination = 1;
+}
+
+message ListCollectionResponse {
+    repeated Collection collections = 1;
+    PaginationResponse pagination = 2;
+}
+
+message UpdateCollectionRequest {
+    // @gotags: json:"id,omitempty,string"
+    int64 id = 1; // 收藏夹id
+    string name = 2; // 收藏夹名称
+    string description = 3; // 收藏夹描述
+}
+
+message UpdateCollectionResponse {
+    Collection collection = 1;
+}
+
+message AddVideo2CollectionRequest {
+    // @gotags: json:"collectionId,omitempty,string"
+    int64 collection_id = 1; // 收藏夹id
+    // @gotags: json:"videoId,omitempty,string"
+    int64 video_id = 2; // 视频id
+}
+
+message AddVideo2CollectionResponse {}
+
+message RemoveVideoFromCollectionRequest {
+    // @gotags: json:"collectionId,omitempty,string"
+    int64 collection_id = 1; // 收藏夹id
+    // @gotags: json:"videoId,omitempty,string"
+    int64 video_id = 2; // 视频id
+}
+
+message RemoveVideoFromCollectionResponse {}
+
+message ListVideo4CollectionRequest {
+    // @gotags: json:"collectionId,omitempty,string"
+    int64 collection_id = 1; // 收藏夹id
+    PaginationRequest pagination = 2;
+}
+
+message ListVideo4CollectionResponse {
+    repeated CollectionVideo videos = 1;
+    PaginationResponse pagination = 2;
+}

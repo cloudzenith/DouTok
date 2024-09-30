@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package svapi;
+
+option go_package = "github.com/cloudzenith/DouTok/...;svapi";
+
+import "google/api/annotations.proto";
+import "buf/validate/validate.proto";
+import "svapi/base.proto";
+
+message FollowUser {
+    // @gotags: json:"id,omitempty,string"
+    int64 id = 1; // 用户id
+    string name = 2; // 用户名称
+    string avatar = 3; // 用户头像
+    bool is_following = 4; // 当前用户是否关注
+}
+
+// 关注
+service FollowService {
+    rpc AddFollow(AddFollowRequest) returns (AddFollowResponse) {
+        option (google.api.http) = {
+            post: "/follow"
+            body: "*"
+        };
+    };
+
+    rpc RemoveFollow(RemoveFollowRequest) returns (RemoveFollowResponse) {
+        option (google.api.http) = {
+            delete: "/follow"
+            body: "*"
+        };
+    };
+
+    rpc ListFollowing(ListFollowingRequest) returns (ListFollowingResponse) {
+        option (google.api.http) = {
+            get: "/follow"
+        };
+    };
+}
+
+message AddFollowRequest {
+    // @gotags: json:"userId,omitempty,string"
+    int64 user_id = 1; // 用户id
+}
+
+message AddFollowResponse {}
+
+message RemoveFollowRequest {
+    // @gotags: json:"userId,omitempty,string"
+    int64 user_id = 1; // 用户id
+}
+
+message RemoveFollowResponse {}
+
+enum FollowType {
+    FOLLOWING = 0;
+    FOLLOWER = 1;
+    BOTH = 2;
+}
+
+message ListFollowingRequest {
+    // @gotags: json:"userId,omitempty,string"
+    int64 user_id = 1; // 用户id
+    FollowType type = 2;
+    PaginationRequest pagination = 3;
+}
+
+message ListFollowingResponse {
+    repeated FollowUser users = 1;
+    PaginationResponse pagination = 2;
+}

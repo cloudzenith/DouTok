@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package svapi;
+
+option go_package = "github.com/cloudzenith/DouTok/...;svapi";
+
+import "google/api/annotations.proto";
+import "buf/validate/validate.proto";
+import "svapi/base.proto";
+
+message Comment {
+    // @gotags: json:"id,omitempty,string"
+    int64 id = 1; // 评论id
+    // @gotags: json:"videoId,omitempty,string"
+    int64 video_id = 2; // 视频id
+    CommentUser user = 3; // 评论用户
+    string content = 4; // 评论内容
+    string date = 5; // 评论日期
+    string like_count = 6; // 点赞数
+    string reply_count = 7; // 回复数
+}
+
+message CommentUser {
+    // @gotags: json:"id,omitempty,string"
+    int64 id = 1; // 用户id
+    string name = 2; // 用户名称
+    string avatar = 3; // 用户头像
+    bool is_following = 4; // 是否关注
+}
+
+// 评论
+service CommentService {
+    rpc CreateComment(CreateCommentRequest) returns (CreateCommentResponse) {
+        option (google.api.http) = {
+            post: "/comment"
+            body: "*"
+        };
+    };
+
+    rpc RemoveComment(RemoveCommentRequest) returns (RemoveCommentResponse) {
+        option (google.api.http) = {
+            delete: "/comment"
+            body: "*"
+        };
+    };
+
+    rpc ListComment4Video(ListComment4VideoRequest) returns (ListComment4VideoResponse) {
+        option (google.api.http) = {
+            get: "/comment/video"
+        };
+    };
+}
+
+message CreateCommentRequest {
+    // @gotags: json:"videoId,omitempty,string"
+    int64 video_id = 1; // 视频id
+    string content = 2; // 评论内容
+}
+
+message CreateCommentResponse {
+    Comment comment = 1;
+}
+
+message RemoveCommentRequest {
+    // @gotags: json:"id,omitempty,string"
+    int64 id = 1; // 评论id
+}
+
+message RemoveCommentResponse {}
+
+message ListComment4VideoRequest {
+    // @gotags: json:"videoId,omitempty,string"
+    int64 video_id = 1; // 视频id
+    PaginationRequest pagination = 2;
+}
+
+message ListComment4VideoResponse {
+    repeated Comment comments = 1;
+    PaginationResponse pagination = 2;
+}

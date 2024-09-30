@@ -38,12 +38,9 @@ config:
 api:
 	protoc --proto_path=./api \
 	       --proto_path="./third_party" \
-	       --validate_out="paths=source_relative,lang=go:./api" \
  	       --go_out=paths=source_relative:./api \
- 	       --go-http_out=paths=source_relative:./api \
  	       --go-grpc_out=paths=source_relative:./api \
-	       --openapi_out=fq_schema_naming=true,default_response=false:. \
-	       $(API_PROTO_FILES)
+	       ./api/v1/*.proto
 
 .PHONY: build
 # build
