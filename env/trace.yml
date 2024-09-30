@@ -62,6 +62,8 @@ services:
       - "4317"  # otlp grpc
       - "4318"  # otlp http
       - "9411"   # zipkin
+    networks:
+      - total
 
   otel:
     container_name: otel
@@ -76,6 +78,8 @@ services:
       - "13133:13133" # health_check extension
       - "4317:4317"   # OTLP gRPC receiver
       - "55670:55679" # zpages extension
+    networks:
+      - total
 
   prometheus:
     image: prom/prometheus:latest
@@ -89,3 +93,5 @@ services:
       - ./prometheus/prometheus.yaml:/etc/prometheus.yaml
     ports:
       - "9090:9090"
+    networks:
+      - total

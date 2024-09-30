@@ -93,6 +93,14 @@ func (l *Launcher) runInitConfig() {
 	l.runHandlers(l.afterConfigInitHandlers, "start to run handlers after config init")
 }
 
+func (l *Launcher) initTracer(cfg *App) {
+	if cfg.TempoEndpoint != "" {
+		if err := initTracer(cfg.Name, cfg.TempoEndpoint); err != nil {
+			panic(err)
+		}
+	}
+}
+
 func (l *Launcher) runHandlers(handlers []func(), info string) {
 	if len(handlers) > 0 {
 		log.Context(context.Background()).Info(info)
@@ -138,6 +146,8 @@ func (l *Launcher) newKratosApp() {
 	)
 
 	l.app = kratos.New(options...)
+
+	l.initTracer(appConfig)
 }
 
 func (l *Launcher) initSnowflake(appConfig *App) {
