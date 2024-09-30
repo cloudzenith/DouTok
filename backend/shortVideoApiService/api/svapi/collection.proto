@@ -19,13 +19,13 @@ message Collection {
 
 message CollectionVideo {
     // @gotags: json:"id,omitempty,string"
-    int64 id = 2; // 收藏夹id
+    int64 id = 1; // 收藏夹id
     // @gotags: json:"videoId,omitempty,string"
-    int64 video_id = 3; // 视频id
-    string cover_url = 4; // 视频封面地址
-    string title = 5; // 视频标题
-    string description = 6; // 视频描述
-    string video_url = 7; // 视频地址
+    int64 video_id = 2; // 视频id
+    string cover_url = 3; // 视频封面地址
+    string title = 4; // 视频标题
+    string description = 5; // 视频描述
+    string video_url = 6; // 视频地址
 }
 
 // 收藏夹服务

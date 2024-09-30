@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package shortVideoCoreService.api.v1;
+
+option go_package = "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1;v1";
+
+import "google/api/annotations.proto";
+import "validate/validate.proto";
+import "v1/base.proto";
+
+service FollowService {
+    rpc AddFollow(AddFollowRequest) returns (AddFollowResponse);
+    rpc RemoveFollow(RemoveFollowRequest) returns (RemoveFollowResponse);
+    rpc ListFollowing(ListFollowingRequest) returns (ListFollowingResponse);
+}
+
+message AddFollowRequest {
+    int64 user_id = 1;
+    int64 target_user_id = 2;
+}
+
+message AddFollowResponse {
+    Metadata meta = 1;
+}
+
+message RemoveFollowRequest {
+    int64 user_id = 1;
+    int64 target_user_id = 2;
+}
+
+message RemoveFollowResponse {
+    Metadata meta = 1;
+}
+
+enum FollowType {
+    FOLLOWING = 0;
+    FOLLOWER = 1;
+    BOTH = 2;
+}
+
+message ListFollowingRequest {
+    int64 user_id = 1;
+    FollowType follow_type = 2;
+    PaginationRequest pagination = 3;
+}
+
+message ListFollowingResponse {
+    Metadata meta = 1;
+    repeated int64 user_id_list = 2;
+}

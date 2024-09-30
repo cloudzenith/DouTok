@@ -1,0 +1,91 @@
+syntax = "proto3";
+
+package shortVideoCoreService.api.v1;
+
+option go_package = "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1;v1";
+
+import "google/api/annotations.proto";
+import "validate/validate.proto";
+import "v1/base.proto";
+
+message Collection {
+    int64 id = 1;
+    int64 user_id = 2;
+    string name = 3;
+    string description = 4;
+}
+
+service CollectionService {
+    rpc CreateCollection(CreateCollectionRequest) returns (CreateCollectionResponse);
+    rpc RemoveCollection(RemoveCollectionRequest) returns (RemoveCollectionResponse);
+    rpc ListCollection(ListCollectionRequest) returns (ListCollectionResponse);
+    rpc UpdateCollection(UpdateCollectionRequest) returns (UpdateCollectionResponse);
+    rpc AddVideo2Collection(AddVideo2CollectionRequest) returns (AddVideo2CollectionResponse);
+    rpc RemoveVideoFromCollection(RemoveVideoFromCollectionRequest) returns (RemoveVideoFromCollectionResponse);
+    rpc ListCollectionVideo(ListCollectionVideoRequest) returns (ListCollectionVideoResponse);
+}
+
+message CreateCollectionRequest {
+    string name = 1;
+    string description = 2;
+}
+
+message CreateCollectionResponse {
+    Metadata meta = 1;
+}
+
+message RemoveCollectionRequest {
+    int64 id = 1;
+}
+
+message RemoveCollectionResponse {
+    Metadata meta = 1;
+}
+
+message ListCollectionRequest {
+    int64 user_id = 1;
+    PaginationRequest pagination = 2;
+}
+
+message ListCollectionResponse {
+    repeated Collection collections = 1;
+    Metadata meta = 2;
+}
+
+message UpdateCollectionRequest {
+    int64 id = 1;
+    string name = 2;
+    string description = 3;
+}
+
+message UpdateCollectionResponse {
+    Metadata meta = 1;
+}
+
+message AddVideo2CollectionRequest {
+    int64 collection_id = 1;
+    int64 video_id = 2;
+}
+
+message AddVideo2CollectionResponse {
+    Metadata meta = 1;
+}
+
+message RemoveVideoFromCollectionRequest {
+    int64 collection_id = 1;
+    int64 video_id = 2;
+}
+
+message RemoveVideoFromCollectionResponse {
+    Metadata meta = 1;
+}
+
+message ListCollectionVideoRequest {
+    int64 collection_id = 1;
+    PaginationRequest pagination = 2;
+}
+
+message ListCollectionVideoResponse {
+    repeated int64 video_id_list = 1;
+    Metadata meta = 2;
+}

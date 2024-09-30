@@ -9,14 +9,13 @@ import "validate/validate.proto";
 import "v1/base.proto";
 
 message Comment {
-    // @gotags: json:"id,omitempty,string"
     int64 id = 1; // 评论id
-    // @gotags: json:"videoId,omitempty,string"
     int64 video_id = 2; // 视频id
     string content = 3; // 评论内容
     string date = 4; // 评论日期
     string like_count = 5; // 点赞数
     string reply_count = 6; // 回复数
+    int64 user_id = 7; // 用户id
 }
 
 service CommentService {
