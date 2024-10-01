@@ -5,7 +5,7 @@ import (
 	v1 "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1"
 	service_dto "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/application/dto"
 	domain_dto "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/dto"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/videodomain"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/service/videodomain"
 	infra_dto "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/dto"
 )
 

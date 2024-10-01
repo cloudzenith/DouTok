@@ -17,6 +17,7 @@ message Collection {
 
 service CollectionService {
     rpc CreateCollection(CreateCollectionRequest) returns (CreateCollectionResponse);
+    rpc GetCollectionById(GetCollectionByIdRequest) returns (GetCollectionByIdResponse);
     rpc RemoveCollection(RemoveCollectionRequest) returns (RemoveCollectionResponse);
     rpc ListCollection(ListCollectionRequest) returns (ListCollectionResponse);
     rpc UpdateCollection(UpdateCollectionRequest) returns (UpdateCollectionResponse);
@@ -28,10 +29,20 @@ service CollectionService {
 message CreateCollectionRequest {
     string name = 1;
     string description = 2;
+    int64 user_id = 3;
 }
 
 message CreateCollectionResponse {
     Metadata meta = 1;
+}
+
+message GetCollectionByIdRequest {
+    int64 id = 1;
+}
+
+message GetCollectionByIdResponse {
+    Collection collection = 1;
+    Metadata meta = 2;
 }
 
 message RemoveCollectionRequest {

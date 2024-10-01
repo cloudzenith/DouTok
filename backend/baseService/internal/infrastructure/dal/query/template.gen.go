@@ -40,7 +40,7 @@ func newTemplate(db *gorm.DB, opts ...gen.DOOption) template {
 }
 
 type template struct {
-	templateDo templateDo
+	templateDo
 
 	ALL        field.Asterisk
 	ID         field.Int64
@@ -77,14 +77,6 @@ func (t *template) updateTableName(table string) *template {
 	return t
 }
 
-func (t *template) WithContext(ctx context.Context) *templateDo { return t.templateDo.WithContext(ctx) }
-
-func (t template) TableName() string { return t.templateDo.TableName() }
-
-func (t template) Alias() string { return t.templateDo.Alias() }
-
-func (t template) Columns(cols ...field.Expr) gen.Columns { return t.templateDo.Columns(cols...) }
-
 func (t *template) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := t.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -116,95 +108,156 @@ func (t template) replaceDB(db *gorm.DB) template {
 
 type templateDo struct{ gen.DO }
 
-func (t templateDo) Debug() *templateDo {
+type ITemplateDo interface {
+	gen.SubQuery
+	Debug() ITemplateDo
+	WithContext(ctx context.Context) ITemplateDo
+	WithResult(fc func(tx gen.Dao)) gen.ResultInfo
+	ReplaceDB(db *gorm.DB)
+	ReadDB() ITemplateDo
+	WriteDB() ITemplateDo
+	As(alias string) gen.Dao
+	Session(config *gorm.Session) ITemplateDo
+	Columns(cols ...field.Expr) gen.Columns
+	Clauses(conds ...clause.Expression) ITemplateDo
+	Not(conds ...gen.Condition) ITemplateDo
+	Or(conds ...gen.Condition) ITemplateDo
+	Select(conds ...field.Expr) ITemplateDo
+	Where(conds ...gen.Condition) ITemplateDo
+	Order(conds ...field.Expr) ITemplateDo
+	Distinct(cols ...field.Expr) ITemplateDo
+	Omit(cols ...field.Expr) ITemplateDo
+	Join(table schema.Tabler, on ...field.Expr) ITemplateDo
+	LeftJoin(table schema.Tabler, on ...field.Expr) ITemplateDo
+	RightJoin(table schema.Tabler, on ...field.Expr) ITemplateDo
+	Group(cols ...field.Expr) ITemplateDo
+	Having(conds ...gen.Condition) ITemplateDo
+	Limit(limit int) ITemplateDo
+	Offset(offset int) ITemplateDo
+	Count() (count int64, err error)
+	Scopes(funcs ...func(gen.Dao) gen.Dao) ITemplateDo
+	Unscoped() ITemplateDo
+	Create(values ...*models.Template) error
+	CreateInBatches(values []*models.Template, batchSize int) error
+	Save(values ...*models.Template) error
+	First() (*models.Template, error)
+	Take() (*models.Template, error)
+	Last() (*models.Template, error)
+	Find() ([]*models.Template, error)
+	FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*models.Template, err error)
+	FindInBatches(result *[]*models.Template, batchSize int, fc func(tx gen.Dao, batch int) error) error
+	Pluck(column field.Expr, dest interface{}) error
+	Delete(...*models.Template) (info gen.ResultInfo, err error)
+	Update(column field.Expr, value interface{}) (info gen.ResultInfo, err error)
+	UpdateSimple(columns ...field.AssignExpr) (info gen.ResultInfo, err error)
+	Updates(value interface{}) (info gen.ResultInfo, err error)
+	UpdateColumn(column field.Expr, value interface{}) (info gen.ResultInfo, err error)
+	UpdateColumnSimple(columns ...field.AssignExpr) (info gen.ResultInfo, err error)
+	UpdateColumns(value interface{}) (info gen.ResultInfo, err error)
+	UpdateFrom(q gen.SubQuery) gen.Dao
+	Attrs(attrs ...field.AssignExpr) ITemplateDo
+	Assign(attrs ...field.AssignExpr) ITemplateDo
+	Joins(fields ...field.RelationField) ITemplateDo
+	Preload(fields ...field.RelationField) ITemplateDo
+	FirstOrInit() (*models.Template, error)
+	FirstOrCreate() (*models.Template, error)
+	FindByPage(offset int, limit int) (result []*models.Template, count int64, err error)
+	ScanByPage(result interface{}, offset int, limit int) (count int64, err error)
+	Scan(result interface{}) (err error)
+	Returning(value interface{}, columns ...string) ITemplateDo
+	UnderlyingDB() *gorm.DB
+	schema.Tabler
+}
+
+func (t templateDo) Debug() ITemplateDo {
 	return t.withDO(t.DO.Debug())
 }
 
-func (t templateDo) WithContext(ctx context.Context) *templateDo {
+func (t templateDo) WithContext(ctx context.Context) ITemplateDo {
 	return t.withDO(t.DO.WithContext(ctx))
 }
 
-func (t templateDo) ReadDB() *templateDo {
+func (t templateDo) ReadDB() ITemplateDo {
 	return t.Clauses(dbresolver.Read)
 }
 
-func (t templateDo) WriteDB() *templateDo {
+func (t templateDo) WriteDB() ITemplateDo {
 	return t.Clauses(dbresolver.Write)
 }
 
-func (t templateDo) Session(config *gorm.Session) *templateDo {
+func (t templateDo) Session(config *gorm.Session) ITemplateDo {
 	return t.withDO(t.DO.Session(config))
 }
 
-func (t templateDo) Clauses(conds ...clause.Expression) *templateDo {
+func (t templateDo) Clauses(conds ...clause.Expression) ITemplateDo {
 	return t.withDO(t.DO.Clauses(conds...))
 }
 
-func (t templateDo) Returning(value interface{}, columns ...string) *templateDo {
+func (t templateDo) Returning(value interface{}, columns ...string) ITemplateDo {
 	return t.withDO(t.DO.Returning(value, columns...))
 }
 
-func (t templateDo) Not(conds ...gen.Condition) *templateDo {
+func (t templateDo) Not(conds ...gen.Condition) ITemplateDo {
 	return t.withDO(t.DO.Not(conds...))
 }
 
-func (t templateDo) Or(conds ...gen.Condition) *templateDo {
+func (t templateDo) Or(conds ...gen.Condition) ITemplateDo {
 	return t.withDO(t.DO.Or(conds...))
 }
 
-func (t templateDo) Select(conds ...field.Expr) *templateDo {
+func (t templateDo) Select(conds ...field.Expr) ITemplateDo {
 	return t.withDO(t.DO.Select(conds...))
 }
 
-func (t templateDo) Where(conds ...gen.Condition) *templateDo {
+func (t templateDo) Where(conds ...gen.Condition) ITemplateDo {
 	return t.withDO(t.DO.Where(conds...))
 }
 
-func (t templateDo) Order(conds ...field.Expr) *templateDo {
+func (t templateDo) Order(conds ...field.Expr) ITemplateDo {
 	return t.withDO(t.DO.Order(conds...))
 }
 
-func (t templateDo) Distinct(cols ...field.Expr) *templateDo {
+func (t templateDo) Distinct(cols ...field.Expr) ITemplateDo {
 	return t.withDO(t.DO.Distinct(cols...))
 }
 
-func (t templateDo) Omit(cols ...field.Expr) *templateDo {
+func (t templateDo) Omit(cols ...field.Expr) ITemplateDo {
 	return t.withDO(t.DO.Omit(cols...))
 }
 
-func (t templateDo) Join(table schema.Tabler, on ...field.Expr) *templateDo {
+func (t templateDo) Join(table schema.Tabler, on ...field.Expr) ITemplateDo {
 	return t.withDO(t.DO.Join(table, on...))
 }
 
-func (t templateDo) LeftJoin(table schema.Tabler, on ...field.Expr) *templateDo {
+func (t templateDo) LeftJoin(table schema.Tabler, on ...field.Expr) ITemplateDo {
 	return t.withDO(t.DO.LeftJoin(table, on...))
 }
 
-func (t templateDo) RightJoin(table schema.Tabler, on ...field.Expr) *templateDo {
+func (t templateDo) RightJoin(table schema.Tabler, on ...field.Expr) ITemplateDo {
 	return t.withDO(t.DO.RightJoin(table, on...))
 }
 
-func (t templateDo) Group(cols ...field.Expr) *templateDo {
+func (t templateDo) Group(cols ...field.Expr) ITemplateDo {
 	return t.withDO(t.DO.Group(cols...))
 }
 
-func (t templateDo) Having(conds ...gen.Condition) *templateDo {
+func (t templateDo) Having(conds ...gen.Condition) ITemplateDo {
 	return t.withDO(t.DO.Having(conds...))
 }
 
-func (t templateDo) Limit(limit int) *templateDo {
+func (t templateDo) Limit(limit int) ITemplateDo {
 	return t.withDO(t.DO.Limit(limit))
 }
 
-func (t templateDo) Offset(offset int) *templateDo {
+func (t templateDo) Offset(offset int) ITemplateDo {
 	return t.withDO(t.DO.Offset(offset))
 }
 
-func (t templateDo) Scopes(funcs ...func(gen.Dao) gen.Dao) *templateDo {
+func (t templateDo) Scopes(funcs ...func(gen.Dao) gen.Dao) ITemplateDo {
 	return t.withDO(t.DO.Scopes(funcs...))
 }
 
-func (t templateDo) Unscoped() *templateDo {
+func (t templateDo) Unscoped() ITemplateDo {
 	return t.withDO(t.DO.Unscoped())
 }
 
@@ -270,22 +323,22 @@ func (t templateDo) FindInBatches(result *[]*models.Template, batchSize int, fc 
 	return t.DO.FindInBatches(result, batchSize, fc)
 }
 
-func (t templateDo) Attrs(attrs ...field.AssignExpr) *templateDo {
+func (t templateDo) Attrs(attrs ...field.AssignExpr) ITemplateDo {
 	return t.withDO(t.DO.Attrs(attrs...))
 }
 
-func (t templateDo) Assign(attrs ...field.AssignExpr) *templateDo {
+func (t templateDo) Assign(attrs ...field.AssignExpr) ITemplateDo {
 	return t.withDO(t.DO.Assign(attrs...))
 }
 
-func (t templateDo) Joins(fields ...field.RelationField) *templateDo {
+func (t templateDo) Joins(fields ...field.RelationField) ITemplateDo {
 	for _, _f := range fields {
 		t = *t.withDO(t.DO.Joins(_f))
 	}
 	return &t
 }
 
-func (t templateDo) Preload(fields ...field.RelationField) *templateDo {
+func (t templateDo) Preload(fields ...field.RelationField) ITemplateDo {
 	for _, _f := range fields {
 		t = *t.withDO(t.DO.Preload(_f))
 	}

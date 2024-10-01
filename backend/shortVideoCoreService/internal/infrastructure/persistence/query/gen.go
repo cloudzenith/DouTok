@@ -16,39 +16,64 @@ import (
 )
 
 var (
-	Q     = new(Query)
-	User  *user
-	Video *video
+	Q               = new(Query)
+	Collection      *collection
+	CollectionVideo *collectionVideo
+	Comment         *comment
+	Favorite        *favorite
+	Follow          *follow
+	User            *user
+	Video           *video
 )
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	*Q = *Use(db, opts...)
+	Collection = &Q.Collection
+	CollectionVideo = &Q.CollectionVideo
+	Comment = &Q.Comment
+	Favorite = &Q.Favorite
+	Follow = &Q.Follow
 	User = &Q.User
 	Video = &Q.Video
 }
 
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
-		db:    db,
-		User:  newUser(db, opts...),
-		Video: newVideo(db, opts...),
+		db:              db,
+		Collection:      newCollection(db, opts...),
+		CollectionVideo: newCollectionVideo(db, opts...),
+		Comment:         newComment(db, opts...),
+		Favorite:        newFavorite(db, opts...),
+		Follow:          newFollow(db, opts...),
+		User:            newUser(db, opts...),
+		Video:           newVideo(db, opts...),
 	}
 }
 
 type Query struct {
 	db *gorm.DB
 
-	User  user
-	Video video
+	Collection      collection
+	CollectionVideo collectionVideo
+	Comment         comment
+	Favorite        favorite
+	Follow          follow
+	User            user
+	Video           video
 }
 
 func (q *Query) Available() bool { return q.db != nil }
 
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
-		db:    db,
-		User:  q.User.clone(db),
-		Video: q.Video.clone(db),
+		db:              db,
+		Collection:      q.Collection.clone(db),
+		CollectionVideo: q.CollectionVideo.clone(db),
+		Comment:         q.Comment.clone(db),
+		Favorite:        q.Favorite.clone(db),
+		Follow:          q.Follow.clone(db),
+		User:            q.User.clone(db),
+		Video:           q.Video.clone(db),
 	}
 }
 
@@ -62,21 +87,36 @@ func (q *Query) WriteDB() *Query {
 
 func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
-		db:    db,
-		User:  q.User.replaceDB(db),
-		Video: q.Video.replaceDB(db),
+		db:              db,
+		Collection:      q.Collection.replaceDB(db),
+		CollectionVideo: q.CollectionVideo.replaceDB(db),
+		Comment:         q.Comment.replaceDB(db),
+		Favorite:        q.Favorite.replaceDB(db),
+		Follow:          q.Follow.replaceDB(db),
+		User:            q.User.replaceDB(db),
+		Video:           q.Video.replaceDB(db),
 	}
 }
 
 type queryCtx struct {
-	User  IUserDo
-	Video IVideoDo
+	Collection      ICollectionDo
+	CollectionVideo ICollectionVideoDo
+	Comment         ICommentDo
+	Favorite        IFavoriteDo
+	Follow          IFollowDo
+	User            IUserDo
+	Video           IVideoDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
-		User:  q.User.WithContext(ctx),
-		Video: q.Video.WithContext(ctx),
+		Collection:      q.Collection.WithContext(ctx),
+		CollectionVideo: q.CollectionVideo.WithContext(ctx),
+		Comment:         q.Comment.WithContext(ctx),
+		Favorite:        q.Favorite.WithContext(ctx),
+		Follow:          q.Follow.WithContext(ctx),
+		User:            q.User.WithContext(ctx),
+		Video:           q.Video.WithContext(ctx),
 	}
 }
 

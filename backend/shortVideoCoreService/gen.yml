@@ -7,6 +7,11 @@ database:
   tables:
     - user
     - video
+    - comment
+    - collection
+    - collection_video
+    - favorite
+    - follow
   mode:
     - WithDefaultQuery
     - WithoutContext

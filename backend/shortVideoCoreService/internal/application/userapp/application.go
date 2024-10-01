@@ -5,7 +5,7 @@ import (
 	v1 "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/dto"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/entity"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/userdomain"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/service/userdomain"
 	"github.com/go-kratos/kratos/v2/log"
 )
 

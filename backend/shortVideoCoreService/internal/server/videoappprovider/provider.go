@@ -5,7 +5,7 @@ import (
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/conf"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/data/userdata"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/data/videodata"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/videodomain"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/service/videodomain"
 )
 
 func InitVideoApplication(config *conf.Config) *videoapp.VideoApplication {
