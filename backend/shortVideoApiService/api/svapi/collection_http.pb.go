@@ -28,12 +28,19 @@ const OperationCollectionServiceRemoveVideoFromCollection = "/svapi.CollectionSe
 const OperationCollectionServiceUpdateCollection = "/svapi.CollectionService/UpdateCollection"
 
 type CollectionServiceHTTPServer interface {
+	// AddVideo2Collection 将视频添加到收藏夹
 	AddVideo2Collection(context.Context, *AddVideo2CollectionRequest) (*AddVideo2CollectionResponse, error)
+	// CreateCollection 创建收藏夹
 	CreateCollection(context.Context, *CreateCollectionRequest) (*CreateCollectionResponse, error)
+	// ListCollection 列出用户的收藏夹
 	ListCollection(context.Context, *ListCollectionRequest) (*ListCollectionResponse, error)
+	// ListVideo4Collection 列出收藏夹中的视频
 	ListVideo4Collection(context.Context, *ListVideo4CollectionRequest) (*ListVideo4CollectionResponse, error)
+	// RemoveCollection 删除收藏夹
 	RemoveCollection(context.Context, *RemoveCollectionRequest) (*RemoveCollectionResponse, error)
+	// RemoveVideoFromCollection 从收藏夹中移除视频
 	RemoveVideoFromCollection(context.Context, *RemoveVideoFromCollectionRequest) (*RemoveVideoFromCollectionResponse, error)
+	// UpdateCollection 更新收藏夹信息
 	UpdateCollection(context.Context, *UpdateCollectionRequest) (*UpdateCollectionResponse, error)
 }
 

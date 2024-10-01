@@ -31,7 +31,34 @@ message CheckAccountResponse {
     int64 account_id = 2; // 账户id，通过此id绑定跨平台账号
 }
 
+enum VoucherType {
+    VOUCHER_PHONE = 0;
+    VOUCHER_EMAIL = 1;
+}
+
+message BindRequest {
+    int64 account_id = 1;
+    VoucherType voucher_type = 2;
+    string voucher = 3;
+}
+
+message BindResponse {
+    api.Metadata meta = 1;
+}
+
+message UnbindRequest {
+    int64 account_id = 1;
+    VoucherType voucher_type = 2;
+    string voucher = 3;
+}
+
+message UnbindResponse {
+    api.Metadata meta = 1;
+}
+
 service AccountService {
     rpc Register(RegisterRequest) returns (RegisterResponse);
     rpc CheckAccount(CheckAccountRequest) returns (CheckAccountResponse);
+    rpc Bind(BindRequest) returns (BindResponse);
+    rpc Unbind(UnbindRequest) returns (UnbindResponse);
 }

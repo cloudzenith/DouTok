@@ -24,8 +24,11 @@ const OperationCommentServiceListComment4Video = "/svapi.CommentService/ListComm
 const OperationCommentServiceRemoveComment = "/svapi.CommentService/RemoveComment"
 
 type CommentServiceHTTPServer interface {
+	// CreateComment 创建评论
 	CreateComment(context.Context, *CreateCommentRequest) (*CreateCommentResponse, error)
+	// ListComment4Video 列出视频的评论
 	ListComment4Video(context.Context, *ListComment4VideoRequest) (*ListComment4VideoResponse, error)
+	// RemoveComment 删除评论
 	RemoveComment(context.Context, *RemoveCommentRequest) (*RemoveCommentResponse, error)
 }
 

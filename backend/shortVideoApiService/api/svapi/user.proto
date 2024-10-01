@@ -46,6 +46,20 @@ service UserService {
             body: "*"
         };
     };
+
+    rpc BindUserVoucher(BindUserVoucherRequest) returns (BindUserVoucherResponse) {
+        option (google.api.http) = {
+            post: "/user/voucher"
+            body: "*"
+        };
+    };
+
+    rpc UnbindUserVoucher(UnbindUserVoucherRequest) returns (UnbindUserVoucherResponse) {
+        option (google.api.http) = {
+            delete: "/user/voucher"
+            body: "*"
+        };
+    };
 }
 
 message User {
@@ -133,3 +147,23 @@ message UpdateUserInfoRequest {
 message UpdateUserInfoResponse {
 }
 
+enum VoucherType {
+    PHONE = 0;
+    EMAIL = 1;
+}
+
+message BindUserVoucherRequest {
+    VoucherType voucher_type = 1;
+    string voucher = 2;
+}
+
+message BindUserVoucherResponse {
+}
+
+message UnbindUserVoucherRequest {
+    VoucherType voucher_type = 1;
+    string voucher = 2;
+}
+
+message UnbindUserVoucherResponse {
+}

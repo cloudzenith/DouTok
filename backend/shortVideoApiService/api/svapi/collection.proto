@@ -30,6 +30,7 @@ message CollectionVideo {
 
 // 收藏夹服务
 service CollectionService {
+    // 创建收藏夹
     rpc CreateCollection(CreateCollectionRequest) returns (CreateCollectionResponse) {
         option (google.api.http) = {
             post: "/collection"
@@ -37,6 +38,7 @@ service CollectionService {
         };
     };
 
+    // 删除收藏夹
     rpc RemoveCollection(RemoveCollectionRequest) returns (RemoveCollectionResponse) {
         option (google.api.http) = {
             delete: "/collection"
@@ -44,12 +46,14 @@ service CollectionService {
         };
     };
 
+    // 列出用户的收藏夹
     rpc ListCollection(ListCollectionRequest) returns (ListCollectionResponse) {
         option (google.api.http) = {
             get: "/collection"
         };
     };
 
+    // 更新收藏夹信息
     rpc UpdateCollection(UpdateCollectionRequest) returns (UpdateCollectionResponse) {
         option (google.api.http) = {
             put: "/collection"
@@ -57,6 +61,7 @@ service CollectionService {
         };
     };
 
+    // 将视频添加到收藏夹
     rpc AddVideo2Collection(AddVideo2CollectionRequest) returns (AddVideo2CollectionResponse) {
         option (google.api.http) = {
             post: "/collection/video"
@@ -64,6 +69,7 @@ service CollectionService {
         };
     };
 
+    // 从收藏夹中移除视频
     rpc RemoveVideoFromCollection(RemoveVideoFromCollectionRequest) returns (RemoveVideoFromCollectionResponse) {
         option (google.api.http) = {
             delete: "/collection/video"
@@ -71,6 +77,7 @@ service CollectionService {
         };
     };
 
+    // 列出收藏夹中的视频
     rpc ListVideo4Collection(ListVideo4CollectionRequest) returns (ListVideo4CollectionResponse) {
         option (google.api.http) = {
             get: "/collection/video"

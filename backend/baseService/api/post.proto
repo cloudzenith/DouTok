@@ -84,8 +84,8 @@ message SendEmailResponse {
 }
 
 enum PostType {
-  SMS = 0;
-  EMAIL = 1;
+    SMS = 0;
+    EMAIL = 1;
 }
 
 message SendRequest {

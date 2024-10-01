@@ -13,11 +13,15 @@ message Comment {
     int64 id = 1; // 评论id
     // @gotags: json:"videoId,omitempty,string"
     int64 video_id = 2; // 视频id
-    CommentUser user = 3; // 评论用户
-    string content = 4; // 评论内容
-    string date = 5; // 评论日期
-    string like_count = 6; // 点赞数
-    string reply_count = 7; // 回复数
+    // @gotags: json:"parentId,omitempty,string"
+    int64 parent_id = 3; // 父评论id
+    CommentUser user = 4; // 评论用户
+    CommentUser reply_user = 5; // 回复用户
+    string content = 6; // 评论内容
+    string date = 7; // 评论日期
+    string like_count = 8; // 点赞数
+    string reply_count = 9; // 回复数
+    repeated Comment comments = 10; // 子评论
 }
 
 message CommentUser {
@@ -30,6 +34,7 @@ message CommentUser {
 
 // 评论
 service CommentService {
+    // 创建评论
     rpc CreateComment(CreateCommentRequest) returns (CreateCommentResponse) {
         option (google.api.http) = {
             post: "/comment"
@@ -37,6 +42,7 @@ service CommentService {
         };
     };
 
+    // 删除评论
     rpc RemoveComment(RemoveCommentRequest) returns (RemoveCommentResponse) {
         option (google.api.http) = {
             delete: "/comment"
@@ -44,6 +50,7 @@ service CommentService {
         };
     };
 
+    // 列出视频的评论
     rpc ListComment4Video(ListComment4VideoRequest) returns (ListComment4VideoResponse) {
         option (google.api.http) = {
             get: "/comment/video"
@@ -55,6 +62,10 @@ message CreateCommentRequest {
     // @gotags: json:"videoId,omitempty,string"
     int64 video_id = 1; // 视频id
     string content = 2; // 评论内容
+    // @gotags: json:"parentId,omitempty,string"
+    int64 parent_id = 3;
+    // @gotags: json:"replyUserId,omitempty,string"
+    int64 reply_user_id = 4;
 }
 
 message CreateCommentResponse {

@@ -16,6 +16,8 @@ message Comment {
     string like_count = 5; // 点赞数
     string reply_count = 6; // 回复数
     int64 user_id = 7; // 用户id
+    int64 parent_id = 8; // 父评论id
+    int64 reply_user_id = 9; // 回复用户id
 }
 
 service CommentService {
