@@ -6,6 +6,7 @@ import (
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/application/interface/followserviceiface"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/utils"
 	"github.com/go-kratos/kratos/v2/log"
+	"math"
 )
 
 type Application struct {
@@ -56,7 +57,12 @@ func (a *Application) ListFollowing(ctx context.Context, request *v1.ListFollowi
 
 	return &v1.ListFollowingResponse{
 		Meta:       utils.GetSuccessMeta(),
-		UserIdList: data,
+		UserIdList: data.UserIdList,
+		Pagination: &v1.PaginationResponse{
+			Page:  request.Pagination.Page,
+			Total: int32(math.Ceil(float64(data.Count) / float64(request.Pagination.Size))),
+			Count: int32(data.Count),
+		},
 	}, nil
 }
 

@@ -3,6 +3,7 @@ package followrepo
 import (
 	"context"
 	"errors"
+	"github.com/TremblingV5/box/dbtx"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/snowflakeutil"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/repoiface"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/model"
@@ -62,29 +63,42 @@ func (r *PersistRepository) ListFollowing(ctx context.Context, userId int64, fol
 		return nil, err
 	}
 
-	data, err := query.Q.WithContext(ctx).Follow.Where(conditions...).Limit(limit).Offset(offset).Find()
-	if err != nil {
-		return nil, err
-	}
+	return dbtx.TxDoGetValue(ctx, func(tx *query.QueryTx) ([]int64, error) {
+		data, err := query.Q.WithContext(ctx).Follow.Where(conditions...).Limit(limit).Offset(offset).Find()
+		if err != nil {
+			return nil, err
+		}
 
-	var result []int64
-	for _, item := range data {
-		switch followType {
-		case 0:
-			result = append(result, item.TargetUserID)
-		case 1:
-			result = append(result, item.UserID)
-		case 2:
-			if item.UserID != userId {
-				result = append(result, item.UserID)
-			}
-			if item.TargetUserID != userId {
+		var result []int64
+		for _, item := range data {
+			switch followType {
+			case 0:
 				result = append(result, item.TargetUserID)
+			case 1:
+				result = append(result, item.UserID)
+			case 2:
+				if item.UserID != userId {
+					result = append(result, item.UserID)
+				}
+				if item.TargetUserID != userId {
+					result = append(result, item.TargetUserID)
+				}
 			}
 		}
+
+		return result, nil
+	})
+}
+
+func (r *PersistRepository) CountFollowing(ctx context.Context, userId int64, followType int32) (int64, error) {
+	conditions, err := r.parseFollowType(followType, userId)
+	if err != nil {
+		return 0, err
 	}
 
-	return result, nil
+	return dbtx.TxDoGetValue(ctx, func(tx *query.QueryTx) (int64, error) {
+		return tx.Follow.Where(conditions...).Count()
+	})
 }
 
 var _ repoiface.FollowRepository = (*PersistRepository)(nil)

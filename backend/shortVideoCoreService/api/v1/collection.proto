@@ -61,6 +61,7 @@ message ListCollectionRequest {
 message ListCollectionResponse {
     repeated Collection collections = 1;
     Metadata meta = 2;
+    PaginationResponse pagination = 3;
 }
 
 message UpdateCollectionRequest {
@@ -99,4 +100,5 @@ message ListCollectionVideoRequest {
 message ListCollectionVideoResponse {
     repeated int64 video_id_list = 1;
     Metadata meta = 2;
+    PaginationResponse pagination = 3;
 }

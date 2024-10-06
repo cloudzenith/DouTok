@@ -43,7 +43,7 @@ func (s *Service) RemoveCollection(ctx context.Context, collectionId int64) erro
 	return s.collection.RemoveById(ctx, collectionId)
 }
 
-func (s *Service) ListCollection(ctx context.Context, userId int64, limit, offset int) ([]*collection.Collection, error) {
+func (s *Service) ListCollection(ctx context.Context, userId int64, limit, offset int) (*collectionserviceiface.ListCollectionResult, error) {
 	list, err := s.collection.ListByUserId(ctx, userId, limit, offset)
 	if err != nil {
 		log.Context(ctx).Errorf("ListCollection error: %v", err)
@@ -54,7 +54,17 @@ func (s *Service) ListCollection(ctx context.Context, userId int64, limit, offse
 	for _, c := range list {
 		collections = append(collections, collection.NewWithModel(c))
 	}
-	return collections, nil
+
+	count, err := s.collection.CountByUserId(ctx, userId)
+	if err != nil {
+		// 弱依赖
+		log.Context(ctx).Warnf("failed to count collection: %v", err)
+	}
+
+	return &collectionserviceiface.ListCollectionResult{
+		Data:  collections,
+		Count: count,
+	}, nil
 }
 
 func (s *Service) UpdateCollection(ctx context.Context, collectionId int64, name, description string) error {
@@ -74,7 +84,7 @@ func (s *Service) AddVideo2Collection(ctx context.Context, collectionId, videoId
 	return s.collection.AddVideo2Collection(ctx, collectionId, videoId)
 }
 
-func (s *Service) ListCollectionVideo(ctx context.Context, collectionId int64, pagination *v1.PaginationRequest) ([]int64, error) {
+func (s *Service) ListCollectionVideo(ctx context.Context, collectionId int64, pagination *v1.PaginationRequest) (*collectionserviceiface.ListCollectionVideoResult, error) {
 	list, err := s.collection.ListByUserId(ctx, collectionId, int(pagination.Size), (int(pagination.Page)-1)*int(pagination.Size))
 	if err != nil {
 		log.Context(ctx).Errorf("ListCollectionVideo error: %v", err)
@@ -86,7 +96,15 @@ func (s *Service) ListCollectionVideo(ctx context.Context, collectionId int64, p
 		videoIds = append(videoIds, c.ID)
 	}
 
-	return videoIds, nil
+	count, err := s.collection.CountCollectionVideo(ctx, collectionId)
+	if err != nil {
+		log.Context(ctx).Warnf("failed to count collection video: %v", err)
+	}
+
+	return &collectionserviceiface.ListCollectionVideoResult{
+		Data:  videoIds,
+		Count: count,
+	}, nil
 }
 
 func (s *Service) RemoveVideo2Collection(ctx context.Context, collectionId, videoId int64) error {

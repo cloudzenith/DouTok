@@ -6,6 +6,7 @@ import (
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/application/interface/collectionserviceiface"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/utils"
 	"github.com/go-kratos/kratos/v2/log"
+	"math"
 )
 
 type Application struct {
@@ -81,7 +82,7 @@ func (a *Application) ListCollection(ctx context.Context, request *v1.ListCollec
 	}
 
 	var collections []*v1.Collection
-	for _, c := range data {
+	for _, c := range data.Data {
 		collections = append(collections, &v1.Collection{
 			Id:          c.ID,
 			UserId:      c.UserId,
@@ -93,6 +94,11 @@ func (a *Application) ListCollection(ctx context.Context, request *v1.ListCollec
 	return &v1.ListCollectionResponse{
 		Meta:        utils.GetSuccessMeta(),
 		Collections: collections,
+		Pagination: &v1.PaginationResponse{
+			Page:  request.Pagination.Page,
+			Total: int32(math.Ceil(float64(data.Count) / float64(request.Pagination.Size))),
+			Count: int32(data.Count),
+		},
 	}, nil
 }
 
@@ -149,6 +155,11 @@ func (a *Application) ListCollectionVideo(ctx context.Context, request *v1.ListC
 
 	return &v1.ListCollectionVideoResponse{
 		Meta:        utils.GetSuccessMeta(),
-		VideoIdList: data,
+		VideoIdList: data.Data,
+		Pagination: &v1.PaginationResponse{
+			Page:  request.Pagination.Page,
+			Total: int32(math.Ceil(float64(data.Count) / float64(request.Pagination.Size))),
+			Count: int32(data.Count),
+		},
 	}, nil
 }

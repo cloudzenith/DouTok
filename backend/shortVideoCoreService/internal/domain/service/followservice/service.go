@@ -2,6 +2,7 @@ package followservice
 
 import (
 	"context"
+	"github.com/TremblingV5/box/dbtx"
 	v1 "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/application/interface/followserviceiface"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/repoiface"
@@ -36,7 +37,12 @@ func (s *Service) RemoveFollow(ctx context.Context, userId, targetUserId int64) 
 	return nil
 }
 
-func (s *Service) ListFollowing(ctx context.Context, userId int64, followType v1.FollowType, pagination *v1.PaginationRequest) ([]int64, error) {
+func (s *Service) ListFollowing(ctx context.Context, userId int64, followType v1.FollowType, pagination *v1.PaginationRequest) (result *followserviceiface.ListFollowingDTO, err error) {
+	ctx, persist := dbtx.WithTXPersist(ctx)
+	defer func() {
+		persist(err)
+	}()
+
 	var limit = int(pagination.Size)
 	var offset = (int(pagination.Page) - 1) * int(pagination.Size)
 	data, err := s.follow.ListFollowing(ctx, userId, int32(followType), limit, offset)
@@ -45,7 +51,16 @@ func (s *Service) ListFollowing(ctx context.Context, userId int64, followType v1
 		return nil, err
 	}
 
-	return data, nil
+	count, err := s.follow.CountFollowing(ctx, userId, int32(followType))
+	if err != nil {
+		// 弱依赖
+		log.Context(ctx).Warnf("failed to count following: %v", err)
+	}
+
+	return &followserviceiface.ListFollowingDTO{
+		UserIdList: data,
+		Count:      count,
+	}, nil
 }
 
 var _ followserviceiface.FollowService = (*Service)(nil)

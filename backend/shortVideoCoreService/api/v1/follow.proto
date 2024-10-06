@@ -47,4 +47,5 @@ message ListFollowingRequest {
 message ListFollowingResponse {
     Metadata meta = 1;
     repeated int64 user_id_list = 2;
+    PaginationResponse pagination = 3;
 }

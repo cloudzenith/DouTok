@@ -34,6 +34,10 @@ func (p *PersistRepository) ListByUserId(ctx context.Context, userId int64, limi
 	return query.Q.WithContext(ctx).Collection.Where(query.Q.Collection.UserID.Eq(userId)).Limit(limit).Offset(offset).Find()
 }
 
+func (p *PersistRepository) CountByUserId(ctx context.Context, userId int64) (int64, error) {
+	return query.Q.WithContext(ctx).Collection.Where(query.Q.Collection.UserID.Eq(userId)).Count()
+}
+
 func (p *PersistRepository) Update(ctx context.Context, collection *model.Collection) error {
 	_, err := query.Q.WithContext(ctx).
 		Collection.
@@ -56,6 +60,10 @@ func (p *PersistRepository) RemoveVideoFromCollection(ctx context.Context, colle
 		query.Q.CollectionVideo.VideoID.Eq(videoId),
 	).Update(query.CollectionVideo.IsDeleted, true)
 	return err
+}
+
+func (p *PersistRepository) CountCollectionVideo(ctx context.Context, collectionId int64) (int64, error) {
+	return query.Q.WithContext(ctx).CollectionVideo.Where(query.Q.CollectionVideo.CollectionID.Eq(collectionId)).Count()
 }
 
 var _ repoiface.CollectionRepository = (*PersistRepository)(nil)
