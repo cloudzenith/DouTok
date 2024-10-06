@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS `comment` (
     parent_id BIGINT DEFAULT NULL COMMENT '父评论id',
     to_user_id BIGINT DEFAULT NULL COMMENT '评论所回复的用户id',
     content varchar(512) NOT NULL COMMENT '评论内容',
+    first_comments json NOT NULL COMMENT '最开始的x条子评论',
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
     create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     update_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -73,8 +74,8 @@ CREATE TABLE IF NOT EXISTS `follow` (
 -- +goose StatementEnd
 
 -- +goose StatementBegin
--- ALTER TABLE account
--- ADD COLUMN `number` VARCHAR(15) NOT NULL DEFAULT '' COMMENT 'doutok号';
+ALTER TABLE account
+ADD COLUMN `number` VARCHAR(15) NOT NULL DEFAULT '' COMMENT 'doutok号';
 -- +goose StatementEnd
 
 -- +goose StatementBegin

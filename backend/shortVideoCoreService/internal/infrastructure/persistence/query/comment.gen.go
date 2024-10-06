@@ -33,6 +33,7 @@ func newComment(db *gorm.DB, opts ...gen.DOOption) comment {
 	_comment.ParentID = field.NewInt64(tableName, "parent_id")
 	_comment.ToUserID = field.NewInt64(tableName, "to_user_id")
 	_comment.Content = field.NewString(tableName, "content")
+	_comment.FirstComments = field.NewString(tableName, "first_comments")
 	_comment.IsDeleted = field.NewBool(tableName, "is_deleted")
 	_comment.CreateTime = field.NewTime(tableName, "create_time")
 	_comment.UpdateTime = field.NewTime(tableName, "update_time")
@@ -45,16 +46,17 @@ func newComment(db *gorm.DB, opts ...gen.DOOption) comment {
 type comment struct {
 	commentDo
 
-	ALL        field.Asterisk
-	ID         field.Int64
-	VideoID    field.Int64
-	UserID     field.Int64  // 发表评论的用户id
-	ParentID   field.Int64  // 父评论id
-	ToUserID   field.Int64  // 评论所回复的用户id
-	Content    field.String // 评论内容
-	IsDeleted  field.Bool
-	CreateTime field.Time
-	UpdateTime field.Time
+	ALL           field.Asterisk
+	ID            field.Int64
+	VideoID       field.Int64
+	UserID        field.Int64  // 发表评论的用户id
+	ParentID      field.Int64  // 父评论id
+	ToUserID      field.Int64  // 评论所回复的用户id
+	Content       field.String // 评论内容
+	FirstComments field.String // 最开始的x条子评论
+	IsDeleted     field.Bool
+	CreateTime    field.Time
+	UpdateTime    field.Time
 
 	fieldMap map[string]field.Expr
 }
@@ -77,6 +79,7 @@ func (c *comment) updateTableName(table string) *comment {
 	c.ParentID = field.NewInt64(table, "parent_id")
 	c.ToUserID = field.NewInt64(table, "to_user_id")
 	c.Content = field.NewString(table, "content")
+	c.FirstComments = field.NewString(table, "first_comments")
 	c.IsDeleted = field.NewBool(table, "is_deleted")
 	c.CreateTime = field.NewTime(table, "create_time")
 	c.UpdateTime = field.NewTime(table, "update_time")
@@ -96,13 +99,14 @@ func (c *comment) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (c *comment) fillFieldMap() {
-	c.fieldMap = make(map[string]field.Expr, 9)
+	c.fieldMap = make(map[string]field.Expr, 10)
 	c.fieldMap["id"] = c.ID
 	c.fieldMap["video_id"] = c.VideoID
 	c.fieldMap["user_id"] = c.UserID
 	c.fieldMap["parent_id"] = c.ParentID
 	c.fieldMap["to_user_id"] = c.ToUserID
 	c.fieldMap["content"] = c.Content
+	c.fieldMap["first_comments"] = c.FirstComments
 	c.fieldMap["is_deleted"] = c.IsDeleted
 	c.fieldMap["create_time"] = c.CreateTime
 	c.fieldMap["update_time"] = c.UpdateTime

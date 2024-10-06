@@ -7,8 +7,12 @@ import (
 
 type CommentRepository interface {
 	Create(ctx context.Context, comment *model.Comment) error
+	Update(ctx context.Context, comment *model.Comment) error
 	RemoveById(ctx context.Context, commentId int64) error
 	ListByVideoId(ctx context.Context, videoId int64, limit, offset int) ([]*model.Comment, error)
+	ListParentCommentByVideoId(ctx context.Context, videoId int64, limit, offset int) ([]*model.Comment, error)
+	ListChildCommentByCommentId(ctx context.Context, commentId int64, limit, offset int) ([]*model.Comment, error)
+	CountChildComments(ctx context.Context, commentId int64) (int64, error)
 	GetById(ctx context.Context, commentId int64) (*model.Comment, error)
 	GetByIdList(ctx context.Context, commentIdList []int64) ([]*model.Comment, error)
 	CountByVideoId(ctx context.Context, videoId int64) (int64, error)

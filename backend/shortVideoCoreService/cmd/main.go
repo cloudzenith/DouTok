@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/TremblingV5/box/dbtx"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/components/mysqlx"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/launcher"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/conf"
@@ -12,6 +13,12 @@ import (
 	"github.com/go-kratos/kratos/v2/config/file"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 )
+
+func init() {
+	dbtx.Init(func() dbtx.TX {
+		return query.Q.Begin()
+	})
+}
 
 func main() {
 	c := &conf.Config{}

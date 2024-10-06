@@ -10,10 +10,13 @@ import (
 
 type Application struct {
 	collection collectionserviceiface.CollectionService
+	v1.UnimplementedCollectionServiceServer
 }
 
-func New() *Application {
-	return &Application{}
+func New(collection collectionserviceiface.CollectionService) *Application {
+	return &Application{
+		collection: collection,
+	}
 }
 
 func (a *Application) CreateCollection(ctx context.Context, request *v1.CreateCollectionRequest) (*v1.CreateCollectionResponse, error) {

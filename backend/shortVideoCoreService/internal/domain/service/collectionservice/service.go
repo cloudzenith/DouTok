@@ -13,8 +13,10 @@ type Service struct {
 	collection repoiface.CollectionRepository
 }
 
-func New() *Service {
-	return &Service{}
+func New(collection repoiface.CollectionRepository) *Service {
+	return &Service{
+		collection: collection,
+	}
 }
 
 func (s *Service) CreateCollection(ctx context.Context, userId int64, name, description string) error {
