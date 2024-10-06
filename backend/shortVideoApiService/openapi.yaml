@@ -258,6 +258,42 @@ paths:
                                         description: Status message. Could be displayed to user.
                                     data:
                                         $ref: '#/components/schemas/svapi.RemoveCommentResponse'
+    /comment/child:
+        get:
+            tags:
+                - CommentService
+            operationId: CommentService_ListChildComment
+            parameters:
+                - name: commentId
+                  in: query
+                  description: '@gotags: json:"commentId,omitempty,string"'
+                  schema:
+                    type: string
+                - name: pagination.page
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: pagination.size
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                properties:
+                                    code:
+                                        type: integer
+                                        description: Status code. Zero means success.
+                                    msg:
+                                        type: string
+                                        description: Status message. Could be displayed to user.
+                                    data:
+                                        $ref: '#/components/schemas/svapi.ListChildCommentResponse'
     /comment/video:
         get:
             tags:
@@ -1085,6 +1121,15 @@ components:
                 video:
                     $ref: '#/components/schemas/svapi.Video'
             description: 获取视频信息响应消息类型
+        svapi.ListChildCommentResponse:
+            type: object
+            properties:
+                comments:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/svapi.Comment'
+                pagination:
+                    $ref: '#/components/schemas/svapi.PaginationResponse'
         svapi.ListCollectionResponse:
             type: object
             properties:

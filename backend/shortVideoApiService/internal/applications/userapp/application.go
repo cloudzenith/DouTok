@@ -181,4 +181,14 @@ func (a *Application) UpdateUserInfo(ctx context.Context, request *svapi.UpdateU
 	return &svapi.UpdateUserInfoResponse{}, nil
 }
 
+func (a *Application) BindUserVoucher(ctx context.Context, request *svapi.BindUserVoucherRequest) (*svapi.BindUserVoucherResponse, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (a *Application) UnbindUserVoucher(ctx context.Context, request *svapi.UnbindUserVoucherRequest) (*svapi.UnbindUserVoucherResponse, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
 var _ svapi.UserServiceHTTPServer = (*Application)(nil)

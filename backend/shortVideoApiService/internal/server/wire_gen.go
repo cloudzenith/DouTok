@@ -7,7 +7,11 @@
 package server
 
 import (
+	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/applications/collectionapp"
+	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/applications/commentapp"
+	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/applications/favoriteapp"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/applications/fileapp"
+	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/applications/followapp"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/applications/userapp"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/applications/videoapp"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/adapter/baseadapter"
@@ -33,5 +37,29 @@ func initVideoApp() *videoapp.Application {
 func initFileApp() *fileapp.Application {
 	adapter := baseadapter.New()
 	application := fileapp.New(adapter)
+	return application
+}
+
+func initCollectionApp() *collectionapp.Application {
+	adapter := svcoreadapter.New()
+	application := collectionapp.New(adapter)
+	return application
+}
+
+func initCommentApp() *commentapp.Application {
+	adapter := svcoreadapter.New()
+	application := commentapp.New(adapter)
+	return application
+}
+
+func initFavoriteApp() *favoriteapp.Application {
+	adapter := svcoreadapter.New()
+	application := favoriteapp.New(adapter)
+	return application
+}
+
+func initFollowApp() *followapp.Application {
+	adapter := svcoreadapter.New()
+	application := followapp.New(adapter)
 	return application
 }

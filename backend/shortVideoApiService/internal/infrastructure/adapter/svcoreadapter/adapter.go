@@ -7,8 +7,12 @@ import (
 )
 
 type Adapter struct {
-	user  v1.UserServiceClient
-	video v1.VideoServiceClient
+	user       v1.UserServiceClient
+	video      v1.VideoServiceClient
+	collection v1.CollectionServiceClient
+	comment    v1.CommentServiceClient
+	favorite   v1.FavoriteServiceClient
+	follow     v1.FollowServiceClient
 }
 
 func New() *Adapter {
@@ -18,7 +22,11 @@ func New() *Adapter {
 	}
 
 	return &Adapter{
-		user:  v1.NewUserServiceClient(conn),
-		video: v1.NewVideoServiceClient(conn),
+		user:       v1.NewUserServiceClient(conn),
+		video:      v1.NewVideoServiceClient(conn),
+		collection: v1.NewCollectionServiceClient(conn),
+		comment:    v1.NewCommentServiceClient(conn),
+		favorite:   v1.NewFavoriteServiceClient(conn),
+		follow:     v1.NewFollowServiceClient(conn),
 	}
 }

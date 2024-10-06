@@ -45,3 +45,17 @@ func (a *Adapter) CreateUser(ctx context.Context, mobile, email string, accountI
 	}
 	return resp.UserId, nil
 }
+
+func (a *Adapter) GetUserInfoByIdList(ctx context.Context, userIdList []int64) ([]*v1.User, error) {
+	req := &v1.GetUserByIdListRequest{
+		UserIdList: userIdList,
+	}
+
+	resp, err := a.user.GetUserByIdList(ctx, req)
+	return respcheck.CheckT[[]*v1.User, *v1.Metadata](
+		resp, err,
+		func() []*v1.User {
+			return resp.UserList
+		},
+	)
+}

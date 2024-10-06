@@ -57,5 +57,9 @@ func NewHttpServer() *http.Server {
 	svapi.RegisterUserServiceHTTPServer(srv, initUserApp())
 	svapi.RegisterShortVideoCoreVideoServiceHTTPServer(srv, initVideoApp())
 	svapi.RegisterFileServiceHTTPServer(srv, initFileApp())
+	svapi.RegisterCollectionServiceHTTPServer(srv, initCollectionApp())
+	svapi.RegisterCommentServiceHTTPServer(srv, initCommentApp())
+	svapi.RegisterFavoriteServiceHTTPServer(srv, initFavoriteApp())
+	svapi.RegisterFollowServiceHTTPServer(srv, initFollowApp())
 	return srv
 }

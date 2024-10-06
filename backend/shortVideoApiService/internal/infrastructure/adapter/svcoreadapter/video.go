@@ -72,3 +72,16 @@ func (a *Adapter) SaveVideoInfo(ctx context.Context, title, videoUrl, coverUrl, 
 		},
 	)
 }
+
+func (a *Adapter) GetVideosByIdList(ctx context.Context, idList []int64) ([]*v1.Video, error) {
+	req := &v1.GetVideoByIdListRequest{
+		VideoIdList: idList,
+	}
+	resp, err := a.video.GetVideoByIdList(ctx, req)
+	return respcheck.CheckT[[]*v1.Video, *v1.Metadata](
+		resp, err,
+		func() []*v1.Video {
+			return resp.Videos
+		},
+	)
+}
