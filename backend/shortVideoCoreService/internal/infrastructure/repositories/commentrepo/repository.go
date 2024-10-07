@@ -52,7 +52,7 @@ func (r *PersistRepository) ListParentCommentByVideoId(ctx context.Context, vide
 		ctx,
 		[]gen.Condition{
 			query.Q.Comment.VideoID.Eq(videoId),
-			query.Q.Comment.ParentID.IsNull(),
+			query.Q.Comment.ParentID.Eq(0),
 		},
 		[]field.Expr{
 			query.Q.Comment.ID.Asc(),

@@ -46,7 +46,7 @@ func (a *Application) ListFollowing(ctx context.Context, request *svapi.ListFoll
 		return nil, errorx.New(1, "获取列表失败")
 	}
 
-	userInfoList, err := a.core.GetUserInfoByIdList(ctx, resp)
+	userInfoList, err := a.core.GetUserInfoByIdList(ctx, resp.UserIdList)
 	if err != nil {
 		// 弱依赖
 		log.Context(ctx).Warnf("failed to get user info by id list: %v", err)
@@ -58,7 +58,7 @@ func (a *Application) ListFollowing(ctx context.Context, request *svapi.ListFoll
 	}
 
 	var result []*svapi.FollowUser
-	for _, id := range resp {
+	for _, id := range resp.UserIdList {
 		userInfo := userInfoMap[id]
 		if userInfo == nil {
 			continue
@@ -72,9 +72,13 @@ func (a *Application) ListFollowing(ctx context.Context, request *svapi.ListFoll
 		})
 	}
 
-	// TODO: 增加分页信息
 	return &svapi.ListFollowingResponse{
 		Users: result,
+		Pagination: &svapi.PaginationResponse{
+			Page:  resp.Pagination.Page,
+			Count: resp.Pagination.Count,
+			Total: resp.Pagination.Total,
+		},
 	}, nil
 }
 

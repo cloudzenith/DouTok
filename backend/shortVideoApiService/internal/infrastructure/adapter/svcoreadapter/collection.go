@@ -37,7 +37,7 @@ func (a *Adapter) AddCollection(ctx context.Context, name, description string, u
 	return respcheck.Check[*v1.Metadata](resp, err)
 }
 
-func (a *Adapter) ListCollection(ctx context.Context, userId int64, page, size int32) ([]*v1.Collection, error) {
+func (a *Adapter) ListCollection(ctx context.Context, userId int64, page, size int32) (*v1.ListCollectionResponse, error) {
 	req := &v1.ListCollectionRequest{
 		UserId: userId,
 		Pagination: &v1.PaginationRequest{
@@ -47,15 +47,15 @@ func (a *Adapter) ListCollection(ctx context.Context, userId int64, page, size i
 	}
 
 	resp, err := a.collection.ListCollection(ctx, req)
-	return respcheck.CheckT[[]*v1.Collection, *v1.Metadata](
+	return respcheck.CheckT[*v1.ListCollectionResponse, *v1.Metadata](
 		resp, err,
-		func() []*v1.Collection {
-			return resp.Collections
+		func() *v1.ListCollectionResponse {
+			return resp
 		},
 	)
 }
 
-func (a *Adapter) ListVideo4Collection(ctx context.Context, collectionId int64, page, size int32) ([]int64, error) {
+func (a *Adapter) ListVideo4Collection(ctx context.Context, collectionId int64, page, size int32) (*v1.ListCollectionVideoResponse, error) {
 	req := &v1.ListCollectionVideoRequest{
 		CollectionId: collectionId,
 		Pagination: &v1.PaginationRequest{
@@ -65,10 +65,10 @@ func (a *Adapter) ListVideo4Collection(ctx context.Context, collectionId int64, 
 	}
 
 	resp, err := a.collection.ListCollectionVideo(ctx, req)
-	return respcheck.CheckT[[]int64, *v1.Metadata](
+	return respcheck.CheckT[*v1.ListCollectionVideoResponse, *v1.Metadata](
 		resp, err,
-		func() []int64 {
-			return resp.VideoIdList
+		func() *v1.ListCollectionVideoResponse {
+			return resp
 		},
 	)
 }

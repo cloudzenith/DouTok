@@ -81,7 +81,7 @@ func (a *Application) ListCollection(ctx context.Context, request *svapi.ListCol
 	}
 
 	var result []*svapi.Collection
-	for _, item := range data {
+	for _, item := range data.Collections {
 		result = append(result, &svapi.Collection{
 			Id:          item.Id,
 			Name:        item.Name,
@@ -89,9 +89,13 @@ func (a *Application) ListCollection(ctx context.Context, request *svapi.ListCol
 		})
 	}
 
-	// FIXME: 缺少分页信息
 	return &svapi.ListCollectionResponse{
 		Collections: result,
+		Pagination: &svapi.PaginationResponse{
+			Page:  data.Pagination.Page,
+			Total: data.Pagination.Total,
+			Count: data.Pagination.Count,
+		},
 	}, nil
 }
 
@@ -100,12 +104,12 @@ func (a *Application) ListVideo4Collection(ctx context.Context, request *svapi.L
 		return nil, errorx.New(1, err.Error())
 	}
 
-	videoIdList, err := a.core.ListVideo4Collection(ctx, request.CollectionId, request.Pagination.Page, request.Pagination.Size)
+	resp, err := a.core.ListVideo4Collection(ctx, request.CollectionId, request.Pagination.Page, request.Pagination.Size)
 	if err != nil {
 		return nil, errorx.New(1, "获取失败")
 	}
 
-	videoInfoList, err := a.core.GetVideosByIdList(ctx, videoIdList)
+	videoInfoList, err := a.core.GetVideosByIdList(ctx, resp.VideoIdList)
 	if err != nil {
 		log.Context(ctx).Errorf("failed to get video info: %v", err)
 		return nil, errorx.New(1, "获取视频信息失败")
@@ -122,9 +126,13 @@ func (a *Application) ListVideo4Collection(ctx context.Context, request *svapi.L
 		})
 	}
 
-	// FIXME: 缺少分页信息
 	return &svapi.ListVideo4CollectionResponse{
 		Videos: result,
+		Pagination: &svapi.PaginationResponse{
+			Page:  resp.Pagination.Page,
+			Total: resp.Pagination.Total,
+			Count: resp.Pagination.Count,
+		},
 	}, nil
 }
 

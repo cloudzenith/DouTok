@@ -60,8 +60,8 @@ func (a *Application) RemoveComment(ctx context.Context, request *v1.RemoveComme
 
 func (a *Application) ListComment4Video(ctx context.Context, request *v1.ListComment4VideoRequest) (*v1.ListComment4VideoResponse, error) {
 	limit, offset := utils.GetLimitOffset(
+		int(request.Pagination.Page),
 		int(request.Pagination.Size),
-		(int(request.Pagination.Page)-1)*int(request.Pagination.Size),
 	)
 
 	comments, err := a.comment.ListComment4Video(
@@ -89,8 +89,8 @@ func (a *Application) ListComment4Video(ctx context.Context, request *v1.ListCom
 
 func (a *Application) ListChildComment4Comment(ctx context.Context, request *v1.ListChildComment4CommentRequest) (*v1.ListChildComment4CommentResponse, error) {
 	limit, offset := utils.GetLimitOffset(
+		int(request.Pagination.Page),
 		int(request.Pagination.Size),
-		(int(request.Pagination.Page)-1)*int(request.Pagination.Size),
 	)
 
 	comments, err := a.comment.ListChildComment(

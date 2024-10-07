@@ -2,6 +2,7 @@ package collectionrepo
 
 import (
 	"context"
+	"github.com/cloudzenith/DouTok/backend/gopkgs/snowflakeutil"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/repoiface"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/model"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/query"
@@ -50,6 +51,7 @@ func (p *PersistRepository) AddVideo2Collection(ctx context.Context, collectionI
 	newCollectionVideo := &model.CollectionVideo{
 		CollectionID: collectionId,
 		VideoID:      videoId,
+		ID:           snowflakeutil.GetSnowflakeId(),
 	}
 	return query.Q.WithContext(ctx).CollectionVideo.Create(newCollectionVideo)
 }
@@ -60,6 +62,10 @@ func (p *PersistRepository) RemoveVideoFromCollection(ctx context.Context, colle
 		query.Q.CollectionVideo.VideoID.Eq(videoId),
 	).Update(query.CollectionVideo.IsDeleted, true)
 	return err
+}
+
+func (p *PersistRepository) ListCollectionVideo(ctx context.Context, collectionId int64, limit, offset int) ([]*model.CollectionVideo, error) {
+	return query.Q.WithContext(ctx).CollectionVideo.Where(query.Q.CollectionVideo.CollectionID.Eq(collectionId)).Limit(limit).Offset(offset).Find()
 }
 
 func (p *PersistRepository) CountCollectionVideo(ctx context.Context, collectionId int64) (int64, error) {

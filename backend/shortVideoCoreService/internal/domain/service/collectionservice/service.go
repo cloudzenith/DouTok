@@ -6,6 +6,7 @@ import (
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/application/interface/collectionserviceiface"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/entity/collection"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/repoiface"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/utils"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
@@ -85,7 +86,8 @@ func (s *Service) AddVideo2Collection(ctx context.Context, collectionId, videoId
 }
 
 func (s *Service) ListCollectionVideo(ctx context.Context, collectionId int64, pagination *v1.PaginationRequest) (*collectionserviceiface.ListCollectionVideoResult, error) {
-	list, err := s.collection.ListByUserId(ctx, collectionId, int(pagination.Size), (int(pagination.Page)-1)*int(pagination.Size))
+	limit, offset := utils.GetLimitOffset(int(pagination.Page), int(pagination.Size))
+	list, err := s.collection.ListCollectionVideo(ctx, collectionId, limit, offset)
 	if err != nil {
 		log.Context(ctx).Errorf("ListCollectionVideo error: %v", err)
 		return nil, err
@@ -93,7 +95,7 @@ func (s *Service) ListCollectionVideo(ctx context.Context, collectionId int64, p
 
 	var videoIds []int64
 	for _, c := range list {
-		videoIds = append(videoIds, c.ID)
+		videoIds = append(videoIds, c.VideoID)
 	}
 
 	count, err := s.collection.CountCollectionVideo(ctx, collectionId)

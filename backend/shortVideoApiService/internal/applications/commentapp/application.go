@@ -27,6 +27,7 @@ func (a *Application) generateCommentUserInfo(userInfo *v1.User) (commentUser *s
 		return commentUser
 	}
 
+	commentUser = &svapi.CommentUser{}
 	commentUser.Name = userInfo.Name
 	commentUser.Avatar = userInfo.Avatar
 	commentUser.Id = userInfo.Id
@@ -86,15 +87,7 @@ func (a *Application) CreateComment(ctx context.Context, request *svapi.CreateCo
 	}, nil
 }
 
-func (a *Application) assembleCommentListResult(ctx context.Context, data []*v1.Comment) []*svapi.Comment {
-	var userIdList []int64
-	for _, item := range data {
-		userIdList = append(userIdList, item.UserId)
-		if item.ReplyUserId != 0 && &item.ReplyUserId != nil {
-			userIdList = append(userIdList, item.ReplyUserId)
-		}
-	}
-
+func (a *Application) getUserInfoMap(ctx context.Context, userIdList []int64) map[int64]*v1.User {
 	userInfoList, err := a.core.GetUserInfoByIdList(ctx, userIdList)
 	if err != nil {
 		// 弱依赖
@@ -104,6 +97,29 @@ func (a *Application) assembleCommentListResult(ctx context.Context, data []*v1.
 	userInfoMap := make(map[int64]*v1.User)
 	for _, item := range userInfoList {
 		userInfoMap[item.Id] = item
+	}
+
+	return userInfoMap
+}
+
+func (a *Application) assembleCommentListResult(ctx context.Context, data []*v1.Comment, userInfoMap map[int64]*v1.User) []*svapi.Comment {
+	if userInfoMap == nil {
+		var userIdList []int64
+		for _, item := range data {
+			userIdList = append(userIdList, item.UserId)
+			if item.ReplyUserId != 0 && &item.ReplyUserId != nil {
+				userIdList = append(userIdList, item.ReplyUserId)
+			}
+
+			for _, childComments := range item.Comments {
+				userIdList = append(userIdList, childComments.UserId)
+				if childComments.ReplyUserId != 0 && &childComments.ReplyUserId != nil {
+					userIdList = append(userIdList, childComments.ReplyUserId)
+				}
+			}
+		}
+
+		userInfoMap = a.getUserInfoMap(ctx, userIdList)
 	}
 
 	var result []*svapi.Comment
@@ -132,6 +148,7 @@ func (a *Application) assembleCommentListResult(ctx context.Context, data []*v1.
 			Date:       item.Date,
 			LikeCount:  item.LikeCount,
 			ReplyCount: item.ReplyCount,
+			Comments:   a.assembleCommentListResult(ctx, item.Comments, userInfoMap),
 		})
 	}
 
@@ -139,13 +156,13 @@ func (a *Application) assembleCommentListResult(ctx context.Context, data []*v1.
 }
 
 func (a *Application) ListComment4Video(ctx context.Context, request *svapi.ListComment4VideoRequest) (*svapi.ListComment4VideoResponse, error) {
-	data, err := a.core.ListComment4Video(ctx, request.VideoId)
+	data, err := a.core.ListComment4Video(ctx, request.VideoId, request.Pagination.Page, request.Pagination.Size)
 	if err != nil {
 		log.Context(ctx).Errorf("failed to list comment for video: %v", err)
 		return nil, errorx.New(1, "获取评论失败")
 	}
 
-	result := a.assembleCommentListResult(ctx, data)
+	result := a.assembleCommentListResult(ctx, data, nil)
 
 	return &svapi.ListComment4VideoResponse{
 		Comments: result,
@@ -178,13 +195,13 @@ func (a *Application) RemoveComment(ctx context.Context, request *svapi.RemoveCo
 }
 
 func (a *Application) ListChildComment(ctx context.Context, request *svapi.ListChildCommentRequest) (*svapi.ListChildCommentResponse, error) {
-	data, err := a.core.ListChildComments(ctx, request.CommentId)
+	data, err := a.core.ListChildComments(ctx, request.CommentId, request.Pagination.Page, request.Pagination.GetSize())
 	if err != nil {
 		log.Context(ctx).Errorf("failed to list child comment: %v", err)
 		return nil, errorx.New(1, "获取回复失败")
 	}
 
-	result := a.assembleCommentListResult(ctx, data)
+	result := a.assembleCommentListResult(ctx, data, nil)
 
 	return &svapi.ListChildCommentResponse{
 		Comments: result,

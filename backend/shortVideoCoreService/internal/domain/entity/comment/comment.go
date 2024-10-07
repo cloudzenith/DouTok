@@ -72,11 +72,11 @@ func (c *Comment) ToModel() *model.Comment {
 
 func (c *Comment) GetChildCommentProto() []*v1.Comment {
 	var result []*v1.Comment
-	if len(c.Comments) == 0 {
+	if len(c.FirstComments) == 0 {
 		return result
 	}
 
-	for _, item := range c.Comments {
+	for _, item := range c.FirstComments {
 		result = append(result, item.ToProto())
 	}
 

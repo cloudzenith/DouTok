@@ -6,7 +6,6 @@ import (
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/application/interface/collectionserviceiface"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/utils"
 	"github.com/go-kratos/kratos/v2/log"
-	"math"
 )
 
 type Application struct {
@@ -68,11 +67,15 @@ func (a *Application) RemoveCollection(ctx context.Context, request *v1.RemoveCo
 }
 
 func (a *Application) ListCollection(ctx context.Context, request *v1.ListCollectionRequest) (*v1.ListCollectionResponse, error) {
+	limit, offset := utils.GetLimitOffset(
+		int(request.GetPagination().GetPage()),
+		int(request.GetPagination().GetSize()),
+	)
+
 	data, err := a.collection.ListCollection(
 		ctx,
 		request.GetUserId(),
-		int(request.GetPagination().GetSize()),
-		int(request.GetPagination().GetPage()),
+		limit, offset,
 	)
 	if err != nil {
 		log.Context(ctx).Errorf("ListCollection error: %v", err)
@@ -96,7 +99,7 @@ func (a *Application) ListCollection(ctx context.Context, request *v1.ListCollec
 		Collections: collections,
 		Pagination: &v1.PaginationResponse{
 			Page:  request.Pagination.Page,
-			Total: int32(math.Ceil(float64(data.Count) / float64(request.Pagination.Size))),
+			Total: utils.GetPageInfo(data.Count, request.Pagination.Page, request.Pagination.Size),
 			Count: int32(data.Count),
 		},
 	}, nil
@@ -158,7 +161,7 @@ func (a *Application) ListCollectionVideo(ctx context.Context, request *v1.ListC
 		VideoIdList: data.Data,
 		Pagination: &v1.PaginationResponse{
 			Page:  request.Pagination.Page,
-			Total: int32(math.Ceil(float64(data.Count) / float64(request.Pagination.Size))),
+			Total: utils.GetPageInfo(data.Count, request.Pagination.Page, request.Pagination.Size),
 			Count: int32(data.Count),
 		},
 	}, nil

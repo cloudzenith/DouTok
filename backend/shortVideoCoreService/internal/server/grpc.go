@@ -3,6 +3,7 @@ package server
 import (
 	v1 "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/conf"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/middleware"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/server/collectionappprovider"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/server/commentappprovider"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/server/favoriteappprovider"
@@ -27,6 +28,7 @@ func NewGRPCServer(config *conf.Config) *grpc.Server {
 			validate.Validator(),
 			// 此处依赖的全局 logger 会跟随 launcher 的配置而变化
 			logging.Server(log.GetLogger()),
+			middleware.RequestMonitor(),
 		),
 	}
 

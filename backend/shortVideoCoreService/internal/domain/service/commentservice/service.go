@@ -34,7 +34,7 @@ func (s *Service) CreateComment(ctx context.Context, c *comment.Comment) (cmt *c
 	}
 
 	// 存在父评论
-	if c.ParentId != nil {
+	if c.ParentId != nil && *c.ParentId > 0 {
 		var parent *model.Comment
 		parent, err = s.comment.GetById(ctx, *c.ParentId)
 		if err != nil {

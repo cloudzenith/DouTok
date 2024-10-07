@@ -26,7 +26,7 @@ func (a *Adapter) RemoveFollow(ctx context.Context, userId, targetUserId int64) 
 	return respcheck.Check[*v1.Metadata](resp, err)
 }
 
-func (a *Adapter) ListFollow(ctx context.Context, userId int64, followType v1.FollowType, page, size int32) ([]int64, error) {
+func (a *Adapter) ListFollow(ctx context.Context, userId int64, followType v1.FollowType, page, size int32) (*v1.ListFollowingResponse, error) {
 	req := &v1.ListFollowingRequest{
 		UserId:     userId,
 		FollowType: followType,
@@ -37,10 +37,10 @@ func (a *Adapter) ListFollow(ctx context.Context, userId int64, followType v1.Fo
 	}
 
 	resp, err := a.follow.ListFollowing(ctx, req)
-	return respcheck.CheckT[[]int64, *v1.Metadata](
+	return respcheck.CheckT[*v1.ListFollowingResponse, *v1.Metadata](
 		resp, err,
-		func() []int64 {
-			return resp.UserIdList
+		func() *v1.ListFollowingResponse {
+			return resp
 		},
 	)
 }

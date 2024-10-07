@@ -22,9 +22,13 @@ func (a *Adapter) CreateComment(ctx context.Context, options ...commentoptions.C
 	)
 }
 
-func (a *Adapter) ListComment4Video(ctx context.Context, videoId int64) ([]*v1.Comment, error) {
+func (a *Adapter) ListComment4Video(ctx context.Context, videoId int64, page, size int32) ([]*v1.Comment, error) {
 	req := &v1.ListComment4VideoRequest{
 		VideoId: videoId,
+		Pagination: &v1.PaginationRequest{
+			Page: page,
+			Size: size,
+		},
 	}
 
 	resp, err := a.comment.ListComment4Video(ctx, req)
@@ -45,9 +49,13 @@ func (a *Adapter) RemoveComment(ctx context.Context, commentId int64) error {
 	return respcheck.Check[*v1.Metadata](resp, err)
 }
 
-func (a *Adapter) ListChildComments(ctx context.Context, commentId int64) ([]*v1.Comment, error) {
+func (a *Adapter) ListChildComments(ctx context.Context, commentId int64, page, size int32) ([]*v1.Comment, error) {
 	req := &v1.ListChildComment4CommentRequest{
 		CommentId: commentId,
+		Pagination: &v1.PaginationRequest{
+			Page: page,
+			Size: size,
+		},
 	}
 
 	resp, err := a.comment.ListChildComment4Comment(ctx, req)

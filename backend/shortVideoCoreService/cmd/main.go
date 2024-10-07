@@ -5,6 +5,7 @@ import (
 	"github.com/TremblingV5/box/dbtx"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/components/mysqlx"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/launcher"
+	"github.com/cloudzenith/DouTok/backend/gopkgs/snowflakeutil"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/conf"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/query"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/utils"
@@ -34,6 +35,7 @@ func main() {
 			}
 			// init global resources
 			utils.InitDefaultSnowflakeNode(cfg.App.Node)
+			snowflakeutil.InitDefaultSnowflakeNode(cfg.App.Node)
 			query.SetDefault(mysqlx.GetDBClient(context.Background()))
 
 			return server.NewGRPCServer(cfg)
