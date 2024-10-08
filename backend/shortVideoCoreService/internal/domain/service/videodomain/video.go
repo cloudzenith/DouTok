@@ -116,6 +116,21 @@ func (uc *VideoUseCase) GetVideoById(ctx context.Context, videoId int64) (*entit
 	return videoEntity, nil
 }
 
+func (uc *VideoUseCase) GetVideoByIdList(ctx context.Context, videoIdList []int64) ([]*entity.Video, error) {
+	data, err := uc.videoRepo.FindByIdList(ctx, videoIdList)
+	if err != nil {
+		log.Context(ctx).Errorf("GetVideoByIdList error: %v", err)
+		return nil, err
+	}
+
+	var result []*entity.Video
+	for _, item := range data {
+		result = append(result, entity.FromVideoModel(item))
+	}
+
+	return result, nil
+}
+
 func (uc *VideoUseCase) ListPublishedVideo(ctx context.Context, request *service_dto.ListPublishedVideoRequest) (*service_dto.ListPublishedVideoResponse, error) {
 	latestTime := time.Now().UTC().Unix()
 	if request.LatestTime > 0 {

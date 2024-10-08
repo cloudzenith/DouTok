@@ -33,8 +33,7 @@ service VideoService {
         };
     };
 
-    // 标记视频已经成功上传
-    rpc MarkVideoUploaded(MarkVideoUploadedRequest) returns (MarkVideoUploadedResponse);
+    rpc GetVideoByIdList(GetVideoByIdListRequest) returns (GetVideoByIdListResponse) {};
 }
 
 message Author {
@@ -111,10 +110,11 @@ message ListPublishedVideoResponse {
     PaginationResponse pagination = 3;
 }
 
-message MarkVideoUploadedRequest {
-
+message GetVideoByIdListRequest {
+    repeated int64 video_id_list = 1;
 }
 
-message MarkVideoUploadedResponse {
-
+message GetVideoByIdListResponse {
+    Metadata meta = 1;
+    repeated Video videos = 2;
 }

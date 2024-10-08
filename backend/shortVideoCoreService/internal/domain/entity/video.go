@@ -59,6 +59,19 @@ func (v *Video) ToVideoModel() *model.Video {
 	}
 }
 
+func (v *Video) ToPB() *v1.Video {
+	return &v1.Video{
+		Id:            v.ID,
+		Title:         v.Title,
+		Description:   v.Description,
+		PlayUrl:       v.VideoURL,
+		CoverUrl:      v.CoverURL,
+		IsFavorite:    v.IsFavorite,
+		FavoriteCount: v.LikeCount,
+		CommentCount:  v.CommentCount,
+	}
+}
+
 func FromVideoModel(video *model.Video) *Video {
 	if video == nil {
 		return nil

@@ -72,4 +72,14 @@ func (a *AccountApplication) CheckAccount(ctx context.Context, request *api.Chec
 	}, nil
 }
 
+func (a *AccountApplication) Bind(ctx context.Context, request *api.BindRequest) (*api.BindResponse, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (a *AccountApplication) Unbind(ctx context.Context, request *api.UnbindRequest) (*api.UnbindResponse, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
 var _ api.AccountServiceServer = (*AccountApplication)(nil)

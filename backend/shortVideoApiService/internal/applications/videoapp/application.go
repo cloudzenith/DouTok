@@ -9,6 +9,7 @@ import (
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/adapter/svcoreadapter/videooptions"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/utils/claims"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/utils/errorx"
+	v1 "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
@@ -62,6 +63,43 @@ func (a *Application) GetVideoById(ctx context.Context, request *svapi.GetVideoB
 	}, nil
 }
 
+func (a *Application) assembleVideoList(ctx context.Context, userId int64, data []*v1.Video) ([]*svapi.Video, error) {
+	var result []*svapi.Video
+
+	var videoIdList []int64
+	for _, video := range data {
+		videoIdList = append(videoIdList, video.GetId())
+	}
+
+	isFavoriteMap, err := a.core.IsUserFavoriteVideo(ctx, userId, videoIdList)
+	if err != nil {
+		// 弱依赖
+		log.Context(ctx).Warnf("failed to check favorite video: %v", err)
+	}
+
+	for _, video := range data {
+		isFavorite, ok := isFavoriteMap[video.GetId()]
+
+		result = append(result, &svapi.Video{
+			Id:            video.GetId(),
+			Title:         video.Title,
+			PlayUrl:       video.PlayUrl,
+			CoverUrl:      video.CoverUrl,
+			FavoriteCount: video.FavoriteCount,
+			CommentCount:  video.CommentCount,
+			IsFavorite:    isFavorite && ok,
+			Author: &svapi.VideoAuthor{
+				Id:          video.Author.Id,
+				Name:        video.Author.Name,
+				Avatar:      video.Author.Avatar,
+				IsFollowing: video.Author.IsFollowing != 0,
+			},
+		})
+	}
+
+	return result, nil
+}
+
 func (a *Application) listPublishedList(ctx context.Context, userId int64, page, size int32) (*svapi.ListPublishedVideoResponse, error) {
 	resp, err := a.core.ListUserPublishedList(ctx, userId, page, size)
 	if err != nil {
@@ -69,8 +107,14 @@ func (a *Application) listPublishedList(ctx context.Context, userId int64, page,
 		return nil, errorx.New(1, "failed to list published video")
 	}
 
+	videoList, err := a.assembleVideoList(ctx, userId, resp.Videos)
+	if err != nil {
+		log.Context(ctx).Errorf("failed to assemble video list: %v", err)
+		return nil, errorx.New(1, "failed to assemble video list")
+	}
+
 	return &svapi.ListPublishedVideoResponse{
-		VideoList: dto.ToPBVideoList(resp.Videos),
+		VideoList: videoList,
 		Pagination: &svapi.PaginationResponse{
 			Page:  resp.Pagination.Page,
 			Total: resp.Pagination.Total,

@@ -75,9 +75,9 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 }
 
 type queryCtx struct {
-	Account  *accountDo
-	File     *fileDo
-	Template *templateDo
+	Account  IAccountDo
+	File     IFileDo
+	Template ITemplateDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {

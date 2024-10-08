@@ -5,8 +5,10 @@ import (
 	v1 "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1"
 	service_dto "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/application/dto"
 	domain_dto "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/dto"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/videodomain"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/service/videodomain"
 	infra_dto "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/dto"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/utils"
+	"github.com/go-kratos/kratos/v2/log"
 )
 
 type VideoApplication struct {
@@ -87,5 +89,25 @@ func (s *VideoApplication) ListPublishedVideo(ctx context.Context, in *v1.ListPu
 		},
 		Videos:     service_dto.ToPBVideoList(resp.Videos),
 		Pagination: infra_dto.ToPBPaginationResponse(resp.Pagination),
+	}, nil
+}
+
+func (s *VideoApplication) GetVideoByIdList(ctx context.Context, in *v1.GetVideoByIdListRequest) (*v1.GetVideoByIdListResponse, error) {
+	data, err := s.videoUsecase.GetVideoByIdList(ctx, in.VideoIdList)
+	if err != nil {
+		log.Context(ctx).Errorf("GetVideoByIdList error: %v", err)
+		return &v1.GetVideoByIdListResponse{
+			Meta: utils.GetMetaWithError(err),
+		}, nil
+	}
+
+	var result []*v1.Video
+	for _, item := range data {
+		result = append(result, item.ToPB())
+	}
+
+	return &v1.GetVideoByIdListResponse{
+		Meta:   utils.GetSuccessMeta(),
+		Videos: result,
 	}, nil
 }

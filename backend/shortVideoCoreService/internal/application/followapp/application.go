@@ -1,0 +1,68 @@
+package followapp
+
+import (
+	"context"
+	v1 "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/application/interface/followserviceiface"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/utils"
+	"github.com/go-kratos/kratos/v2/log"
+)
+
+type Application struct {
+	follow followserviceiface.FollowService
+	v1.UnimplementedFollowServiceServer
+}
+
+func New(follow followserviceiface.FollowService) *Application {
+	return &Application{
+		follow: follow,
+	}
+}
+
+func (a *Application) AddFollow(ctx context.Context, request *v1.AddFollowRequest) (*v1.AddFollowResponse, error) {
+	if err := a.follow.AddFollow(ctx, request.UserId, request.TargetUserId); err != nil {
+		log.Context(ctx).Errorf("failed to add follow: %v", err)
+		return &v1.AddFollowResponse{
+			Meta: utils.GetMetaWithError(err),
+		}, nil
+	}
+
+	return &v1.AddFollowResponse{
+		Meta: utils.GetSuccessMeta(),
+	}, nil
+}
+
+func (a *Application) RemoveFollow(ctx context.Context, request *v1.RemoveFollowRequest) (*v1.RemoveFollowResponse, error) {
+	if err := a.follow.RemoveFollow(ctx, request.UserId, request.TargetUserId); err != nil {
+		log.Context(ctx).Errorf("failed to remove follow: %v", err)
+		return &v1.RemoveFollowResponse{
+			Meta: utils.GetMetaWithError(err),
+		}, nil
+	}
+
+	return &v1.RemoveFollowResponse{
+		Meta: utils.GetSuccessMeta(),
+	}, nil
+}
+
+func (a *Application) ListFollowing(ctx context.Context, request *v1.ListFollowingRequest) (*v1.ListFollowingResponse, error) {
+	data, err := a.follow.ListFollowing(ctx, request.UserId, request.FollowType, request.Pagination)
+	if err != nil {
+		log.Context(ctx).Errorf("failed to list follow: %v", err)
+		return &v1.ListFollowingResponse{
+			Meta: utils.GetMetaWithError(err),
+		}, nil
+	}
+
+	return &v1.ListFollowingResponse{
+		Meta:       utils.GetSuccessMeta(),
+		UserIdList: data.UserIdList,
+		Pagination: &v1.PaginationResponse{
+			Page:  request.Pagination.Page,
+			Total: utils.GetPageInfo(data.Count, request.Pagination.Page, request.Pagination.Size),
+			Count: int32(data.Count),
+		},
+	}, nil
+}
+
+//var _ v1.FollowServiceServer = (*Application)(nil)

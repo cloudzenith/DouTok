@@ -26,6 +26,8 @@ service UserService {
             body: "*"
         };
     };
+
+    rpc GetUserByIdList(GetUserByIdListRequest) returns (GetUserByIdListResponse) {};
 }
 
 message User {
@@ -79,4 +81,13 @@ message UpdateUserInfoResponse {
 enum UpdateUserImageType {
     AVATAR = 0;
     BACKGROUND_IMAGE = 1;
+}
+
+message GetUserByIdListRequest {
+    repeated int64 user_id_list = 1;
+}
+
+message GetUserByIdListResponse {
+    repeated User user_list = 1;
+    Metadata meta = 2;
 }

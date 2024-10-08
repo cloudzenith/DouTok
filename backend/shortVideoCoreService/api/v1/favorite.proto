@@ -37,6 +37,7 @@ message AddFavoriteRequest {
     FavoriteType type = 2;
     // @gotags: json:"id,omitempty,string"
     int64 id = 3;
+    int64 user_id = 4;
 }
 
 message AddFavoriteResponse {
@@ -48,6 +49,7 @@ message RemoveFavoriteRequest {
     FavoriteType type = 2;
     // @gotags: json:"id,omitempty,string"
     int64 id = 3;
+    int64 user_id = 4;
 }
 
 message RemoveFavoriteResponse {
@@ -58,6 +60,7 @@ message ListFavoriteRequest {
     FavoriteAggregateType aggregate_type = 1;
     int64 id = 2;
     PaginationRequest pagination = 3;
+    FavoriteType favorite_type = 4;
 }
 
 message ListFavoriteResponse {
@@ -68,12 +71,23 @@ message ListFavoriteResponse {
 
 message CountFavoriteRequest {
     FavoriteAggregateType aggregate_type = 1;
-    int64 id = 2;
+    repeated int64 id = 2;
+    FavoriteType favorite_type = 4;
+}
+
+message CountFavoriteResponseItem {
+    int64 biz_id = 1;
+    int64 count = 2;
 }
 
 message CountFavoriteResponse {
     Metadata meta = 1;
-    int64 count = 2;
+    repeated CountFavoriteResponseItem items = 2;
+}
+
+message IsFavoriteRequestItem {
+    int64 biz_id = 3;
+    int64 user_id = 4;
 }
 
 message IsFavoriteRequest {
@@ -81,9 +95,17 @@ message IsFavoriteRequest {
     FavoriteType type = 2;
     int64 biz_id = 3;
     int64 user_id = 4;
+    repeated IsFavoriteRequestItem items = 5;
+}
+
+message IsFavoriteResponseItem {
+    int64 biz_id = 1;
+    int64 user_id = 2;
+    bool is_favorite = 3;
 }
 
 message IsFavoriteResponse {
     Metadata meta = 1;
     bool is_favorite = 2;
+    repeated IsFavoriteResponseItem result = 3;
 }

@@ -5,7 +5,8 @@ import (
 	v1 "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/dto"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/entity"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/userdomain"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/service/userdomain"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/utils"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
@@ -68,5 +69,25 @@ func (s *UserApplication) GetUserInfo(ctx context.Context, in *v1.GetUserInfoReq
 			BizCode: 0,
 			Message: "success",
 		},
+	}, nil
+}
+
+func (s *UserApplication) GetUserByIdList(ctx context.Context, in *v1.GetUserByIdListRequest) (*v1.GetUserByIdListResponse, error) {
+	data, err := s.userUsecase.GetUserByIdList(ctx, in.UserIdList)
+	if err != nil {
+		log.Context(ctx).Errorf("failed to get user by id list: %v", err)
+		return &v1.GetUserByIdListResponse{
+			Meta: utils.GetMetaWithError(err),
+		}, nil
+	}
+
+	var users []*v1.User
+	for _, user := range data {
+		users = append(users, user.ToUserResp())
+	}
+
+	return &v1.GetUserByIdListResponse{
+		Meta:     utils.GetSuccessMeta(),
+		UserList: users,
 	}, nil
 }

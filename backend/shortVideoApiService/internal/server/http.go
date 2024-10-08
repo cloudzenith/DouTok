@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/middlewares/httprespwrapper"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/api/svapi"
+	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/middlewares"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/utils/claims"
 	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
 	"github.com/go-kratos/kratos/v2/middleware/selector"
@@ -37,6 +38,7 @@ func NewHttpServer() *http.Server {
 			),
 		),
 		http.Middleware(
+			middlewares.RequestMonitor(),
 			selector.Server(
 				jwt.Server(
 					func(token *jwt5.Token) (interface{}, error) {
@@ -57,5 +59,9 @@ func NewHttpServer() *http.Server {
 	svapi.RegisterUserServiceHTTPServer(srv, initUserApp())
 	svapi.RegisterShortVideoCoreVideoServiceHTTPServer(srv, initVideoApp())
 	svapi.RegisterFileServiceHTTPServer(srv, initFileApp())
+	svapi.RegisterCollectionServiceHTTPServer(srv, initCollectionApp())
+	svapi.RegisterCommentServiceHTTPServer(srv, initCommentApp())
+	svapi.RegisterFavoriteServiceHTTPServer(srv, initFavoriteApp())
+	svapi.RegisterFollowServiceHTTPServer(srv, initFollowApp())
 	return srv
 }

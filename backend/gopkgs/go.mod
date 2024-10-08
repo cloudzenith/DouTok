@@ -31,6 +31,7 @@ require (
 require (
 	dario.cat/mergo v1.0.0 // indirect
 	github.com/armon/go-metrics v0.4.1 // indirect
+	github.com/bsm/redislock v0.9.4 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20230717121745-296ad89f973d // indirect
 	github.com/chenzhuoyu/iasm v0.9.1 // indirect

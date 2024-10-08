@@ -14,6 +14,7 @@ type Account struct {
 	Password  string `gorm:"column:password;type:varchar(64);not null" json:"password"`
 	Salt      string `gorm:"column:salt;type:varchar(64);not null" json:"salt"`
 	IsDeleted bool   `gorm:"column:is_deleted;type:tinyint(1);not null" json:"is_deleted"`
+	Number    string `gorm:"column:number;type:varchar(15);not null;comment:doutok号" json:"number"` // doutok号
 }
 
 // TableName Account's table name

@@ -9,20 +9,23 @@ import "validate/validate.proto";
 import "v1/base.proto";
 
 message Comment {
-    // @gotags: json:"id,omitempty,string"
     int64 id = 1; // 评论id
-    // @gotags: json:"videoId,omitempty,string"
     int64 video_id = 2; // 视频id
     string content = 3; // 评论内容
     string date = 4; // 评论日期
     string like_count = 5; // 点赞数
     string reply_count = 6; // 回复数
+    int64 user_id = 7; // 用户id
+    int64 parent_id = 8; // 父评论id
+    int64 reply_user_id = 9; // 回复用户id
+    repeated Comment comments = 10; // 子评论
 }
 
 service CommentService {
     rpc CreateComment(CreateCommentRequest) returns (CreateCommentResponse);
     rpc RemoveComment(RemoveCommentRequest) returns (RemoveCommentResponse);
     rpc ListComment4Video(ListComment4VideoRequest) returns (ListComment4VideoResponse);
+    rpc ListChildComment4Comment(ListChildComment4CommentRequest) returns (ListChildComment4CommentResponse);
     rpc GetCommentById(GetCommentByIdRequest) returns (GetCommentByIdResponse);
     rpc CountComment4Video(CountComment4VideoRequest) returns (CountComment4VideoResponse);
     rpc CountComment4User(CountComment4UserRequest) returns (CountComment4UserResponse);
@@ -32,6 +35,8 @@ message CreateCommentRequest {
     int64 video_id = 1; // 视频id
     int64 user_id = 2; // 用户id
     string content = 3; // 评论内容
+    int64 parent_id = 4; // 父评论id
+    int64 reply_user_id = 5; // 回复用户id
 }
 
 message CreateCommentResponse {
@@ -54,6 +59,17 @@ message ListComment4VideoRequest {
 }
 
 message ListComment4VideoResponse {
+    Metadata meta = 1;
+    repeated Comment comments = 2;
+    PaginationResponse pagination = 3;
+}
+
+message ListChildComment4CommentRequest {
+    int64 comment_id = 1;
+    PaginationRequest pagination = 2;
+}
+
+message ListChildComment4CommentResponse {
     Metadata meta = 1;
     repeated Comment comments = 2;
     PaginationResponse pagination = 3;

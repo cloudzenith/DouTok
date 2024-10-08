@@ -12,16 +12,16 @@ const TableNameVideo = "video"
 
 // Video mapped from table <video>
 type Video struct {
-	ID           int64     `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
-	UserID       int64     `gorm:"column:user_id" json:"user_id"`
-	Title        string    `gorm:"column:title" json:"title"`
-	Description  string    `gorm:"column:description" json:"description"`
-	VideoURL     string    `gorm:"column:video_url" json:"video_url"`
-	CoverURL     string    `gorm:"column:cover_url" json:"cover_url"`
-	LikeCount    int64     `gorm:"column:like_count" json:"like_count"`
-	CommentCount int64     `gorm:"column:comment_count" json:"comment_count"`
-	CreatedAt    time.Time `gorm:"column:created_at;not null;default:CURRENT_TIMESTAMP" json:"created_at"`
-	UpdatedAt    time.Time `gorm:"column:updated_at;not null;default:CURRENT_TIMESTAMP" json:"updated_at"`
+	ID           int64     `gorm:"column:id;type:bigint;primaryKey;autoIncrement:true" json:"id"`
+	UserID       int64     `gorm:"column:user_id;type:bigint;not null" json:"user_id"`
+	Title        string    `gorm:"column:title;type:varchar(50);not null" json:"title"`
+	Description  string    `gorm:"column:description;type:varchar(255);not null" json:"description"`
+	VideoURL     string    `gorm:"column:video_url;type:varchar(255);not null" json:"video_url"`
+	CoverURL     string    `gorm:"column:cover_url;type:varchar(255);not null" json:"cover_url"`
+	LikeCount    int64     `gorm:"column:like_count;type:bigint;not null" json:"like_count"`
+	CommentCount int64     `gorm:"column:comment_count;type:bigint;not null" json:"comment_count"`
+	CreatedAt    time.Time `gorm:"column:created_at;type:timestamp;not null;default:CURRENT_TIMESTAMP" json:"created_at"`
+	UpdatedAt    time.Time `gorm:"column:updated_at;type:timestamp;not null;default:CURRENT_TIMESTAMP" json:"updated_at"`
 }
 
 // TableName Video's table name

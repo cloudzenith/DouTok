@@ -36,6 +36,10 @@ func (r *VideoRepo) FindByID(ctx context.Context, tx *query.Query, id int64) (*m
 	return video, nil
 }
 
+func (r *VideoRepo) FindByIdList(ctx context.Context, idList []int64) ([]*model.Video, error) {
+	return query.Q.WithContext(ctx).Video.Where(query.Q.Video.ID.In(idList...)).Find()
+}
+
 func (r *VideoRepo) GetVideoList(
 	ctx context.Context, tx *query.Query, userId int64, latestTime int64, pageRequest *infra_dto.PaginationRequest,
 ) ([]*model.Video, *infra_dto.PaginationResponse, error) {

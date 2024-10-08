@@ -10,6 +10,7 @@ paths:
         get:
             tags:
                 - CollectionService
+            description: 列出用户的收藏夹
             operationId: CollectionService_ListCollection
             parameters:
                 - name: pagination.page
@@ -40,6 +41,7 @@ paths:
         put:
             tags:
                 - CollectionService
+            description: 更新收藏夹信息
             operationId: CollectionService_UpdateCollection
             requestBody:
                 content:
@@ -65,6 +67,7 @@ paths:
         post:
             tags:
                 - CollectionService
+            description: 创建收藏夹
             operationId: CollectionService_CreateCollection
             requestBody:
                 content:
@@ -90,6 +93,7 @@ paths:
         delete:
             tags:
                 - CollectionService
+            description: 删除收藏夹
             operationId: CollectionService_RemoveCollection
             requestBody:
                 content:
@@ -116,6 +120,7 @@ paths:
         get:
             tags:
                 - CollectionService
+            description: 列出收藏夹中的视频
             operationId: CollectionService_ListVideo4Collection
             parameters:
                 - name: collectionId
@@ -151,6 +156,7 @@ paths:
         post:
             tags:
                 - CollectionService
+            description: 将视频添加到收藏夹
             operationId: CollectionService_AddVideo2Collection
             requestBody:
                 content:
@@ -176,6 +182,7 @@ paths:
         delete:
             tags:
                 - CollectionService
+            description: 从收藏夹中移除视频
             operationId: CollectionService_RemoveVideoFromCollection
             requestBody:
                 content:
@@ -202,6 +209,7 @@ paths:
         post:
             tags:
                 - CommentService
+            description: 创建评论
             operationId: CommentService_CreateComment
             requestBody:
                 content:
@@ -227,6 +235,7 @@ paths:
         delete:
             tags:
                 - CommentService
+            description: 删除评论
             operationId: CommentService_RemoveComment
             requestBody:
                 content:
@@ -249,10 +258,47 @@ paths:
                                         description: Status message. Could be displayed to user.
                                     data:
                                         $ref: '#/components/schemas/svapi.RemoveCommentResponse'
+    /comment/child:
+        get:
+            tags:
+                - CommentService
+            operationId: CommentService_ListChildComment
+            parameters:
+                - name: commentId
+                  in: query
+                  description: '@gotags: json:"commentId,omitempty,string"'
+                  schema:
+                    type: string
+                - name: pagination.page
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: pagination.size
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                properties:
+                                    code:
+                                        type: integer
+                                        description: Status code. Zero means success.
+                                    msg:
+                                        type: string
+                                        description: Status message. Could be displayed to user.
+                                    data:
+                                        $ref: '#/components/schemas/svapi.ListChildCommentResponse'
     /comment/video:
         get:
             tags:
                 - CommentService
+            description: 列出视频的评论
             operationId: CommentService_ListComment4Video
             parameters:
                 - name: videoId
@@ -624,6 +670,57 @@ paths:
                                         description: Status message. Could be displayed to user.
                                     data:
                                         $ref: '#/components/schemas/svapi.RegisterResponse'
+    /user/voucher:
+        post:
+            tags:
+                - UserService
+            operationId: UserService_BindUserVoucher
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/svapi.BindUserVoucherRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                properties:
+                                    code:
+                                        type: integer
+                                        description: Status code. Zero means success.
+                                    msg:
+                                        type: string
+                                        description: Status message. Could be displayed to user.
+                                    data:
+                                        $ref: '#/components/schemas/svapi.BindUserVoucherResponse'
+        delete:
+            tags:
+                - UserService
+            operationId: UserService_UnbindUserVoucher
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/svapi.UnbindUserVoucherRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                properties:
+                                    code:
+                                        type: integer
+                                        description: Status code. Zero means success.
+                                    msg:
+                                        type: string
+                                        description: Status message. Could be displayed to user.
+                                    data:
+                                        $ref: '#/components/schemas/svapi.UnbindUserVoucherResponse'
     /video/feed:
         post:
             tags:
@@ -850,6 +947,17 @@ components:
         svapi.AddVideo2CollectionResponse:
             type: object
             properties: {}
+        svapi.BindUserVoucherRequest:
+            type: object
+            properties:
+                voucherType:
+                    type: integer
+                    format: enum
+                voucher:
+                    type: string
+        svapi.BindUserVoucherResponse:
+            type: object
+            properties: {}
         svapi.Collection:
             type: object
             properties:
@@ -889,7 +997,12 @@ components:
                 videoId:
                     type: string
                     description: '@gotags: json:"videoId,omitempty,string"'
+                parentId:
+                    type: string
+                    description: '@gotags: json:"parentId,omitempty,string"'
                 user:
+                    $ref: '#/components/schemas/svapi.CommentUser'
+                replyUser:
                     $ref: '#/components/schemas/svapi.CommentUser'
                 content:
                     type: string
@@ -899,6 +1012,10 @@ components:
                     type: string
                 replyCount:
                     type: string
+                comments:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/svapi.Comment'
         svapi.CommentUser:
             type: object
             properties:
@@ -931,6 +1048,12 @@ components:
                     description: '@gotags: json:"videoId,omitempty,string"'
                 content:
                     type: string
+                parentId:
+                    type: string
+                    description: '@gotags: json:"parentId,omitempty,string"'
+                replyUserId:
+                    type: string
+                    description: '@gotags: json:"replyUserId,omitempty,string"'
         svapi.CreateCommentResponse:
             type: object
             properties:
@@ -998,6 +1121,15 @@ components:
                 video:
                     $ref: '#/components/schemas/svapi.Video'
             description: 获取视频信息响应消息类型
+        svapi.ListChildCommentResponse:
+            type: object
+            properties:
+                comments:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/svapi.Comment'
+                pagination:
+                    $ref: '#/components/schemas/svapi.PaginationResponse'
         svapi.ListCollectionResponse:
             type: object
             properties:
@@ -1322,6 +1454,17 @@ components:
                 order:
                     type: integer
                     format: enum
+        svapi.UnbindUserVoucherRequest:
+            type: object
+            properties:
+                voucherType:
+                    type: integer
+                    format: enum
+                voucher:
+                    type: string
+        svapi.UnbindUserVoucherResponse:
+            type: object
+            properties: {}
         svapi.UpdateCollectionRequest:
             type: object
             properties:
