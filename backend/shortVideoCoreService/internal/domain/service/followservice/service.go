@@ -63,4 +63,14 @@ func (s *Service) ListFollowing(ctx context.Context, userId int64, followType v1
 	}, nil
 }
 
+func (s *Service) ListFollowingInGivenList(ctx context.Context, userId int64, targetUserIdList []int64) ([]int64, error) {
+	result, err := s.follow.ListFollowingInGivenList(ctx, userId, targetUserIdList)
+	if err != nil {
+		log.Context(ctx).Errorf("failed to list following in given list: %v", err)
+		return nil, err
+	}
+
+	return result, nil
+}
+
 var _ followserviceiface.FollowService = (*Service)(nil)

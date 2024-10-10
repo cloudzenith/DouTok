@@ -9,7 +9,12 @@ import {
   UserOutlined
 } from "@ant-design/icons";
 
-import { UserServiceLoginResponse, useUserServiceLogin } from "@/api/svapi/api";
+import {
+  UserServiceGetUserInfoResponse,
+  UserServiceLoginResponse,
+  useUserServiceGetUserInfo,
+  useUserServiceLogin
+} from "@/api/svapi/api";
 
 import "./LoginComponent.css";
 import useUserStore from "@/components/UserStore/useUserStore";
@@ -27,7 +32,6 @@ export function LoginComponent(props: LoginComponentProps) {
 
   const [loginType, setLoginType] = useState<LoginType>("phone");
   const loginMutate = useUserServiceLogin({});
-
   const submit4Login = (formData: Record<string, string>) => {
     loginMutate
       .mutate({

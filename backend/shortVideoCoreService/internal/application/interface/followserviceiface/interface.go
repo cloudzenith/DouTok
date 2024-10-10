@@ -14,4 +14,5 @@ type FollowService interface {
 	AddFollow(ctx context.Context, userId, targetUserId int64) error
 	RemoveFollow(ctx context.Context, userId, targetUserId int64) error
 	ListFollowing(ctx context.Context, userId int64, followType v1.FollowType, pagination *v1.PaginationRequest) (*ListFollowingDTO, error)
+	ListFollowingInGivenList(ctx context.Context, userId int64, targetUserIdList []int64) ([]int64, error)
 }
