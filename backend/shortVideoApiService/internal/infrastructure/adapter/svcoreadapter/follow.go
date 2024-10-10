@@ -46,5 +46,24 @@ func (a *Adapter) ListFollow(ctx context.Context, userId int64, followType v1.Fo
 }
 
 func (a *Adapter) IsFollowing(ctx context.Context, userId int64, targetUserIdList []int64) (map[int64]bool, error) {
-	req := &v1.IsF
+	req := &v1.IsFollowingRequest{
+		UserId:           userId,
+		TargetUserIdList: targetUserIdList,
+	}
+
+	resp, err := a.follow.IsFollowing(ctx, req)
+	return respcheck.CheckT[map[int64]bool, *v1.Metadata](
+		resp, err,
+		func() map[int64]bool {
+			result := make(map[int64]bool)
+			if len(resp.FollowingList) == 0 {
+				return result
+			}
+
+			for _, item := range resp.FollowingList {
+				result[item] = true
+			}
+			return result
+		},
+	)
 }

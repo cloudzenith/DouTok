@@ -106,3 +106,27 @@ func (a *Adapter) GetCollectionById(ctx context.Context, collectionId int64) (*v
 		},
 	)
 }
+
+func (a *Adapter) IsCollected(ctx context.Context, userId int64, videoIdList []int64) (map[int64]bool, error) {
+	req := &v1.IsCollectedRequest{
+		UserId:      userId,
+		VideoIdList: videoIdList,
+	}
+
+	resp, err := a.collection.IsCollected(ctx, req)
+	return respcheck.CheckT[map[int64]bool, *v1.Metadata](
+		resp, err,
+		func() map[int64]bool {
+			result := make(map[int64]bool)
+			if len(resp.VideoIdList) == 0 {
+				return result
+			}
+
+			for _, item := range resp.VideoIdList {
+				result[item] = true
+			}
+
+			return result
+		},
+	)
+}
