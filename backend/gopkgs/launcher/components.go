@@ -2,6 +2,7 @@ package launcher
 
 import (
 	"context"
+
 	"github.com/cloudzenith/DouTok/backend/gopkgs/components"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/components/consulx"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/components/etcdx"
@@ -11,6 +12,7 @@ import (
 	"github.com/cloudzenith/DouTok/backend/gopkgs/components/rmqconsumerx"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/components/rmqproducerx"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/gofer"
+
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -38,42 +40,24 @@ func NewComponentsLauncher(config config.Config) *ComponentsLauncher {
 }
 
 func launchWrapper(cfg config.Value, componentsName string) {
-	if componentsName == "mysql" {
+	switch componentsName {
+	case "mysql":
 		launchComponent(cfg, mysqlx.Init)
-		return
-	}
-
-	if componentsName == "redis" {
+	case "redis":
 		launchComponent(cfg, redisx.Init)
-		return
-	}
-
-	if componentsName == "minio" {
+	case "minio":
 		launchComponent(cfg, miniox.Init)
-		return
-	}
-
-	if componentsName == "etcd" {
+	case "etcd":
 		launchComponent(cfg, etcdx.Init)
-		return
-	}
-
-	if componentsName == "consul" {
+	case "consul":
 		launchComponent(cfg, consulx.Init)
-		return
-	}
-
-	if componentsName == "rmqconsumer" {
+	case "rmqconsumer":
 		launchComponent(cfg, rmqconsumerx.Init)
-		return
-	}
-
-	if componentsName == "rmqproducer" {
+	case "rmqproducer":
 		launchComponent(cfg, rmqproducerx.Init)
-		return
+	default:
+		panic("unknown components name: " + componentsName)
 	}
-
-	panic("unknown components name: " + componentsName)
 }
 
 func (l *ComponentsLauncher) Launch() {
