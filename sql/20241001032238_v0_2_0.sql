@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS `collection` (
 CREATE TABLE IF NOT EXISTS `collection_video` (
     id BIGINT PRIMARY KEY,
     collection_id BIGINT NOT NULL,
+    user_id BIGINT NOT NULL,
     video_id BIGINT NOT NULL,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
     create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

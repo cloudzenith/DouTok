@@ -2,12 +2,15 @@ package collectionservice
 
 import (
 	"context"
+	"errors"
+	"github.com/TremblingV5/box/dbtx"
 	v1 "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/application/interface/collectionserviceiface"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/entity/collection"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/repoiface"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/utils"
 	"github.com/go-kratos/kratos/v2/log"
+	"gorm.io/gorm"
 )
 
 type Service struct {
@@ -81,8 +84,36 @@ func (s *Service) UpdateCollection(ctx context.Context, collectionId int64, name
 	return s.collection.Update(ctx, c.ToModel())
 }
 
-func (s *Service) AddVideo2Collection(ctx context.Context, collectionId, videoId int64) error {
-	return s.collection.AddVideo2Collection(ctx, collectionId, videoId)
+func (s *Service) AddVideo2Collection(ctx context.Context, collectionId, videoId int64) (err error) {
+	ctx, persist := dbtx.WithTXPersist(ctx)
+	defer func() {
+		persist(err)
+	}()
+
+	existedCollection, err := s.collection.GetByIdTx(ctx, collectionId)
+	if err != nil {
+		log.Context(ctx).Errorf("GetCollectionById error: %v", err)
+		return err
+	}
+
+	existedRelation, err := s.collection.GetCollectionVideo(ctx, collectionId, videoId)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		log.Context(ctx).Errorf("GetCollectionVideo error: %v", err)
+		return err
+	}
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		err = s.collection.AddVideo2Collection(ctx, existedCollection.UserID, collectionId, videoId)
+		if err != nil {
+			log.Context(ctx).Errorf("AddVideo2Collection error: %v", err)
+			return err
+		}
+
+		return nil
+	}
+
+	existedRelation.IsDeleted = false
+	return s.collection.UpdateCollectionVideoTx(ctx, existedRelation)
 }
 
 func (s *Service) ListCollectionVideo(ctx context.Context, collectionId int64, pagination *v1.PaginationRequest) (*collectionserviceiface.ListCollectionVideoResult, error) {
@@ -111,6 +142,10 @@ func (s *Service) ListCollectionVideo(ctx context.Context, collectionId int64, p
 
 func (s *Service) RemoveVideo2Collection(ctx context.Context, collectionId, videoId int64) error {
 	return s.collection.RemoveVideoFromCollection(ctx, collectionId, videoId)
+}
+
+func (s *Service) ListCollectedVideoByGiven(ctx context.Context, userId int64, videoIdList []int64) ([]int64, error) {
+	return s.collection.ListCollectedVideoByGiven(ctx, userId, videoIdList)
 }
 
 var _ collectionserviceiface.CollectionService = (*Service)(nil)

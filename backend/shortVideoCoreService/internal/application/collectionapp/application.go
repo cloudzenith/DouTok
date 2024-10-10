@@ -166,3 +166,18 @@ func (a *Application) ListCollectionVideo(ctx context.Context, request *v1.ListC
 		},
 	}, nil
 }
+
+func (a *Application) IsCollected(ctx context.Context, request *v1.IsCollectedRequest) (*v1.IsCollectedResponse, error) {
+	data, err := a.collection.ListCollectedVideoByGiven(ctx, request.GetUserId(), request.GetVideoIdList())
+	if err != nil {
+		log.Context(ctx).Errorf("IsCollected error: %v", err)
+		return &v1.IsCollectedResponse{
+			Meta: utils.GetMetaWithError(err),
+		}, nil
+	}
+
+	return &v1.IsCollectedResponse{
+		Meta:        utils.GetSuccessMeta(),
+		VideoIdList: data,
+	}, nil
+}

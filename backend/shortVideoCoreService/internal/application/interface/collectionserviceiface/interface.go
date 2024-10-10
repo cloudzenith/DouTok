@@ -25,4 +25,5 @@ type CollectionService interface {
 	AddVideo2Collection(ctx context.Context, collectionId, videoId int64) error
 	RemoveVideo2Collection(ctx context.Context, collectionId, videoId int64) error
 	ListCollectionVideo(ctx context.Context, collectionId int64, pagination *v1.PaginationRequest) (*ListCollectionVideoResult, error)
+	ListCollectedVideoByGiven(ctx context.Context, userId int64, videoIdList []int64) ([]int64, error)
 }
