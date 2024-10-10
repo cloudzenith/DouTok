@@ -101,4 +101,22 @@ func (r *PersistRepository) CountFollowing(ctx context.Context, userId int64, fo
 	})
 }
 
+func (r *PersistRepository) ListFollowingInGivenList(ctx context.Context, userId int64, targetUserIdList []int64) ([]int64, error) {
+	data, err := query.Q.WithContext(ctx).Follow.Select(
+		query.Q.Follow.TargetUserID,
+	).Where(
+		query.Q.Follow.UserID.Eq(userId),
+		query.Q.Follow.TargetUserID.In(targetUserIdList...),
+	).Find()
+	if err != nil {
+		return nil, err
+	}
+
+	var result []int64
+	for _, item := range data {
+		result = append(result, item.TargetUserID)
+	}
+	return result, nil
+}
+
 var _ repoiface.FollowRepository = (*PersistRepository)(nil)

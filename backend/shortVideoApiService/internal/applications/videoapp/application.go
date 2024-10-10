@@ -46,9 +46,20 @@ func (a *Application) FeedShortVideo(ctx context.Context, request *svapi.FeedSho
 		return nil, errorx.New(1, "failed to feed short video")
 	}
 
+	videos := dto.ToPBVideoList(resp.Videos)
+
 	return &svapi.FeedShortVideoResponse{
-		Videos: dto.ToPBVideoList(resp.Videos),
+		Videos: videos,
 	}, nil
+}
+
+func (a *Application) assembleUserIsFollowing(list []*svapi.Video) {
+	var targetUserId []int64
+	for _, video := range list {
+		targetUserId = append(targetUserId, video.GetAuthor().GetId())
+	}
+
+	isFollowingMap, err := a.core.RemoveFollow()
 }
 
 func (a *Application) GetVideoById(ctx context.Context, request *svapi.GetVideoByIdRequest) (*svapi.GetVideoByIdResponse, error) {

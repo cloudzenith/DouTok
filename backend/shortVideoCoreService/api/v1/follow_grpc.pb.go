@@ -25,6 +25,7 @@ type FollowServiceClient interface {
 	AddFollow(ctx context.Context, in *AddFollowRequest, opts ...grpc.CallOption) (*AddFollowResponse, error)
 	RemoveFollow(ctx context.Context, in *RemoveFollowRequest, opts ...grpc.CallOption) (*RemoveFollowResponse, error)
 	ListFollowing(ctx context.Context, in *ListFollowingRequest, opts ...grpc.CallOption) (*ListFollowingResponse, error)
+	IsFollowing(ctx context.Context, in *IsFollowingRequest, opts ...grpc.CallOption) (*IsFollowingResponse, error)
 }
 
 type followServiceClient struct {
@@ -62,6 +63,15 @@ func (c *followServiceClient) ListFollowing(ctx context.Context, in *ListFollowi
 	return out, nil
 }
 
+func (c *followServiceClient) IsFollowing(ctx context.Context, in *IsFollowingRequest, opts ...grpc.CallOption) (*IsFollowingResponse, error) {
+	out := new(IsFollowingResponse)
+	err := c.cc.Invoke(ctx, "/shortVideoCoreService.api.v1.FollowService/IsFollowing", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FollowServiceServer is the server API for FollowService service.
 // All implementations must embed UnimplementedFollowServiceServer
 // for forward compatibility
@@ -69,6 +79,7 @@ type FollowServiceServer interface {
 	AddFollow(context.Context, *AddFollowRequest) (*AddFollowResponse, error)
 	RemoveFollow(context.Context, *RemoveFollowRequest) (*RemoveFollowResponse, error)
 	ListFollowing(context.Context, *ListFollowingRequest) (*ListFollowingResponse, error)
+	IsFollowing(context.Context, *IsFollowingRequest) (*IsFollowingResponse, error)
 	mustEmbedUnimplementedFollowServiceServer()
 }
 
@@ -84,6 +95,9 @@ func (UnimplementedFollowServiceServer) RemoveFollow(context.Context, *RemoveFol
 }
 func (UnimplementedFollowServiceServer) ListFollowing(context.Context, *ListFollowingRequest) (*ListFollowingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListFollowing not implemented")
+}
+func (UnimplementedFollowServiceServer) IsFollowing(context.Context, *IsFollowingRequest) (*IsFollowingResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsFollowing not implemented")
 }
 func (UnimplementedFollowServiceServer) mustEmbedUnimplementedFollowServiceServer() {}
 
@@ -152,6 +166,24 @@ func _FollowService_ListFollowing_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FollowService_IsFollowing_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IsFollowingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FollowServiceServer).IsFollowing(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/shortVideoCoreService.api.v1.FollowService/IsFollowing",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FollowServiceServer).IsFollowing(ctx, req.(*IsFollowingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FollowService_ServiceDesc is the grpc.ServiceDesc for FollowService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -170,6 +202,10 @@ var FollowService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListFollowing",
 			Handler:    _FollowService_ListFollowing_Handler,
+		},
+		{
+			MethodName: "IsFollowing",
+			Handler:    _FollowService_IsFollowing_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

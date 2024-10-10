@@ -44,3 +44,7 @@ func (a *Adapter) ListFollow(ctx context.Context, userId int64, followType v1.Fo
 		},
 	)
 }
+
+func (a *Adapter) IsFollowing(ctx context.Context, userId int64, targetUserIdList []int64) (map[int64]bool, error) {
+	req := &v1.IsF
+}

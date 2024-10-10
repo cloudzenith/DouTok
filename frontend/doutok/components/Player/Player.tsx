@@ -5,9 +5,15 @@ import dynamic from "next/dynamic";
 import "plyr-react/plyr.css";
 import "./Player.css";
 import { SourceInfo } from "plyr";
-import { Button } from "antd";
+import { Button, message } from "antd";
 import Avatar from "antd/es/avatar/avatar";
-import { HeartOutlined, MessageOutlined, ShareAltOutlined, StarOutlined } from "@ant-design/icons";
+import { CheckOutlined, HeartOutlined, MessageOutlined, ShareAltOutlined, StarOutlined } from "@ant-design/icons";
+import {
+  FollowServiceAddFollowResponse, SvapiVideo,
+  useFollowServiceAddFollow,
+  useFollowServiceRemoveFollow
+} from "@/api/svapi/api";
+import useUserStore from "@/components/UserStore/useUserStore";
 
 export interface PlayerProps {
   src?: string;
@@ -16,16 +22,58 @@ export interface PlayerProps {
   avatar?: string;
   username?: string;
   description?: string;
+  userId: string;
+  isCouldFollow?: boolean;
+  videoInfo: SvapiVideo;
 }
 
 const Plyr = dynamic(() => import("plyr-react"), { ssr: false });
 
 export function Player(props: PlayerProps) {
   const [haveSource, setHaveSource] = useState(false);
+  // 能否关注
+  const [isCouldFollow, setIsCouldFollow] = useState(props.isCouldFollow);
+  // 是否已关注
+  const [isFollowed, setIsFollowed] = useState(false);
 
   useEffect(() => {
     setHaveSource(true);
   }, []);
+
+  useEffect(() => {
+    setIsCouldFollow(props.isCouldFollow);
+    setIsFollowed(props.videoInfo.author?.isFollowing === true);
+  }, [props.isCouldFollow, props.videoInfo]);
+
+  const addFollowMutate = useFollowServiceAddFollow({});
+  const addFollowHandle = () => {
+    addFollowMutate.mutate({
+      userId: props.userId
+    }).then((result: FollowServiceAddFollowResponse) => {
+      if (result?.code !== 0) {
+        message.error("关注失败");
+        return;
+      }
+
+      message.info("关注成功");
+      setIsFollowed(true);
+    });
+  };
+
+  const removeFollowMutate = useFollowServiceRemoveFollow({});
+  const removeFollowMutateHandle = () => {
+    removeFollowMutate.mutate({
+      userId: props.userId
+    }).then((result: FollowServiceAddFollowResponse) => {
+      if (result?.code !== 0) {
+        message.error("取消关注失败");
+        return;
+      }
+
+      message.info("取消关注成功");
+      setIsFollowed(false);
+    })
+  };
 
   return (
     <div
@@ -79,15 +127,26 @@ export function Player(props: PlayerProps) {
               />
             </div>
             <div>
-              <Button
+              {isCouldFollow && !isFollowed && <Button
                 size={"small"}
                 block={true}
                 style={{
                   pointerEvents: "all"
                 }}
+                onClick={addFollowHandle}
               >
                 关注
-              </Button>
+              </Button>}
+              {isCouldFollow && isFollowed && <Button
+                size={"small"}
+                block={true}
+                style={{
+                  pointerEvents: "all"
+                }}
+                onClick={removeFollowMutateHandle}
+              >
+                <CheckOutlined />
+              </Button>}
             </div>
           </div>
             <div className={"mask-button-container"}>

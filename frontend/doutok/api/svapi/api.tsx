@@ -12,6 +12,139 @@ import {
   UseMutateProps
 } from "restful-react";
 export const SPEC_VERSION = "0.0.1";
+export interface SvapiAddFavoriteRequest {
+  target?: number;
+  type?: number;
+  /**
+   * @gotags: json:"id,omitempty,string"
+   */
+  id?: string;
+}
+
+// tslint:disable-next-line:no-empty-interface
+export interface SvapiAddFavoriteResponse {}
+
+export interface SvapiAddFollowRequest {
+  /**
+   * @gotags: json:"userId,omitempty,string"
+   */
+  userId?: string;
+}
+
+// tslint:disable-next-line:no-empty-interface
+export interface SvapiAddFollowResponse {}
+
+export interface SvapiAddVideo2CollectionRequest {
+  /**
+   * @gotags: json:"collectionId,omitempty,string"
+   */
+  collectionId?: string;
+  /**
+   * @gotags: json:"videoId,omitempty,string"
+   */
+  videoId?: string;
+}
+
+// tslint:disable-next-line:no-empty-interface
+export interface SvapiAddVideo2CollectionResponse {}
+
+export interface SvapiBindUserVoucherRequest {
+  voucherType?: number;
+  voucher?: string;
+}
+
+// tslint:disable-next-line:no-empty-interface
+export interface SvapiBindUserVoucherResponse {}
+
+export interface SvapiCollection {
+  /**
+   * @gotags: json:"id,omitempty,string"
+   */
+  id?: string;
+  /**
+   * @gotags: json:"userId,omitempty,string"
+   */
+  userId?: string;
+  name?: string;
+  description?: string;
+}
+
+export interface SvapiCollectionVideo {
+  /**
+   * @gotags: json:"id,omitempty,string"
+   */
+  id?: string;
+  /**
+   * @gotags: json:"videoId,omitempty,string"
+   */
+  videoId?: string;
+  coverUrl?: string;
+  title?: string;
+  description?: string;
+  videoUrl?: string;
+}
+
+export interface SvapiComment {
+  /**
+   * @gotags: json:"id,omitempty,string"
+   */
+  id?: string;
+  /**
+   * @gotags: json:"videoId,omitempty,string"
+   */
+  videoId?: string;
+  /**
+   * @gotags: json:"parentId,omitempty,string"
+   */
+  parentId?: string;
+  user?: SvapiCommentUser;
+  replyUser?: SvapiCommentUser;
+  content?: string;
+  date?: string;
+  likeCount?: string;
+  replyCount?: string;
+  comments?: SvapiComment[];
+}
+
+export interface SvapiCommentUser {
+  /**
+   * @gotags: json:"id,omitempty,string"
+   */
+  id?: string;
+  name?: string;
+  avatar?: string;
+  isFollowing?: boolean;
+}
+
+export interface SvapiCreateCollectionRequest {
+  name?: string;
+  description?: string;
+}
+
+export interface SvapiCreateCollectionResponse {
+  collection?: SvapiCollection;
+}
+
+export interface SvapiCreateCommentRequest {
+  /**
+   * @gotags: json:"videoId,omitempty,string"
+   */
+  videoId?: string;
+  content?: string;
+  /**
+   * @gotags: json:"parentId,omitempty,string"
+   */
+  parentId?: string;
+  /**
+   * @gotags: json:"replyUserId,omitempty,string"
+   */
+  replyUserId?: string;
+}
+
+export interface SvapiCreateCommentResponse {
+  comment?: SvapiComment;
+}
+
 /**
  * 刷视频请求消息类型
  */
@@ -42,6 +175,16 @@ export interface SvapiFeedShortVideoResponse {
   nextTime?: string;
 }
 
+export interface SvapiFollowUser {
+  /**
+   * @gotags: json:"id,omitempty,string"
+   */
+  id?: string;
+  name?: string;
+  avatar?: string;
+  isFollowing?: boolean;
+}
+
 export interface SvapiGetUserInfoResponse {
   user?: SvapiUser;
 }
@@ -65,6 +208,26 @@ export interface SvapiGetVideoByIdResponse {
   video?: SvapiVideo;
 }
 
+export interface SvapiListChildCommentResponse {
+  comments?: SvapiComment[];
+  pagination?: SvapiPaginationResponse;
+}
+
+export interface SvapiListCollectionResponse {
+  collections?: SvapiCollection[];
+  pagination?: SvapiPaginationResponse;
+}
+
+export interface SvapiListComment4VideoResponse {
+  comments?: SvapiComment[];
+  pagination?: SvapiPaginationResponse;
+}
+
+export interface SvapiListFollowingResponse {
+  users?: SvapiFollowUser[];
+  pagination?: SvapiPaginationResponse;
+}
+
 /**
  * 获取当前用户的发布视频列表请求消息类型
  */
@@ -81,6 +244,11 @@ export interface SvapiListPublishedVideoRequest {
  */
 export interface SvapiListPublishedVideoResponse {
   videoList?: SvapiVideo[];
+  pagination?: SvapiPaginationResponse;
+}
+
+export interface SvapiListVideo4CollectionResponse {
+  videos?: SvapiCollectionVideo[];
   pagination?: SvapiPaginationResponse;
 }
 
@@ -224,6 +392,62 @@ export interface SvapiRegisterResponse {
   userId?: string;
 }
 
+export interface SvapiRemoveCollectionRequest {
+  /**
+   * @gotags: json:"id,omitempty,string"
+   */
+  id?: string;
+}
+
+// tslint:disable-next-line:no-empty-interface
+export interface SvapiRemoveCollectionResponse {}
+
+export interface SvapiRemoveCommentRequest {
+  /**
+   * @gotags: json:"id,omitempty,string"
+   */
+  id?: string;
+}
+
+// tslint:disable-next-line:no-empty-interface
+export interface SvapiRemoveCommentResponse {}
+
+export interface SvapiRemoveFavoriteRequest {
+  target?: number;
+  type?: number;
+  /**
+   * @gotags: json:"id,omitempty,string"
+   */
+  id?: string;
+}
+
+// tslint:disable-next-line:no-empty-interface
+export interface SvapiRemoveFavoriteResponse {}
+
+export interface SvapiRemoveFollowRequest {
+  /**
+   * @gotags: json:"userId,omitempty,string"
+   */
+  userId?: string;
+}
+
+// tslint:disable-next-line:no-empty-interface
+export interface SvapiRemoveFollowResponse {}
+
+export interface SvapiRemoveVideoFromCollectionRequest {
+  /**
+   * @gotags: json:"collectionId,omitempty,string"
+   */
+  collectionId?: string;
+  /**
+   * @gotags: json:"videoId,omitempty,string"
+   */
+  videoId?: string;
+}
+
+// tslint:disable-next-line:no-empty-interface
+export interface SvapiRemoveVideoFromCollectionResponse {}
+
 /**
  * 通用确认上传完成请求消息类型
  */
@@ -294,6 +518,27 @@ export interface SvapiReportVideoFinishUploadResponse {
 export interface SvapiSortField {
   field?: string;
   order?: number;
+}
+
+export interface SvapiUnbindUserVoucherRequest {
+  voucherType?: number;
+  voucher?: string;
+}
+
+// tslint:disable-next-line:no-empty-interface
+export interface SvapiUnbindUserVoucherResponse {}
+
+export interface SvapiUpdateCollectionRequest {
+  /**
+   * @gotags: json:"id,omitempty,string"
+   */
+  id?: string;
+  name?: string;
+  description?: string;
+}
+
+export interface SvapiUpdateCollectionResponse {
+  collection?: SvapiCollection;
 }
 
 export interface SvapiUpdateUserInfoRequest {
@@ -373,6 +618,749 @@ export interface SvapiVideoAuthor {
   isFollowing?: boolean;
 }
 
+export interface CollectionServiceListCollectionResponse {
+  /**
+   * Status code. Zero means success.
+   */
+  code?: number;
+  /**
+   * Status message. Could be displayed to user.
+   */
+  msg?: string;
+  data?: SvapiListCollectionResponse;
+}
+
+export interface CollectionServiceListCollectionQueryParams {
+  "pagination.page"?: number;
+  "pagination.size"?: number;
+}
+
+export type CollectionServiceListCollectionProps = Omit<
+  GetProps<
+    CollectionServiceListCollectionResponse,
+    unknown,
+    CollectionServiceListCollectionQueryParams,
+    void
+  >,
+  "path"
+>;
+
+/**
+ * 列出用户的收藏夹
+ */
+export const CollectionServiceListCollection = (
+  props: CollectionServiceListCollectionProps
+) => (
+  <Get<
+    CollectionServiceListCollectionResponse,
+    unknown,
+    CollectionServiceListCollectionQueryParams,
+    void
+  >
+    path={`/collection`}
+    {...props}
+  />
+);
+
+export type UseCollectionServiceListCollectionProps = Omit<
+  UseGetProps<
+    CollectionServiceListCollectionResponse,
+    unknown,
+    CollectionServiceListCollectionQueryParams,
+    void
+  >,
+  "path"
+>;
+
+/**
+ * 列出用户的收藏夹
+ */
+export const useCollectionServiceListCollection = (
+  props: UseCollectionServiceListCollectionProps
+) =>
+  useGet<
+    CollectionServiceListCollectionResponse,
+    unknown,
+    CollectionServiceListCollectionQueryParams,
+    void
+  >(`/collection`, props);
+
+export interface CollectionServiceUpdateCollectionResponse {
+  /**
+   * Status code. Zero means success.
+   */
+  code?: number;
+  /**
+   * Status message. Could be displayed to user.
+   */
+  msg?: string;
+  data?: SvapiUpdateCollectionResponse;
+}
+
+export type CollectionServiceUpdateCollectionProps = Omit<
+  MutateProps<
+    CollectionServiceUpdateCollectionResponse,
+    unknown,
+    void,
+    SvapiUpdateCollectionRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+/**
+ * 更新收藏夹信息
+ */
+export const CollectionServiceUpdateCollection = (
+  props: CollectionServiceUpdateCollectionProps
+) => (
+  <Mutate<
+    CollectionServiceUpdateCollectionResponse,
+    unknown,
+    void,
+    SvapiUpdateCollectionRequest,
+    void
+  >
+    verb="PUT"
+    path={`/collection`}
+    {...props}
+  />
+);
+
+export type UseCollectionServiceUpdateCollectionProps = Omit<
+  UseMutateProps<
+    CollectionServiceUpdateCollectionResponse,
+    unknown,
+    void,
+    SvapiUpdateCollectionRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+/**
+ * 更新收藏夹信息
+ */
+export const useCollectionServiceUpdateCollection = (
+  props: UseCollectionServiceUpdateCollectionProps
+) =>
+  useMutate<
+    CollectionServiceUpdateCollectionResponse,
+    unknown,
+    void,
+    SvapiUpdateCollectionRequest,
+    void
+  >("PUT", `/collection`, props);
+
+export interface CollectionServiceCreateCollectionResponse {
+  /**
+   * Status code. Zero means success.
+   */
+  code?: number;
+  /**
+   * Status message. Could be displayed to user.
+   */
+  msg?: string;
+  data?: SvapiCreateCollectionResponse;
+}
+
+export type CollectionServiceCreateCollectionProps = Omit<
+  MutateProps<
+    CollectionServiceCreateCollectionResponse,
+    unknown,
+    void,
+    SvapiCreateCollectionRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+/**
+ * 创建收藏夹
+ */
+export const CollectionServiceCreateCollection = (
+  props: CollectionServiceCreateCollectionProps
+) => (
+  <Mutate<
+    CollectionServiceCreateCollectionResponse,
+    unknown,
+    void,
+    SvapiCreateCollectionRequest,
+    void
+  >
+    verb="POST"
+    path={`/collection`}
+    {...props}
+  />
+);
+
+export type UseCollectionServiceCreateCollectionProps = Omit<
+  UseMutateProps<
+    CollectionServiceCreateCollectionResponse,
+    unknown,
+    void,
+    SvapiCreateCollectionRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+/**
+ * 创建收藏夹
+ */
+export const useCollectionServiceCreateCollection = (
+  props: UseCollectionServiceCreateCollectionProps
+) =>
+  useMutate<
+    CollectionServiceCreateCollectionResponse,
+    unknown,
+    void,
+    SvapiCreateCollectionRequest,
+    void
+  >("POST", `/collection`, props);
+
+export interface CollectionServiceRemoveCollectionResponse {
+  /**
+   * Status code. Zero means success.
+   */
+  code?: number;
+  /**
+   * Status message. Could be displayed to user.
+   */
+  msg?: string;
+  data?: SvapiRemoveCollectionResponse;
+}
+
+export type CollectionServiceRemoveCollectionProps = Omit<
+  MutateProps<
+    CollectionServiceRemoveCollectionResponse,
+    unknown,
+    void,
+    SvapiRemoveCollectionRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+/**
+ * 删除收藏夹
+ */
+export const CollectionServiceRemoveCollection = (
+  props: CollectionServiceRemoveCollectionProps
+) => (
+  <Mutate<
+    CollectionServiceRemoveCollectionResponse,
+    unknown,
+    void,
+    SvapiRemoveCollectionRequest,
+    void
+  >
+    verb="DELETE"
+    path={`/collection`}
+    {...props}
+  />
+);
+
+export type UseCollectionServiceRemoveCollectionProps = Omit<
+  UseMutateProps<
+    CollectionServiceRemoveCollectionResponse,
+    unknown,
+    void,
+    SvapiRemoveCollectionRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+/**
+ * 删除收藏夹
+ */
+export const useCollectionServiceRemoveCollection = (
+  props: UseCollectionServiceRemoveCollectionProps
+) =>
+  useMutate<
+    CollectionServiceRemoveCollectionResponse,
+    unknown,
+    void,
+    SvapiRemoveCollectionRequest,
+    void
+  >("DELETE", `/collection`, { ...props });
+
+export interface CollectionServiceListVideo4CollectionResponse {
+  /**
+   * Status code. Zero means success.
+   */
+  code?: number;
+  /**
+   * Status message. Could be displayed to user.
+   */
+  msg?: string;
+  data?: SvapiListVideo4CollectionResponse;
+}
+
+export interface CollectionServiceListVideo4CollectionQueryParams {
+  /**
+   * @gotags: json:"collectionId,omitempty,string"
+   */
+  collectionId?: string;
+  "pagination.page"?: number;
+  "pagination.size"?: number;
+}
+
+export type CollectionServiceListVideo4CollectionProps = Omit<
+  GetProps<
+    CollectionServiceListVideo4CollectionResponse,
+    unknown,
+    CollectionServiceListVideo4CollectionQueryParams,
+    void
+  >,
+  "path"
+>;
+
+/**
+ * 列出收藏夹中的视频
+ */
+export const CollectionServiceListVideo4Collection = (
+  props: CollectionServiceListVideo4CollectionProps
+) => (
+  <Get<
+    CollectionServiceListVideo4CollectionResponse,
+    unknown,
+    CollectionServiceListVideo4CollectionQueryParams,
+    void
+  >
+    path={`/collection/video`}
+    {...props}
+  />
+);
+
+export type UseCollectionServiceListVideo4CollectionProps = Omit<
+  UseGetProps<
+    CollectionServiceListVideo4CollectionResponse,
+    unknown,
+    CollectionServiceListVideo4CollectionQueryParams,
+    void
+  >,
+  "path"
+>;
+
+/**
+ * 列出收藏夹中的视频
+ */
+export const useCollectionServiceListVideo4Collection = (
+  props: UseCollectionServiceListVideo4CollectionProps
+) =>
+  useGet<
+    CollectionServiceListVideo4CollectionResponse,
+    unknown,
+    CollectionServiceListVideo4CollectionQueryParams,
+    void
+  >(`/collection/video`, props);
+
+export interface CollectionServiceAddVideo2CollectionResponse {
+  /**
+   * Status code. Zero means success.
+   */
+  code?: number;
+  /**
+   * Status message. Could be displayed to user.
+   */
+  msg?: string;
+  data?: SvapiAddVideo2CollectionResponse;
+}
+
+export type CollectionServiceAddVideo2CollectionProps = Omit<
+  MutateProps<
+    CollectionServiceAddVideo2CollectionResponse,
+    unknown,
+    void,
+    SvapiAddVideo2CollectionRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+/**
+ * 将视频添加到收藏夹
+ */
+export const CollectionServiceAddVideo2Collection = (
+  props: CollectionServiceAddVideo2CollectionProps
+) => (
+  <Mutate<
+    CollectionServiceAddVideo2CollectionResponse,
+    unknown,
+    void,
+    SvapiAddVideo2CollectionRequest,
+    void
+  >
+    verb="POST"
+    path={`/collection/video`}
+    {...props}
+  />
+);
+
+export type UseCollectionServiceAddVideo2CollectionProps = Omit<
+  UseMutateProps<
+    CollectionServiceAddVideo2CollectionResponse,
+    unknown,
+    void,
+    SvapiAddVideo2CollectionRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+/**
+ * 将视频添加到收藏夹
+ */
+export const useCollectionServiceAddVideo2Collection = (
+  props: UseCollectionServiceAddVideo2CollectionProps
+) =>
+  useMutate<
+    CollectionServiceAddVideo2CollectionResponse,
+    unknown,
+    void,
+    SvapiAddVideo2CollectionRequest,
+    void
+  >("POST", `/collection/video`, props);
+
+export interface CollectionServiceRemoveVideoFromCollectionResponse {
+  /**
+   * Status code. Zero means success.
+   */
+  code?: number;
+  /**
+   * Status message. Could be displayed to user.
+   */
+  msg?: string;
+  data?: SvapiRemoveVideoFromCollectionResponse;
+}
+
+export type CollectionServiceRemoveVideoFromCollectionProps = Omit<
+  MutateProps<
+    CollectionServiceRemoveVideoFromCollectionResponse,
+    unknown,
+    void,
+    SvapiRemoveVideoFromCollectionRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+/**
+ * 从收藏夹中移除视频
+ */
+export const CollectionServiceRemoveVideoFromCollection = (
+  props: CollectionServiceRemoveVideoFromCollectionProps
+) => (
+  <Mutate<
+    CollectionServiceRemoveVideoFromCollectionResponse,
+    unknown,
+    void,
+    SvapiRemoveVideoFromCollectionRequest,
+    void
+  >
+    verb="DELETE"
+    path={`/collection/video`}
+    {...props}
+  />
+);
+
+export type UseCollectionServiceRemoveVideoFromCollectionProps = Omit<
+  UseMutateProps<
+    CollectionServiceRemoveVideoFromCollectionResponse,
+    unknown,
+    void,
+    SvapiRemoveVideoFromCollectionRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+/**
+ * 从收藏夹中移除视频
+ */
+export const useCollectionServiceRemoveVideoFromCollection = (
+  props: UseCollectionServiceRemoveVideoFromCollectionProps
+) =>
+  useMutate<
+    CollectionServiceRemoveVideoFromCollectionResponse,
+    unknown,
+    void,
+    SvapiRemoveVideoFromCollectionRequest,
+    void
+  >("DELETE", `/collection/video`, { ...props });
+
+export interface CommentServiceCreateCommentResponse {
+  /**
+   * Status code. Zero means success.
+   */
+  code?: number;
+  /**
+   * Status message. Could be displayed to user.
+   */
+  msg?: string;
+  data?: SvapiCreateCommentResponse;
+}
+
+export type CommentServiceCreateCommentProps = Omit<
+  MutateProps<
+    CommentServiceCreateCommentResponse,
+    unknown,
+    void,
+    SvapiCreateCommentRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+/**
+ * 创建评论
+ */
+export const CommentServiceCreateComment = (
+  props: CommentServiceCreateCommentProps
+) => (
+  <Mutate<
+    CommentServiceCreateCommentResponse,
+    unknown,
+    void,
+    SvapiCreateCommentRequest,
+    void
+  >
+    verb="POST"
+    path={`/comment`}
+    {...props}
+  />
+);
+
+export type UseCommentServiceCreateCommentProps = Omit<
+  UseMutateProps<
+    CommentServiceCreateCommentResponse,
+    unknown,
+    void,
+    SvapiCreateCommentRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+/**
+ * 创建评论
+ */
+export const useCommentServiceCreateComment = (
+  props: UseCommentServiceCreateCommentProps
+) =>
+  useMutate<
+    CommentServiceCreateCommentResponse,
+    unknown,
+    void,
+    SvapiCreateCommentRequest,
+    void
+  >("POST", `/comment`, props);
+
+export interface CommentServiceRemoveCommentResponse {
+  /**
+   * Status code. Zero means success.
+   */
+  code?: number;
+  /**
+   * Status message. Could be displayed to user.
+   */
+  msg?: string;
+  data?: SvapiRemoveCommentResponse;
+}
+
+export type CommentServiceRemoveCommentProps = Omit<
+  MutateProps<
+    CommentServiceRemoveCommentResponse,
+    unknown,
+    void,
+    SvapiRemoveCommentRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+/**
+ * 删除评论
+ */
+export const CommentServiceRemoveComment = (
+  props: CommentServiceRemoveCommentProps
+) => (
+  <Mutate<
+    CommentServiceRemoveCommentResponse,
+    unknown,
+    void,
+    SvapiRemoveCommentRequest,
+    void
+  >
+    verb="DELETE"
+    path={`/comment`}
+    {...props}
+  />
+);
+
+export type UseCommentServiceRemoveCommentProps = Omit<
+  UseMutateProps<
+    CommentServiceRemoveCommentResponse,
+    unknown,
+    void,
+    SvapiRemoveCommentRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+/**
+ * 删除评论
+ */
+export const useCommentServiceRemoveComment = (
+  props: UseCommentServiceRemoveCommentProps
+) =>
+  useMutate<
+    CommentServiceRemoveCommentResponse,
+    unknown,
+    void,
+    SvapiRemoveCommentRequest,
+    void
+  >("DELETE", `/comment`, { ...props });
+
+export interface CommentServiceListChildCommentResponse {
+  /**
+   * Status code. Zero means success.
+   */
+  code?: number;
+  /**
+   * Status message. Could be displayed to user.
+   */
+  msg?: string;
+  data?: SvapiListChildCommentResponse;
+}
+
+export interface CommentServiceListChildCommentQueryParams {
+  /**
+   * @gotags: json:"commentId,omitempty,string"
+   */
+  commentId?: string;
+  "pagination.page"?: number;
+  "pagination.size"?: number;
+}
+
+export type CommentServiceListChildCommentProps = Omit<
+  GetProps<
+    CommentServiceListChildCommentResponse,
+    unknown,
+    CommentServiceListChildCommentQueryParams,
+    void
+  >,
+  "path"
+>;
+
+export const CommentServiceListChildComment = (
+  props: CommentServiceListChildCommentProps
+) => (
+  <Get<
+    CommentServiceListChildCommentResponse,
+    unknown,
+    CommentServiceListChildCommentQueryParams,
+    void
+  >
+    path={`/comment/child`}
+    {...props}
+  />
+);
+
+export type UseCommentServiceListChildCommentProps = Omit<
+  UseGetProps<
+    CommentServiceListChildCommentResponse,
+    unknown,
+    CommentServiceListChildCommentQueryParams,
+    void
+  >,
+  "path"
+>;
+
+export const useCommentServiceListChildComment = (
+  props: UseCommentServiceListChildCommentProps
+) =>
+  useGet<
+    CommentServiceListChildCommentResponse,
+    unknown,
+    CommentServiceListChildCommentQueryParams,
+    void
+  >(`/comment/child`, props);
+
+export interface CommentServiceListComment4VideoResponse {
+  /**
+   * Status code. Zero means success.
+   */
+  code?: number;
+  /**
+   * Status message. Could be displayed to user.
+   */
+  msg?: string;
+  data?: SvapiListComment4VideoResponse;
+}
+
+export interface CommentServiceListComment4VideoQueryParams {
+  /**
+   * @gotags: json:"videoId,omitempty,string"
+   */
+  videoId?: string;
+  "pagination.page"?: number;
+  "pagination.size"?: number;
+}
+
+export type CommentServiceListComment4VideoProps = Omit<
+  GetProps<
+    CommentServiceListComment4VideoResponse,
+    unknown,
+    CommentServiceListComment4VideoQueryParams,
+    void
+  >,
+  "path"
+>;
+
+/**
+ * 列出视频的评论
+ */
+export const CommentServiceListComment4Video = (
+  props: CommentServiceListComment4VideoProps
+) => (
+  <Get<
+    CommentServiceListComment4VideoResponse,
+    unknown,
+    CommentServiceListComment4VideoQueryParams,
+    void
+  >
+    path={`/comment/video`}
+    {...props}
+  />
+);
+
+export type UseCommentServiceListComment4VideoProps = Omit<
+  UseGetProps<
+    CommentServiceListComment4VideoResponse,
+    unknown,
+    CommentServiceListComment4VideoQueryParams,
+    void
+  >,
+  "path"
+>;
+
+/**
+ * 列出视频的评论
+ */
+export const useCommentServiceListComment4Video = (
+  props: UseCommentServiceListComment4VideoProps
+) =>
+  useGet<
+    CommentServiceListComment4VideoResponse,
+    unknown,
+    CommentServiceListComment4VideoQueryParams,
+    void
+  >(`/comment/video`, props);
+
 export interface ShortVideoCoreVideoServicePreSign4UploadCoverResponse {
   /**
    * Status code. Zero means success.
@@ -439,6 +1427,128 @@ export const useShortVideoCoreVideoServicePreSign4UploadCover = (
     SvapiPreSign4UploadRequest,
     void
   >("POST", `/cover/upload`, props);
+
+export interface FavoriteServiceAddFavoriteResponse {
+  /**
+   * Status code. Zero means success.
+   */
+  code?: number;
+  /**
+   * Status message. Could be displayed to user.
+   */
+  msg?: string;
+  data?: SvapiAddFavoriteResponse;
+}
+
+export type FavoriteServiceAddFavoriteProps = Omit<
+  MutateProps<
+    FavoriteServiceAddFavoriteResponse,
+    unknown,
+    void,
+    SvapiAddFavoriteRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+export const FavoriteServiceAddFavorite = (
+  props: FavoriteServiceAddFavoriteProps
+) => (
+  <Mutate<
+    FavoriteServiceAddFavoriteResponse,
+    unknown,
+    void,
+    SvapiAddFavoriteRequest,
+    void
+  >
+    verb="POST"
+    path={`/favorite`}
+    {...props}
+  />
+);
+
+export type UseFavoriteServiceAddFavoriteProps = Omit<
+  UseMutateProps<
+    FavoriteServiceAddFavoriteResponse,
+    unknown,
+    void,
+    SvapiAddFavoriteRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+export const useFavoriteServiceAddFavorite = (
+  props: UseFavoriteServiceAddFavoriteProps
+) =>
+  useMutate<
+    FavoriteServiceAddFavoriteResponse,
+    unknown,
+    void,
+    SvapiAddFavoriteRequest,
+    void
+  >("POST", `/favorite`, props);
+
+export interface FavoriteServiceRemoveFavoriteResponse {
+  /**
+   * Status code. Zero means success.
+   */
+  code?: number;
+  /**
+   * Status message. Could be displayed to user.
+   */
+  msg?: string;
+  data?: SvapiRemoveFavoriteResponse;
+}
+
+export type FavoriteServiceRemoveFavoriteProps = Omit<
+  MutateProps<
+    FavoriteServiceRemoveFavoriteResponse,
+    unknown,
+    void,
+    SvapiRemoveFavoriteRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+export const FavoriteServiceRemoveFavorite = (
+  props: FavoriteServiceRemoveFavoriteProps
+) => (
+  <Mutate<
+    FavoriteServiceRemoveFavoriteResponse,
+    unknown,
+    void,
+    SvapiRemoveFavoriteRequest,
+    void
+  >
+    verb="DELETE"
+    path={`/favorite`}
+    {...props}
+  />
+);
+
+export type UseFavoriteServiceRemoveFavoriteProps = Omit<
+  UseMutateProps<
+    FavoriteServiceRemoveFavoriteResponse,
+    unknown,
+    void,
+    SvapiRemoveFavoriteRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+export const useFavoriteServiceRemoveFavorite = (
+  props: UseFavoriteServiceRemoveFavoriteProps
+) =>
+  useMutate<
+    FavoriteServiceRemoveFavoriteResponse,
+    unknown,
+    void,
+    SvapiRemoveFavoriteRequest,
+    void
+  >("DELETE", `/favorite`, { ...props });
 
 export interface ShortVideoCoreVideoServiceReportFinishUploadResponse {
   /**
@@ -523,6 +1633,192 @@ export const useShortVideoCoreVideoServiceReportFinishUpload = ({
       `/file/${paramsInPath.fileId}/finish`,
     { pathParams: { fileId }, ...props }
   );
+
+export interface FollowServiceListFollowingResponse {
+  /**
+   * Status code. Zero means success.
+   */
+  code?: number;
+  /**
+   * Status message. Could be displayed to user.
+   */
+  msg?: string;
+  data?: SvapiListFollowingResponse;
+}
+
+export interface FollowServiceListFollowingQueryParams {
+  /**
+   * @gotags: json:"userId,omitempty,string"
+   */
+  userId?: string;
+  type?: number;
+  "pagination.page"?: number;
+  "pagination.size"?: number;
+}
+
+export type FollowServiceListFollowingProps = Omit<
+  GetProps<
+    FollowServiceListFollowingResponse,
+    unknown,
+    FollowServiceListFollowingQueryParams,
+    void
+  >,
+  "path"
+>;
+
+export const FollowServiceListFollowing = (
+  props: FollowServiceListFollowingProps
+) => (
+  <Get<
+    FollowServiceListFollowingResponse,
+    unknown,
+    FollowServiceListFollowingQueryParams,
+    void
+  >
+    path={`/follow`}
+    {...props}
+  />
+);
+
+export type UseFollowServiceListFollowingProps = Omit<
+  UseGetProps<
+    FollowServiceListFollowingResponse,
+    unknown,
+    FollowServiceListFollowingQueryParams,
+    void
+  >,
+  "path"
+>;
+
+export const useFollowServiceListFollowing = (
+  props: UseFollowServiceListFollowingProps
+) =>
+  useGet<
+    FollowServiceListFollowingResponse,
+    unknown,
+    FollowServiceListFollowingQueryParams,
+    void
+  >(`/follow`, props);
+
+export interface FollowServiceAddFollowResponse {
+  /**
+   * Status code. Zero means success.
+   */
+  code?: number;
+  /**
+   * Status message. Could be displayed to user.
+   */
+  msg?: string;
+  data?: SvapiAddFollowResponse;
+}
+
+export type FollowServiceAddFollowProps = Omit<
+  MutateProps<
+    FollowServiceAddFollowResponse,
+    unknown,
+    void,
+    SvapiAddFollowRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+export const FollowServiceAddFollow = (props: FollowServiceAddFollowProps) => (
+  <Mutate<
+    FollowServiceAddFollowResponse,
+    unknown,
+    void,
+    SvapiAddFollowRequest,
+    void
+  >
+    verb="POST"
+    path={`/follow`}
+    {...props}
+  />
+);
+
+export type UseFollowServiceAddFollowProps = Omit<
+  UseMutateProps<
+    FollowServiceAddFollowResponse,
+    unknown,
+    void,
+    SvapiAddFollowRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+export const useFollowServiceAddFollow = (
+  props: UseFollowServiceAddFollowProps
+) =>
+  useMutate<
+    FollowServiceAddFollowResponse,
+    unknown,
+    void,
+    SvapiAddFollowRequest,
+    void
+  >("POST", `/follow`, props);
+
+export interface FollowServiceRemoveFollowResponse {
+  /**
+   * Status code. Zero means success.
+   */
+  code?: number;
+  /**
+   * Status message. Could be displayed to user.
+   */
+  msg?: string;
+  data?: SvapiRemoveFollowResponse;
+}
+
+export type FollowServiceRemoveFollowProps = Omit<
+  MutateProps<
+    FollowServiceRemoveFollowResponse,
+    unknown,
+    void,
+    SvapiRemoveFollowRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+export const FollowServiceRemoveFollow = (
+  props: FollowServiceRemoveFollowProps
+) => (
+  <Mutate<
+    FollowServiceRemoveFollowResponse,
+    unknown,
+    void,
+    SvapiRemoveFollowRequest,
+    void
+  >
+    verb="DELETE"
+    path={`/follow`}
+    {...props}
+  />
+);
+
+export type UseFollowServiceRemoveFollowProps = Omit<
+  UseMutateProps<
+    FollowServiceRemoveFollowResponse,
+    unknown,
+    void,
+    SvapiRemoveFollowRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+export const useFollowServiceRemoveFollow = (
+  props: UseFollowServiceRemoveFollowProps
+) =>
+  useMutate<
+    FollowServiceRemoveFollowResponse,
+    unknown,
+    void,
+    SvapiRemoveFollowRequest,
+    void
+  >("DELETE", `/follow`, { ...props });
 
 export interface UserServiceGetVerificationCodeResponse {
   /**
@@ -836,6 +2132,128 @@ export const useUserServiceRegister = (props: UseUserServiceRegisterProps) =>
     SvapiRegisterRequest,
     void
   >("POST", `/user/register`, props);
+
+export interface UserServiceBindUserVoucherResponse {
+  /**
+   * Status code. Zero means success.
+   */
+  code?: number;
+  /**
+   * Status message. Could be displayed to user.
+   */
+  msg?: string;
+  data?: SvapiBindUserVoucherResponse;
+}
+
+export type UserServiceBindUserVoucherProps = Omit<
+  MutateProps<
+    UserServiceBindUserVoucherResponse,
+    unknown,
+    void,
+    SvapiBindUserVoucherRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+export const UserServiceBindUserVoucher = (
+  props: UserServiceBindUserVoucherProps
+) => (
+  <Mutate<
+    UserServiceBindUserVoucherResponse,
+    unknown,
+    void,
+    SvapiBindUserVoucherRequest,
+    void
+  >
+    verb="POST"
+    path={`/user/voucher`}
+    {...props}
+  />
+);
+
+export type UseUserServiceBindUserVoucherProps = Omit<
+  UseMutateProps<
+    UserServiceBindUserVoucherResponse,
+    unknown,
+    void,
+    SvapiBindUserVoucherRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+export const useUserServiceBindUserVoucher = (
+  props: UseUserServiceBindUserVoucherProps
+) =>
+  useMutate<
+    UserServiceBindUserVoucherResponse,
+    unknown,
+    void,
+    SvapiBindUserVoucherRequest,
+    void
+  >("POST", `/user/voucher`, props);
+
+export interface UserServiceUnbindUserVoucherResponse {
+  /**
+   * Status code. Zero means success.
+   */
+  code?: number;
+  /**
+   * Status message. Could be displayed to user.
+   */
+  msg?: string;
+  data?: SvapiUnbindUserVoucherResponse;
+}
+
+export type UserServiceUnbindUserVoucherProps = Omit<
+  MutateProps<
+    UserServiceUnbindUserVoucherResponse,
+    unknown,
+    void,
+    SvapiUnbindUserVoucherRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+export const UserServiceUnbindUserVoucher = (
+  props: UserServiceUnbindUserVoucherProps
+) => (
+  <Mutate<
+    UserServiceUnbindUserVoucherResponse,
+    unknown,
+    void,
+    SvapiUnbindUserVoucherRequest,
+    void
+  >
+    verb="DELETE"
+    path={`/user/voucher`}
+    {...props}
+  />
+);
+
+export type UseUserServiceUnbindUserVoucherProps = Omit<
+  UseMutateProps<
+    UserServiceUnbindUserVoucherResponse,
+    unknown,
+    void,
+    SvapiUnbindUserVoucherRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+export const useUserServiceUnbindUserVoucher = (
+  props: UseUserServiceUnbindUserVoucherProps
+) =>
+  useMutate<
+    UserServiceUnbindUserVoucherResponse,
+    unknown,
+    void,
+    SvapiUnbindUserVoucherRequest,
+    void
+  >("DELETE", `/user/voucher`, { ...props });
 
 export interface ShortVideoCoreVideoServiceFeedShortVideoResponse {
   /**
