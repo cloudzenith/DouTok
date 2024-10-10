@@ -24,6 +24,7 @@ service CollectionService {
     rpc AddVideo2Collection(AddVideo2CollectionRequest) returns (AddVideo2CollectionResponse);
     rpc RemoveVideoFromCollection(RemoveVideoFromCollectionRequest) returns (RemoveVideoFromCollectionResponse);
     rpc ListCollectionVideo(ListCollectionVideoRequest) returns (ListCollectionVideoResponse);
+    rpc IsCollected(IsCollectedRequest) returns (IsCollectedResponse);
 }
 
 message CreateCollectionRequest {
@@ -101,4 +102,14 @@ message ListCollectionVideoResponse {
     repeated int64 video_id_list = 1;
     Metadata meta = 2;
     PaginationResponse pagination = 3;
+}
+
+message IsCollectedRequest {
+    int64 user_id = 1;
+    repeated int64 video_id_list = 2;
+}
+
+message IsCollectedResponse {
+    repeated int64 video_id_list = 1;
+    Metadata meta = 2;
 }

@@ -13,7 +13,11 @@ type CollectionRepository interface {
 	CountByUserId(ctx context.Context, userId int64) (int64, error)
 	Update(ctx context.Context, collection *model.Collection) error
 	ListCollectionVideo(ctx context.Context, collectionId int64, limit, offset int) ([]*model.CollectionVideo, error)
-	AddVideo2Collection(ctx context.Context, collectionId, videoId int64) error
+	AddVideo2Collection(ctx context.Context, userId, collectionId, videoId int64) error
 	RemoveVideoFromCollection(ctx context.Context, collectionId, videoId int64) error
+	UpdateCollectionVideoTx(ctx context.Context, collectionVideo *model.CollectionVideo) error
 	CountCollectionVideo(ctx context.Context, collectionId int64) (int64, error)
+	ListCollectedVideoByGiven(ctx context.Context, userId int64, videoIdList []int64) ([]int64, error)
+	GetCollectionVideo(ctx context.Context, collectionId, videoId int64) (*model.CollectionVideo, error)
+	GetByIdTx(ctx context.Context, id int64) (*model.Collection, error)
 }
