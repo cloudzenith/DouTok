@@ -306,25 +306,30 @@ export function Player(props: PlayerProps) {
               </div>
             </div>
             <div className={"mask-button-container"}>
-              <Button
-                className={"mask-button"}
-                ghost={true}
-              >
                 {isCollected && (
-                  <StarFilled
-                    style={{
-                      fontSize: "40px"
-                    }}
-                  />
+                  <Button
+                    className={"mask-button"}
+                    ghost={true}
+                  >
+                    <StarFilled
+                      style={{
+                        fontSize: "40px"
+                      }}
+                    />
+                  </Button>
                 )}
                 {!isCollected && (
-                  <StarOutlined
-                    style={{
-                      fontSize: "40px"
-                    }}
-                  />
+                  <Button
+                    className={"mask-button"}
+                    ghost={true}
+                  >
+                    <StarOutlined
+                      style={{
+                        fontSize: "40px"
+                      }}
+                    />
+                  </Button>
                 )}
-              </Button>
               <div
                 className={"number-div"}
               >

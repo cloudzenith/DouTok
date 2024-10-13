@@ -23,7 +23,7 @@ type CollectionService interface {
 	ListCollection(ctx context.Context, userId int64, limit, offset int) (*ListCollectionResult, error)
 	UpdateCollection(ctx context.Context, collectionId int64, name, description string) error
 	AddVideo2Collection(ctx context.Context, userId, collectionId, videoId int64) error
-	RemoveVideo2Collection(ctx context.Context, collectionId, videoId int64) error
+	RemoveVideo2Collection(ctx context.Context, userId, collectionId, videoId int64) error
 	ListCollectionVideo(ctx context.Context, collectionId int64, pagination *v1.PaginationRequest) (*ListCollectionVideoResult, error)
 	ListCollectedVideoByGiven(ctx context.Context, userId int64, videoIdList []int64) ([]int64, error)
 	GenerateDefaultCollection(ctx context.Context, userId int64) error

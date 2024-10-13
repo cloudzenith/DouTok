@@ -153,7 +153,18 @@ func (s *Service) ListCollectionVideo(ctx context.Context, collectionId int64, p
 	}, nil
 }
 
-func (s *Service) RemoveVideo2Collection(ctx context.Context, collectionId, videoId int64) error {
+func (s *Service) RemoveVideo2Collection(ctx context.Context, userId, collectionId, videoId int64) error {
+	// 没传collectionId, 检索默认收藏夹
+	if collectionId == 0 || &collectionId == nil {
+		coll, err := s.collection.ListFirstCollection4UserId(ctx, userId)
+		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			log.Context(ctx).Errorf("failed to list default collection: %v", err)
+			return err
+		}
+
+		collectionId = coll.ID
+	}
+
 	return s.collection.RemoveVideoFromCollection(ctx, collectionId, videoId)
 }
 

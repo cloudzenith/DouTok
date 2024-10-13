@@ -142,7 +142,15 @@ func (a *Application) AddVideo2Collection(ctx context.Context, request *v1.AddVi
 }
 
 func (a *Application) RemoveVideoFromCollection(ctx context.Context, request *v1.RemoveVideoFromCollectionRequest) (*v1.RemoveVideoFromCollectionResponse, error) {
-	err := a.collection.RemoveVideo2Collection(ctx, request.GetCollectionId(), request.GetVideoId())
+	err := a.collection.GenerateDefaultCollection(ctx, request.GetUserId())
+	if err != nil {
+		log.Context(ctx).Errorf("failed to check default collection: %v", err)
+		return &v1.RemoveVideoFromCollectionResponse{
+			Meta: utils.GetMetaWithError(err),
+		}, nil
+	}
+
+	err = a.collection.RemoveVideo2Collection(ctx, request.GetCollectionId(), request.GetVideoId())
 	if err != nil {
 		log.Context(ctx).Errorf("RemoveVideoFromCollection error: %v", err)
 		return &v1.RemoveVideoFromCollectionResponse{

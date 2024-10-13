@@ -7,10 +7,11 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 )
 
-func (a *Adapter) AddVideo2Collection(ctx context.Context, collectionId, videoId int64) error {
+func (a *Adapter) AddVideo2Collection(ctx context.Context, userId, collectionId, videoId int64) error {
 	req := &v1.AddVideo2CollectionRequest{
 		CollectionId: collectionId,
 		VideoId:      videoId,
+		UserId:       userId,
 	}
 
 	resp, err := a.collection.AddVideo2Collection(ctx, req)

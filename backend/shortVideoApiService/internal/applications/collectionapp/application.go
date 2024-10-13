@@ -42,11 +42,16 @@ func (a *Application) checkCollectionBelongUser(ctx context.Context, collectionI
 }
 
 func (a *Application) AddVideo2Collection(ctx context.Context, request *svapi.AddVideo2CollectionRequest) (*svapi.AddVideo2CollectionResponse, error) {
+	userId, err := claims.GetUserId(ctx)
+	if err != nil {
+		return nil, errorx.New(1, "获取用户信息失败")
+	}
+
 	if err := a.checkCollectionBelongUser(ctx, request.CollectionId); err != nil {
 		return nil, errorx.New(1, err.Error())
 	}
 
-	if err := a.core.AddVideo2Collection(ctx, request.CollectionId, request.VideoId); err != nil {
+	if err := a.core.AddVideo2Collection(ctx, userId, request.CollectionId, request.VideoId); err != nil {
 		log.Context(ctx).Errorf("failed to add video to collection: %v", err)
 		return nil, errorx.New(1, "添加失败")
 	}

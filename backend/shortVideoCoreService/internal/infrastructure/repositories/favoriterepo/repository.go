@@ -62,10 +62,6 @@ func (r *PersistRepository) updateFavoriteTx(ctx context.Context, userId, target
 	})
 }
 
-func (r *PersistRepository) updateFavorite(ctx context.Context, userId, targetId int64, targetType, favoriteType int32, isDeleted bool) error {
-
-}
-
 func (r *PersistRepository) RemoveFavorite(ctx context.Context, userId, targetId int64, targetType, favoriteType int32) error {
 	_, err := query.Q.WithContext(ctx).Favorite.Where(
 		query.Q.Favorite.UserID.Eq(userId),

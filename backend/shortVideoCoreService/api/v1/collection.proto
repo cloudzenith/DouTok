@@ -88,6 +88,7 @@ message AddVideo2CollectionResponse {
 message RemoveVideoFromCollectionRequest {
     int64 collection_id = 1;
     int64 video_id = 2;
+    int64 user_id = 3;
 }
 
 message RemoveVideoFromCollectionResponse {
