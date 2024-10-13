@@ -6,7 +6,7 @@ ARG proxy=https://proxy.golang.org
 ENV proxy=$proxy
 RUN echo "proxy: $proxy"
 
-ENV GOPROXY ${proxy}
+ENV GOPROXY=${proxy}
 
 COPY go.mod .
 RUN go mod download
@@ -14,7 +14,7 @@ RUN go mod download
 COPY . .
 RUN CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -ldflags "-X google.golang.org/protobuf/reflect/protoregistry.conflictPolicy=warn" -a -o serve ./cmd/
 
-FROM golang:1.22-alpine as promtail-builder
+FROM golang:1.22-alpine AS promtail-builder
 
 WORKDIR /build
 
@@ -22,7 +22,7 @@ ARG proxy=https://proxy.golang.org
 ENV proxy=$proxy
 RUN echo "proxy: $proxy"
 
-ENV GOPROXY ${proxy}
+ENV GOPROXY=${proxy}
 
 RUN wget https://github.com/grafana/loki/archive/refs/tags/v3.1.1.zip
 RUN unzip v3.1.1.zip
