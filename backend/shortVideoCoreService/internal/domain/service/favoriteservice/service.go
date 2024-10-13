@@ -3,6 +3,7 @@ package favoriteservice
 import (
 	"context"
 	"fmt"
+	"github.com/TremblingV5/box/dbtx"
 	v1 "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/application/interface/favoriteserviceiface"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/repoiface"
@@ -19,13 +20,19 @@ func New(favorite repoiface.FavoriteRepository) *Service {
 	}
 }
 
-func (s *Service) AddFavorite(ctx context.Context, dto *favoriteserviceiface.WriteOpDTO) error {
+func (s *Service) AddFavorite(ctx context.Context, dto *favoriteserviceiface.WriteOpDTO) (err error) {
 	if err := dto.Check(); err != nil {
 		log.Context(ctx).Fatalf("invalid dto: %v, err: %v", dto, err)
 		return err
 	}
 
-	if err := s.favorite.AddFavorite(ctx, dto.UserId, dto.TargetId, int32(dto.TargetType), int32(dto.FavoriteType)); err != nil {
+	ctx, persist := dbtx.WithTXPersist(ctx)
+	defer func() {
+		persist(err)
+	}()
+
+	err = s.favorite.AddFavorite(ctx, dto.UserId, dto.TargetId, int32(dto.TargetType), int32(dto.FavoriteType))
+	if err != nil {
 		log.Context(ctx).Fatalf("add favorite failed: %v", err)
 		return err
 	}

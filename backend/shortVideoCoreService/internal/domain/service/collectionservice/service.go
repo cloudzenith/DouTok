@@ -8,6 +8,7 @@ import (
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/application/interface/collectionserviceiface"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/entity/collection"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/repoiface"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/model"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/utils"
 	"github.com/go-kratos/kratos/v2/log"
 	"gorm.io/gorm"
@@ -84,11 +85,23 @@ func (s *Service) UpdateCollection(ctx context.Context, collectionId int64, name
 	return s.collection.Update(ctx, c.ToModel())
 }
 
-func (s *Service) AddVideo2Collection(ctx context.Context, collectionId, videoId int64) (err error) {
+func (s *Service) AddVideo2Collection(ctx context.Context, userId, collectionId, videoId int64) (err error) {
 	ctx, persist := dbtx.WithTXPersist(ctx)
 	defer func() {
 		persist(err)
 	}()
+
+	// 没传collectionId, 检索默认收藏夹
+	if collectionId == 0 || &collectionId == nil {
+		var coll *model.Collection
+		coll, err = s.collection.ListFirstCollection4UserId(ctx, userId)
+		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			log.Context(ctx).Errorf("failed to list default collection: %v", err)
+			return err
+		}
+
+		collectionId = coll.ID
+	}
 
 	existedCollection, err := s.collection.GetByIdTx(ctx, collectionId)
 	if err != nil {
@@ -146,6 +159,21 @@ func (s *Service) RemoveVideo2Collection(ctx context.Context, collectionId, vide
 
 func (s *Service) ListCollectedVideoByGiven(ctx context.Context, userId int64, videoIdList []int64) ([]int64, error) {
 	return s.collection.ListCollectedVideoByGiven(ctx, userId, videoIdList)
+}
+
+func (s *Service) GenerateDefaultCollection(ctx context.Context, userId int64) error {
+	// TODO 上锁
+	collections, err := s.ListCollection(ctx, userId, 1, 0)
+	if err != nil {
+		log.Context(ctx).Errorf("failed to check existed collections: %v", err)
+		return err
+	}
+
+	if collections.Count > 0 {
+		return nil
+	}
+
+	return s.CreateCollection(ctx, userId, "默认收藏夹", "默认收藏夹")
 }
 
 var _ collectionserviceiface.CollectionService = (*Service)(nil)

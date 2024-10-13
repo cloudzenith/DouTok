@@ -36,6 +36,14 @@ func (p *PersistRepository) ListByUserId(ctx context.Context, userId int64, limi
 	return query.Q.WithContext(ctx).Collection.Where(query.Q.Collection.UserID.Eq(userId)).Limit(limit).Offset(offset).Find()
 }
 
+func (p *PersistRepository) ListFirstCollection4UserId(ctx context.Context, userId int64) (*model.Collection, error) {
+	return query.Q.WithContext(ctx).Collection.Where(
+		query.Q.Collection.UserID.Eq(userId),
+	).Order(
+		query.Q.Collection.ID,
+	).First()
+}
+
 func (p *PersistRepository) CountByUserId(ctx context.Context, userId int64) (int64, error) {
 	return query.Q.WithContext(ctx).Collection.Where(query.Q.Collection.UserID.Eq(userId)).Count()
 }
@@ -80,6 +88,7 @@ func (p *PersistRepository) ListCollectedVideoByGiven(ctx context.Context, userI
 	).Where(
 		query.Q.CollectionVideo.UserID.Eq(userId),
 		query.Q.CollectionVideo.VideoID.In(videoIdList...),
+		query.Q.CollectionVideo.IsDeleted.Is(false),
 	).Find()
 	if err != nil {
 		return nil, err

@@ -1,19 +1,78 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { RefObject, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import "plyr-react/plyr.css";
 import "./Player.css";
 import { SourceInfo } from "plyr";
 import { Button, message } from "antd";
 import Avatar from "antd/es/avatar/avatar";
-import { CheckOutlined, HeartOutlined, MessageOutlined, ShareAltOutlined, StarOutlined } from "@ant-design/icons";
 import {
-  FollowServiceAddFollowResponse, SvapiVideo,
+  CheckOutlined,
+  HeartFilled,
+  HeartOutlined,
+  MessageOutlined,
+  ShareAltOutlined, StarFilled,
+  StarOutlined
+} from "@ant-design/icons";
+import {
+  FavoriteServiceAddFavoriteResponse,
+  FollowServiceAddFollowResponse, SvapiVideo, useFavoriteServiceAddFavorite, useFavoriteServiceRemoveFavorite,
   useFollowServiceAddFollow,
   useFollowServiceRemoveFollow
 } from "@/api/svapi/api";
-import useUserStore from "@/components/UserStore/useUserStore";
+import { APITypes, PlyrProps, usePlyr } from "plyr-react";
+
+const CustomPlyrInstance = React.forwardRef<
+  APITypes,
+  PlyrProps
+>((props, ref) => {
+  const { source, options = null } = props;
+  const raptorRef = usePlyr(ref, {
+    source,
+    options
+  }) as React.MutableRefObject<HTMLVideoElement>;
+
+  useEffect(() => {
+    raptorRef.current.play()
+  }, []);
+
+  return <video ref={raptorRef} className="plyr-react plyr" />;
+});
+CustomPlyrInstance.displayName = "CustomPlyrInstance";
+
+interface CorePlayerProps {
+  title: string,
+  sources?: SourceInfo,
+  src: string
+}
+
+const CorePlayer = (props: CorePlayerProps, ref) => {
+  return (
+    <CustomPlyrInstance
+      ref={ref}
+      source={{
+        type: "video",
+        title: props.title,
+        sources:
+          props.sources !== undefined
+            ? props.sources
+            : [
+              {
+                src: props.src
+              }
+            ]
+      }}
+      options={{
+        ratio: "16:9",
+        autoplay: false,
+        hideControls: false
+      }}
+    />
+  );
+}
+
+const CorePlayerMemorized = React.memo(React.forwardRef(CorePlayer));
 
 export interface PlayerProps {
   src?: string;
@@ -25,24 +84,35 @@ export interface PlayerProps {
   userId: string;
   isCouldFollow?: boolean;
   videoInfo: SvapiVideo;
+  displaying: boolean;
 }
 
 const Plyr = dynamic(() => import("plyr-react"), { ssr: false });
 
 export function Player(props: PlayerProps) {
+  const playerRef = useRef();
+
   const [haveSource, setHaveSource] = useState(false);
   // 能否关注
   const [isCouldFollow, setIsCouldFollow] = useState(props.isCouldFollow);
   // 是否已关注
   const [isFollowed, setIsFollowed] = useState(false);
+  const [isCollected, setIsCollected] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [videoSource, setVideoSource] = useState("");
+  const [displaying, setDisplaying] = useState(false);
 
   useEffect(() => {
     setHaveSource(true);
   }, []);
 
   useEffect(() => {
+    setVideoSource(props.src as string);
     setIsCouldFollow(props.isCouldFollow);
     setIsFollowed(props.videoInfo.author?.isFollowing === true);
+    setIsCollected(props.videoInfo.isCollected === true);
+    setIsFavorite(props.videoInfo.isFavorite === true);
+    setDisplaying(props.displaying);
   }, [props.isCouldFollow, props.videoInfo]);
 
   const addFollowMutate = useFollowServiceAddFollow({});
@@ -73,6 +143,40 @@ export function Player(props: PlayerProps) {
       message.info("取消关注成功");
       setIsFollowed(false);
     })
+  };
+
+  const addFavoriteMutate = useFavoriteServiceAddFavorite({});
+  const addFavoriteHandle =() => {
+    addFavoriteMutate.mutate({
+      id: props.videoInfo.id,
+      target: 0,
+      type: 0
+    }).then((result: FavoriteServiceAddFavoriteResponse) => {
+      if (result?.code !== 0) {
+        message.error("点赞失败");
+        return;
+      }
+
+      message.info("点赞成功");
+      setIsFavorite(true);
+    });
+  };
+
+  const removeFavoriteMutate = useFavoriteServiceRemoveFavorite({});
+  const removeFavoriteHandle = () => {
+    removeFavoriteMutate.mutate({
+      id: props.videoInfo.id,
+      target: 0,
+      type: 0
+    }).then((result: FavoriteServiceAddFavoriteResponse) => {
+      if (result?.code !== 0) {
+        message.error("取消点赞失败");
+        return;
+      }
+
+      message.info("取消点赞成功");
+      setIsFavorite(false);
+    });
   };
 
   return (
@@ -126,7 +230,7 @@ export function Player(props: PlayerProps) {
                 size={70}
               />
             </div>
-            <div>
+            <div className={"follow-button"}>
               {isCouldFollow && !isFollowed && <Button
                 size={"small"}
                 block={true}
@@ -150,17 +254,34 @@ export function Player(props: PlayerProps) {
             </div>
           </div>
             <div className={"mask-button-container"}>
-              <Button
-                className={"mask-button"}
-                ghost={true}
-                block={true}
-              >
-                <HeartOutlined
-                  style={{
-                    fontSize: "40px"
-                  }}
-                />
-              </Button>
+              {isFavorite && (
+                <Button
+                  className={"mask-button"}
+                  ghost={true}
+                  block={true}
+                  onClick={removeFavoriteHandle}
+                >
+                  <HeartFilled
+                    style={{
+                      fontSize: "40px"
+                    }}
+                  />
+                </Button>
+              )}
+              {!isFavorite && (
+                <Button
+                  className={"mask-button"}
+                  ghost={true}
+                  block={true}
+                  onClick={addFavoriteHandle}
+                >
+                  <HeartOutlined
+                    style={{
+                      fontSize: "40px"
+                    }}
+                  />
+                </Button>
+              )}
               <div
                 className={"number-div"}
               >
@@ -189,11 +310,20 @@ export function Player(props: PlayerProps) {
                 className={"mask-button"}
                 ghost={true}
               >
-                <StarOutlined
-                  style={{
-                    fontSize: "40px"
-                  }}
-                />
+                {isCollected && (
+                  <StarFilled
+                    style={{
+                      fontSize: "40px"
+                    }}
+                  />
+                )}
+                {!isCollected && (
+                  <StarOutlined
+                    style={{
+                      fontSize: "40px"
+                    }}
+                  />
+                )}
               </Button>
               <div
                 className={"number-div"}
@@ -215,25 +345,17 @@ export function Player(props: PlayerProps) {
             </div>
           </div>
         </div>
-        <Plyr
-          source={{
-            type: "video",
-          title: props.title,
-          sources:
-            props.sources !== undefined
-              ? props.sources
-              : [
-                {
-                  src: props.src as string
-                }
-              ]
-        }}
-        options={{
-          ratio: "16:9",
-          autoplay: true,
-          hideControls: false,
-        }}
-      />
+        <CorePlayerMemorized
+          ref={playerRef}
+          title={props.title}
+          sources={props.sources}
+          src={videoSource}
+          ref={playerRef}
+        />
     </div>
   );
 }
+
+
+
+

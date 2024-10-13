@@ -123,7 +123,7 @@ message UpdateCollectionResponse {
 
 message AddVideo2CollectionRequest {
     // @gotags: json:"collectionId,omitempty,string"
-    int64 collection_id = 1; // 收藏夹id
+    int64 collection_id = 1; // 收藏夹id，不传则添加到默认收藏夹
     // @gotags: json:"videoId,omitempty,string"
     int64 video_id = 2; // 视频id
 }

@@ -606,6 +606,7 @@ export interface SvapiVideo {
   commentCount?: string;
   isFavorite?: boolean;
   title?: string;
+  isCollected?: boolean;
 }
 
 export interface SvapiVideoAuthor {

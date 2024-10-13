@@ -120,7 +120,15 @@ func (a *Application) UpdateCollection(ctx context.Context, request *v1.UpdateCo
 }
 
 func (a *Application) AddVideo2Collection(ctx context.Context, request *v1.AddVideo2CollectionRequest) (*v1.AddVideo2CollectionResponse, error) {
-	err := a.collection.AddVideo2Collection(ctx, request.GetCollectionId(), request.GetVideoId())
+	err := a.collection.GenerateDefaultCollection(ctx, request.GetUserId())
+	if err != nil {
+		log.Context(ctx).Errorf("failed to check default collection: %v", err)
+		return &v1.AddVideo2CollectionResponse{
+			Meta: utils.GetMetaWithError(err),
+		}, nil
+	}
+
+	err = a.collection.AddVideo2Collection(ctx, request.GetUserId(), request.GetCollectionId(), request.GetVideoId())
 	if err != nil {
 		log.Context(ctx).Errorf("AddVideo2Collection error: %v", err)
 		return &v1.AddVideo2CollectionResponse{

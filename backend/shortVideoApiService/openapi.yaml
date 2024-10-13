@@ -1552,6 +1552,8 @@ components:
                     type: boolean
                 title:
                     type: string
+                isCollected:
+                    type: boolean
         svapi.VideoAuthor:
             type: object
             properties:

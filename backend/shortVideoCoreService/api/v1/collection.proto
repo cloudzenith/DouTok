@@ -76,8 +76,9 @@ message UpdateCollectionResponse {
 }
 
 message AddVideo2CollectionRequest {
-    int64 collection_id = 1;
+    int64 collection_id = 1; // 不传则添加到默认收藏夹
     int64 video_id = 2;
+    int64 user_id = 3;
 }
 
 message AddVideo2CollectionResponse {

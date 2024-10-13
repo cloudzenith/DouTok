@@ -73,6 +73,7 @@ export function RecommendPageVideo(props: RecommendPageVideoProps) {
             userId={item.author?.id}
             isCouldFollow={currentUserId !== item.author?.id}
             videoInfo={item}
+            displaying={current === index}
           />
         </div>
       ))}

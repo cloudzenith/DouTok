@@ -2,11 +2,13 @@ package followservice
 
 import (
 	"context"
+	"errors"
 	"github.com/TremblingV5/box/dbtx"
 	v1 "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/application/interface/followserviceiface"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/repoiface"
 	"github.com/go-kratos/kratos/v2/log"
+	"gorm.io/gorm"
 )
 
 type Service struct {
@@ -19,9 +21,31 @@ func New(follow repoiface.FollowRepository) *Service {
 	}
 }
 
-func (s *Service) AddFollow(ctx context.Context, userId, targetUserId int64) error {
-	if err := s.follow.AddFollow(ctx, userId, targetUserId); err != nil {
-		log.Context(ctx).Errorf("failed to add follow relation: %v", err)
+func (s *Service) AddFollow(ctx context.Context, userId, targetUserId int64) (err error) {
+	ctx, persist := dbtx.WithTXPersist(ctx)
+	defer func() {
+		persist(err)
+	}()
+
+	existedRelationId, err := s.follow.GetFirstFollowRelation(ctx, userId, targetUserId)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		log.Context(ctx).Errorf("failed to get first follow relation: %v", err)
+		return err
+	}
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		err = s.follow.AddFollow(ctx, userId, targetUserId)
+		if err != nil {
+			log.Context(ctx).Errorf("failed to add follow relation: %v", err)
+			return err
+		}
+
+		return err
+	}
+
+	err = s.follow.UpdateRelation2UnDeleted(ctx, existedRelationId)
+	if err != nil {
+		log.Context(ctx).Errorf("failed to update relation to un-deleted: %v", err)
 		return err
 	}
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/utils/respcheck"
 	v1 "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1"
+	"github.com/go-kratos/kratos/v2/log"
 )
 
 func (a *Adapter) AddFollow(ctx context.Context, userId, targetUserId int64) error {
@@ -52,6 +53,7 @@ func (a *Adapter) IsFollowing(ctx context.Context, userId int64, targetUserIdLis
 	}
 
 	resp, err := a.follow.IsFollowing(ctx, req)
+	log.Context(ctx).Infof("IsFollowing resp: %v", resp)
 	return respcheck.CheckT[map[int64]bool, *v1.Metadata](
 		resp, err,
 		func() map[int64]bool {

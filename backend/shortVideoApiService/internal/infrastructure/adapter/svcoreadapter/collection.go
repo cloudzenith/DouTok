@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/utils/respcheck"
 	v1 "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1"
+	"github.com/go-kratos/kratos/v2/log"
 )
 
 func (a *Adapter) AddVideo2Collection(ctx context.Context, collectionId, videoId int64) error {
@@ -114,6 +115,7 @@ func (a *Adapter) IsCollected(ctx context.Context, userId int64, videoIdList []i
 	}
 
 	resp, err := a.collection.IsCollected(ctx, req)
+	log.Context(ctx).Infof("IsCollected resp: %v", resp)
 	return respcheck.CheckT[map[int64]bool, *v1.Metadata](
 		resp, err,
 		func() map[int64]bool {

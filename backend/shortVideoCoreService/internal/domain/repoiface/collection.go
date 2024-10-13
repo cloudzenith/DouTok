@@ -10,6 +10,7 @@ type CollectionRepository interface {
 	GetById(ctx context.Context, id int64) (*model.Collection, error)
 	RemoveById(ctx context.Context, id int64) error
 	ListByUserId(ctx context.Context, userId int64, limit, offset int) ([]*model.Collection, error)
+	ListFirstCollection4UserId(ctx context.Context, userId int64) (*model.Collection, error)
 	CountByUserId(ctx context.Context, userId int64) (int64, error)
 	Update(ctx context.Context, collection *model.Collection) error
 	ListCollectionVideo(ctx context.Context, collectionId int64, limit, offset int) ([]*model.CollectionVideo, error)
