@@ -58,10 +58,16 @@ func (s *Service) RemoveComment(ctx context.Context, userId, commentId int64) er
 	return s.comment.RemoveById(ctx, commentId)
 }
 
-func (s *Service) ListComment4Video(ctx context.Context, videoId int64, limit, offset int) ([]*comment.Comment, error) {
+func (s *Service) ListComment4Video(ctx context.Context, videoId int64, limit, offset int) (*commentserviceiface.ListCommentsResult, error) {
 	comments, err := s.comment.ListParentCommentByVideoId(ctx, videoId, limit, offset)
 	if err != nil {
 		log.Context(ctx).Errorf("list comment for video failed, err: %v", err)
+		return nil, err
+	}
+
+	count, err := s.comment.CountByVideoId(ctx, videoId)
+	if err != nil {
+		log.Context(ctx).Errorf("count parent comment by video id failed, err: %v", err)
 		return nil, err
 	}
 
@@ -79,13 +85,22 @@ func (s *Service) ListComment4Video(ctx context.Context, videoId int64, limit, o
 		parentComments = append(parentComments, commentDO)
 	}
 
-	return parentComments, nil
+	return &commentserviceiface.ListCommentsResult{
+		Data:  parentComments,
+		Total: count,
+	}, nil
 }
 
-func (s *Service) ListChildComment(ctx context.Context, commentId int64, limit, offset int) ([]*comment.Comment, error) {
+func (s *Service) ListChildComment(ctx context.Context, commentId int64, limit, offset int) (*commentserviceiface.ListCommentsResult, error) {
 	data, err := s.comment.ListChildCommentByCommentId(ctx, commentId, limit, offset)
 	if err != nil {
 		log.Context(ctx).Errorf("failed to list child comments: %v", err)
+		return nil, err
+	}
+
+	count, err := s.comment.CountByParentId(ctx, commentId)
+	if err != nil {
+		log.Context(ctx).Errorf("failed to count child comments: %v", err)
 		return nil, err
 	}
 
@@ -94,7 +109,10 @@ func (s *Service) ListChildComment(ctx context.Context, commentId int64, limit, 
 		result = append(result, comment.NewWithModel(item))
 	}
 
-	return result, nil
+	return &commentserviceiface.ListCommentsResult{
+		Data:  result,
+		Total: count,
+	}, nil
 }
 
 func (s *Service) GetCommentById(ctx context.Context, commentId int64) (cmt *comment.Comment, err error) {

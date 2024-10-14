@@ -7,6 +7,7 @@ option go_package = "github.com/cloudzenith/DouTok/...;svapi";
 import "google/api/annotations.proto";
 import "buf/validate/validate.proto";
 import "svapi/base.proto";
+import "svapi/video.proto";
 
 // 点赞
 service FavoriteService {
@@ -20,6 +21,13 @@ service FavoriteService {
     rpc RemoveFavorite(RemoveFavoriteRequest) returns (RemoveFavoriteResponse) {
         option (google.api.http) = {
             delete: "/favorite"
+            body: "*"
+        };
+    };
+
+    rpc ListFavoriteVideo(ListFavoriteVideoRequest) returns (ListFavoriteVideoResponse) {
+        option (google.api.http) = {
+            post: "/favorite/video/list"
             body: "*"
         };
     };
@@ -52,3 +60,14 @@ message RemoveFavoriteRequest {
 }
 
 message RemoveFavoriteResponse {}
+
+message ListFavoriteVideoRequest {
+    int64 userId = 1;
+    int32 page = 2;
+    int32 size = 3;
+}
+
+message ListFavoriteVideoResponse {
+    repeated Video videos = 1;
+    PaginationResponse pagination = 2;
+}

@@ -16,8 +16,13 @@ import {
   StarOutlined
 } from "@ant-design/icons";
 import {
+  CollectionServiceAddVideo2CollectionResponse,
   FavoriteServiceAddFavoriteResponse,
-  FollowServiceAddFollowResponse, SvapiVideo, useFavoriteServiceAddFavorite, useFavoriteServiceRemoveFavorite,
+  FollowServiceAddFollowResponse,
+  SvapiVideo,
+  useCollectionServiceAddVideo2Collection, useCollectionServiceRemoveVideoFromCollection,
+  useFavoriteServiceAddFavorite,
+  useFavoriteServiceRemoveFavorite,
   useFollowServiceAddFollow,
   useFollowServiceRemoveFollow
 } from "@/api/svapi/api";
@@ -179,6 +184,36 @@ export function Player(props: PlayerProps) {
     });
   };
 
+  const addVideo2DefaultCollectionMutate = useCollectionServiceAddVideo2Collection({});
+  const addVideo2DefaultCollectionHandle = () => {
+    addVideo2DefaultCollectionMutate.mutate({
+      videoId: props.videoInfo.id
+    }).then((result: CollectionServiceAddVideo2CollectionResponse) => {
+      if (result?.code !== 0) {
+        message.error("收藏失败");
+        return;
+      }
+
+      message.info("收藏成功");
+      setIsCollected(true);
+    });
+  };
+
+  const removeVideoFromDefaultCollectionMutate = useCollectionServiceRemoveVideoFromCollection({});
+  const removeVideoFromDefaultCollectionHandle = () => {
+    removeVideoFromDefaultCollectionMutate.mutate({
+      videoId: props.videoInfo.id
+    }).then((result: CollectionServiceAddVideo2CollectionResponse) => {
+      if (result?.code !== 0) {
+        message.error("取消收藏失败");
+        return;
+      }
+
+      message.info("取消收藏成功");
+      setIsCollected(false);
+    });
+  };
+
   return (
     <div
       className={"player"}
@@ -310,6 +345,7 @@ export function Player(props: PlayerProps) {
                   <Button
                     className={"mask-button"}
                     ghost={true}
+                    onClick={removeVideoFromDefaultCollectionHandle}
                   >
                     <StarFilled
                       style={{
@@ -322,6 +358,7 @@ export function Player(props: PlayerProps) {
                   <Button
                     className={"mask-button"}
                     ghost={true}
+                    onClick={addVideo2DefaultCollectionHandle}
                   >
                     <StarOutlined
                       style={{

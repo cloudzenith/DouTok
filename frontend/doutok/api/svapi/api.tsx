@@ -223,6 +223,17 @@ export interface SvapiListComment4VideoResponse {
   pagination?: SvapiPaginationResponse;
 }
 
+export interface SvapiListFavoriteVideoRequest {
+  userId?: string;
+  page?: number;
+  size?: number;
+}
+
+export interface SvapiListFavoriteVideoResponse {
+  videos?: SvapiVideo[];
+  pagination?: SvapiPaginationResponse;
+}
+
 export interface SvapiListFollowingResponse {
   users?: SvapiFollowUser[];
   pagination?: SvapiPaginationResponse;
@@ -1550,6 +1561,67 @@ export const useFavoriteServiceRemoveFavorite = (
     SvapiRemoveFavoriteRequest,
     void
   >("DELETE", `/favorite`, { ...props });
+
+export interface FavoriteServiceListFavoriteVideoResponse {
+  /**
+   * Status code. Zero means success.
+   */
+  code?: number;
+  /**
+   * Status message. Could be displayed to user.
+   */
+  msg?: string;
+  data?: SvapiListFavoriteVideoResponse;
+}
+
+export type FavoriteServiceListFavoriteVideoProps = Omit<
+  MutateProps<
+    FavoriteServiceListFavoriteVideoResponse,
+    unknown,
+    void,
+    SvapiListFavoriteVideoRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+export const FavoriteServiceListFavoriteVideo = (
+  props: FavoriteServiceListFavoriteVideoProps
+) => (
+  <Mutate<
+    FavoriteServiceListFavoriteVideoResponse,
+    unknown,
+    void,
+    SvapiListFavoriteVideoRequest,
+    void
+  >
+    verb="POST"
+    path={`/favorite/video/list`}
+    {...props}
+  />
+);
+
+export type UseFavoriteServiceListFavoriteVideoProps = Omit<
+  UseMutateProps<
+    FavoriteServiceListFavoriteVideoResponse,
+    unknown,
+    void,
+    SvapiListFavoriteVideoRequest,
+    void
+  >,
+  "path" | "verb"
+>;
+
+export const useFavoriteServiceListFavoriteVideo = (
+  props: UseFavoriteServiceListFavoriteVideoProps
+) =>
+  useMutate<
+    FavoriteServiceListFavoriteVideoResponse,
+    unknown,
+    void,
+    SvapiListFavoriteVideoRequest,
+    void
+  >("POST", `/favorite/video/list`, props);
 
 export interface ShortVideoCoreVideoServiceReportFinishUploadResponse {
   /**

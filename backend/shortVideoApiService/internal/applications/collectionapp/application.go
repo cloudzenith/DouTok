@@ -23,6 +23,11 @@ func New(
 }
 
 func (a *Application) checkCollectionBelongUser(ctx context.Context, collectionId int64) error {
+	if collectionId == 0 || &collectionId == nil {
+		log.Context(ctx).Warnf("collectionId is empty")
+		return nil
+	}
+
 	userId, err := claims.GetUserId(ctx)
 	if err != nil {
 		return errorx.New(1, "获取用户信息失败")
@@ -155,11 +160,16 @@ func (a *Application) RemoveCollection(ctx context.Context, request *svapi.Remov
 }
 
 func (a *Application) RemoveVideoFromCollection(ctx context.Context, request *svapi.RemoveVideoFromCollectionRequest) (*svapi.RemoveVideoFromCollectionResponse, error) {
+	userId, err := claims.GetUserId(ctx)
+	if err != nil {
+		return nil, errorx.New(1, "获取用户信息失败")
+	}
+
 	if err := a.checkCollectionBelongUser(ctx, request.CollectionId); err != nil {
 		return nil, errorx.New(1, err.Error())
 	}
 
-	if err := a.core.RemoveVideoFromCollection(ctx, request.CollectionId, request.VideoId); err != nil {
+	if err := a.core.RemoveVideoFromCollection(ctx, userId, request.CollectionId, request.VideoId); err != nil {
 		log.Context(ctx).Errorf("failed to remove video from collection: %v", err)
 		return nil, errorx.New(1, "删除失败")
 	}

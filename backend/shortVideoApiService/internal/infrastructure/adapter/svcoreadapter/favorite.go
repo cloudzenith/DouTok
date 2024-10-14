@@ -58,3 +58,23 @@ func (a *Adapter) IsUserFavoriteVideo(ctx context.Context, userId int64, videoId
 		},
 	)
 }
+
+func (a *Adapter) ListUserFavoriteVideo(ctx context.Context, userId int64, page, size int32) ([]int64, error) {
+	req := &v1.ListFavoriteRequest{
+		FavoriteType:  v1.FavoriteType_FAVORITE,
+		AggregateType: v1.FavoriteAggregateType_BY_USER,
+		Id:            userId,
+		Pagination: &v1.PaginationRequest{
+			Page: page,
+			Size: size,
+		},
+	}
+
+	resp, err := a.favorite.ListFavorite(ctx, req)
+	return respcheck.CheckT[[]int64, *v1.Metadata](
+		resp, err,
+		func() []int64 {
+			return resp.BizId
+		},
+	)
+}

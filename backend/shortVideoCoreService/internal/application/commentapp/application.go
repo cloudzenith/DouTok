@@ -64,7 +64,7 @@ func (a *Application) ListComment4Video(ctx context.Context, request *v1.ListCom
 		int(request.Pagination.Size),
 	)
 
-	comments, err := a.comment.ListComment4Video(
+	data, err := a.comment.ListComment4Video(
 		ctx,
 		request.VideoId,
 		limit, offset,
@@ -77,13 +77,14 @@ func (a *Application) ListComment4Video(ctx context.Context, request *v1.ListCom
 	}
 
 	var commentsProto []*v1.Comment
-	for _, c := range comments {
+	for _, c := range data.Data {
 		commentsProto = append(commentsProto, c.ToProto())
 	}
 
 	return &v1.ListComment4VideoResponse{
-		Meta:     utils.GetSuccessMeta(),
-		Comments: commentsProto,
+		Meta:       utils.GetSuccessMeta(),
+		Comments:   commentsProto,
+		Pagination: utils.GetPageResponse(data.Total, request.Pagination.Page, request.Pagination.Size),
 	}, nil
 }
 
@@ -93,7 +94,7 @@ func (a *Application) ListChildComment4Comment(ctx context.Context, request *v1.
 		int(request.Pagination.Size),
 	)
 
-	comments, err := a.comment.ListChildComment(
+	data, err := a.comment.ListChildComment(
 		ctx,
 		request.CommentId,
 		limit, offset,
@@ -106,13 +107,14 @@ func (a *Application) ListChildComment4Comment(ctx context.Context, request *v1.
 	}
 
 	var commentsProto []*v1.Comment
-	for _, c := range comments {
+	for _, c := range data.Data {
 		commentsProto = append(commentsProto, c.ToProto())
 	}
 
 	return &v1.ListChildComment4CommentResponse{
-		Meta:     utils.GetSuccessMeta(),
-		Comments: commentsProto,
+		Meta:       utils.GetSuccessMeta(),
+		Comments:   commentsProto,
+		Pagination: utils.GetPageResponse(data.Total, request.Pagination.Page, request.Pagination.Size),
 	}, nil
 }
 

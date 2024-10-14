@@ -57,11 +57,7 @@ func (a *Application) ListFollowing(ctx context.Context, request *v1.ListFollowi
 	return &v1.ListFollowingResponse{
 		Meta:       utils.GetSuccessMeta(),
 		UserIdList: data.UserIdList,
-		Pagination: &v1.PaginationResponse{
-			Page:  request.Pagination.Page,
-			Total: utils.GetPageInfo(data.Count, request.Pagination.Page, request.Pagination.Size),
-			Count: int32(data.Count),
-		},
+		Pagination: utils.GetPageResponse(data.Count, request.Pagination.Page, request.Pagination.Size),
 	}, nil
 }
 

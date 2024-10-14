@@ -97,11 +97,7 @@ func (a *Application) ListCollection(ctx context.Context, request *v1.ListCollec
 	return &v1.ListCollectionResponse{
 		Meta:        utils.GetSuccessMeta(),
 		Collections: collections,
-		Pagination: &v1.PaginationResponse{
-			Page:  request.Pagination.Page,
-			Total: utils.GetPageInfo(data.Count, request.Pagination.Page, request.Pagination.Size),
-			Count: int32(data.Count),
-		},
+		Pagination:  utils.GetPageResponse(data.Count, request.Pagination.Page, request.Pagination.Size),
 	}, nil
 }
 
@@ -150,7 +146,7 @@ func (a *Application) RemoveVideoFromCollection(ctx context.Context, request *v1
 		}, nil
 	}
 
-	err = a.collection.RemoveVideo2Collection(ctx, request.GetCollectionId(), request.GetVideoId())
+	err = a.collection.RemoveVideo2Collection(ctx, request.GetUserId(), request.GetCollectionId(), request.GetVideoId())
 	if err != nil {
 		log.Context(ctx).Errorf("RemoveVideoFromCollection error: %v", err)
 		return &v1.RemoveVideoFromCollectionResponse{
@@ -175,11 +171,7 @@ func (a *Application) ListCollectionVideo(ctx context.Context, request *v1.ListC
 	return &v1.ListCollectionVideoResponse{
 		Meta:        utils.GetSuccessMeta(),
 		VideoIdList: data.Data,
-		Pagination: &v1.PaginationResponse{
-			Page:  request.Pagination.Page,
-			Total: utils.GetPageInfo(data.Count, request.Pagination.Page, request.Pagination.Size),
-			Count: int32(data.Count),
-		},
+		Pagination:  utils.GetPageResponse(data.Count, request.Pagination.Page, request.Pagination.Size),
 	}, nil
 }
 

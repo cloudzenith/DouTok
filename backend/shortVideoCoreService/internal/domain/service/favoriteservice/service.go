@@ -7,6 +7,7 @@ import (
 	v1 "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/application/interface/favoriteserviceiface"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/repoiface"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/utils/pageresult"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
@@ -54,13 +55,25 @@ func (s *Service) RemoveFavorite(ctx context.Context, dto *favoriteserviceiface.
 	return nil
 }
 
-func (s *Service) ListFavorite(ctx context.Context, dto *favoriteserviceiface.AggOpDTO, limit, offset int) ([]int64, error) {
+func (s *Service) ListFavorite(ctx context.Context, dto *favoriteserviceiface.AggOpDTO, limit, offset int) (*pageresult.R[int64], error) {
 	if err := dto.Check(); err != nil {
 		log.Context(ctx).Fatalf("invalid dto: %v, err: %v", dto, err)
 		return nil, err
 	}
 
-	return s.favorite.ListFavorite(ctx, dto.BizId, int32(dto.AggType), int32(dto.FavoriteType), limit, offset)
+	idList, err := s.favorite.ListFavorite(ctx, dto.BizId, int32(dto.AggType), int32(dto.FavoriteType), limit, offset)
+	if err != nil {
+		log.Context(ctx).Errorf("list favorite failed: %v", err)
+		return nil, err
+	}
+
+	countResult, err := s.favorite.CountFavorite(ctx, []int64{dto.BizId}, int32(dto.AggType), int32(dto.FavoriteType))
+	if err != nil || len(countResult) == 0 {
+		log.Context(ctx).Errorf("count favorite failed: %v", err)
+		return nil, err
+	}
+
+	return pageresult.New(idList, countResult[0].Cnt), nil
 }
 
 func (s *Service) CountFavorite(ctx context.Context, dto *favoriteserviceiface.AggOpDTO) ([]*v1.CountFavoriteResponseItem, error) {

@@ -16,5 +16,7 @@ type CommentRepository interface {
 	GetById(ctx context.Context, commentId int64) (*model.Comment, error)
 	GetByIdList(ctx context.Context, commentIdList []int64) ([]*model.Comment, error)
 	CountByVideoId(ctx context.Context, videoId int64) (int64, error)
+	CountParentCommentByVideoId(ctx context.Context, videoId int64) (int64, error)
 	CountByUserId(ctx context.Context, userId int64) (int64, error)
+	CountByParentId(ctx context.Context, parentId int64) (int64, error)
 }

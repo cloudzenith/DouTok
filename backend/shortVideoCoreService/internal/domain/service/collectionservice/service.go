@@ -153,7 +153,12 @@ func (s *Service) ListCollectionVideo(ctx context.Context, collectionId int64, p
 	}, nil
 }
 
-func (s *Service) RemoveVideo2Collection(ctx context.Context, userId, collectionId, videoId int64) error {
+func (s *Service) RemoveVideo2Collection(ctx context.Context, userId, collectionId, videoId int64) (err error) {
+	ctx, persist := dbtx.WithTXPersist(ctx)
+	defer func() {
+		persist(err)
+	}()
+
 	// 没传collectionId, 检索默认收藏夹
 	if collectionId == 0 || &collectionId == nil {
 		coll, err := s.collection.ListFirstCollection4UserId(ctx, userId)

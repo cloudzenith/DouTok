@@ -409,6 +409,32 @@ paths:
                                         description: Status message. Could be displayed to user.
                                     data:
                                         $ref: '#/components/schemas/svapi.RemoveFavoriteResponse'
+    /favorite/video/list:
+        post:
+            tags:
+                - FavoriteService
+            operationId: FavoriteService_ListFavoriteVideo
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/svapi.ListFavoriteVideoRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                properties:
+                                    code:
+                                        type: integer
+                                        description: Status code. Zero means success.
+                                    msg:
+                                        type: string
+                                        description: Status message. Could be displayed to user.
+                                    data:
+                                        $ref: '#/components/schemas/svapi.ListFavoriteVideoResponse'
     /file/{fileId}/finish:
         post:
             tags:
@@ -1146,6 +1172,26 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/svapi.Comment'
+                pagination:
+                    $ref: '#/components/schemas/svapi.PaginationResponse'
+        svapi.ListFavoriteVideoRequest:
+            type: object
+            properties:
+                userId:
+                    type: string
+                page:
+                    type: integer
+                    format: int32
+                size:
+                    type: integer
+                    format: int32
+        svapi.ListFavoriteVideoResponse:
+            type: object
+            properties:
+                videos:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/svapi.Video'
                 pagination:
                     $ref: '#/components/schemas/svapi.PaginationResponse'
         svapi.ListFollowingResponse:

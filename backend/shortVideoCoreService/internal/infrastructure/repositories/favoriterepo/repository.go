@@ -73,7 +73,9 @@ func (r *PersistRepository) RemoveFavorite(ctx context.Context, userId, targetId
 func (r *PersistRepository) ListFavorite(ctx context.Context, bizId int64, aggType, favoriteType int32, limit, offset int) ([]int64, error) {
 	var conditions []gen.Condition
 	if aggType == int32(v1.FavoriteAggregateType_BY_USER) {
+		// 聚合维度是用户时，只能查询用户点赞的视频
 		conditions = append(conditions, query.Q.Favorite.UserID.Eq(bizId))
+		conditions = append(conditions, query.Q.Favorite.FavoriteType.Eq(int32(v1.FavoriteTarget_VIDEO)))
 	} else {
 		conditions = append(conditions, query.Q.Favorite.TargetID.Eq(bizId))
 	}

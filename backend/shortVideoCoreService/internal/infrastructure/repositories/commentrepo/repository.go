@@ -95,11 +95,24 @@ func (r *PersistRepository) count(ctx context.Context, conditions ...gen.Conditi
 }
 
 func (r *PersistRepository) CountByVideoId(ctx context.Context, videoId int64) (int64, error) {
-	return r.count(ctx, query.Comment.VideoID.Eq(videoId))
+	return r.count(ctx, query.Comment.VideoID.Eq(videoId), query.Comment.IsDeleted.Is(false))
 }
 
 func (r *PersistRepository) CountByUserId(ctx context.Context, userId int64) (int64, error) {
-	return r.count(ctx, query.Comment.UserID.Eq(userId))
+	return r.count(ctx, query.Comment.UserID.Eq(userId), query.Comment.IsDeleted.Is(false))
+}
+
+func (r *PersistRepository) CountParentCommentByVideoId(ctx context.Context, videoId int64) (int64, error) {
+	return r.count(
+		ctx,
+		query.Comment.VideoID.Eq(videoId),
+		query.Comment.ParentID.Eq(0),
+		query.Comment.IsDeleted.Is(false),
+	)
+}
+
+func (r *PersistRepository) CountByParentId(ctx context.Context, parentId int64) (int64, error) {
+	return r.count(ctx, query.Comment.ParentID.Eq(parentId), query.Comment.IsDeleted.Is(false))
 }
 
 var _ repoiface.CommentRepository = (*PersistRepository)(nil)
