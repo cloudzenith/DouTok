@@ -192,4 +192,8 @@ func (s *Service) GenerateDefaultCollection(ctx context.Context, userId int64) e
 	return s.CreateCollection(ctx, userId, "默认收藏夹", "默认收藏夹")
 }
 
+func (s *Service) CountCollectedNumber4Video(ctx context.Context, videoId []int64) ([]*collectionserviceiface.CountResult, error) {
+	return s.collection.CountByVideoIdList(ctx, videoId)
+}
+
 var _ collectionserviceiface.CollectionService = (*Service)(nil)

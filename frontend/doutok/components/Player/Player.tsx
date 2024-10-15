@@ -1,7 +1,6 @@
 "use client";
 
-import React, { RefObject, useEffect, useRef, useState } from "react";
-import dynamic from "next/dynamic";
+import React, { useEffect, useRef, useState } from "react";
 import "plyr-react/plyr.css";
 import "./Player.css";
 import { SourceInfo } from "plyr";
@@ -10,9 +9,11 @@ import Avatar from "antd/es/avatar/avatar";
 import {
   CheckOutlined,
   HeartFilled,
-  HeartOutlined, MessageFilled,
+  HeartOutlined,
+  MessageFilled,
   MessageOutlined,
-  ShareAltOutlined, StarFilled,
+  ShareAltOutlined,
+  StarFilled,
   StarOutlined
 } from "@ant-design/icons";
 import {
@@ -20,7 +21,8 @@ import {
   FavoriteServiceAddFavoriteResponse,
   FollowServiceAddFollowResponse,
   SvapiVideo,
-  useCollectionServiceAddVideo2Collection, useCollectionServiceRemoveVideoFromCollection,
+  useCollectionServiceAddVideo2Collection,
+  useCollectionServiceRemoveVideoFromCollection,
   useFavoriteServiceAddFavorite,
   useFavoriteServiceRemoveFavorite,
   useFollowServiceAddFollow,
@@ -29,28 +31,27 @@ import {
 import { APITypes, PlyrProps, usePlyr } from "plyr-react";
 import { CommentComponent } from "@/components/Player/CommentComponent/CommentComponent";
 
-const CustomPlyrInstance = React.forwardRef<
-  APITypes,
-  PlyrProps
->((props, ref) => {
-  const { source, options = null } = props;
-  const raptorRef = usePlyr(ref, {
-    source,
-    options
-  }) as React.MutableRefObject<HTMLVideoElement>;
+const CustomPlyrInstance = React.forwardRef<APITypes, PlyrProps>(
+  (props, ref) => {
+    const { source, options = null } = props;
+    const raptorRef = usePlyr(ref, {
+      source,
+      options
+    }) as React.MutableRefObject<HTMLVideoElement>;
 
-  useEffect(() => {
-    raptorRef.current.play()
-  }, []);
+    useEffect(() => {
+      raptorRef.current.play();
+    }, []);
 
-  return <video ref={raptorRef} className="plyr-react plyr" />;
-});
+    return <video ref={raptorRef} className="plyr-react plyr" />;
+  }
+);
 CustomPlyrInstance.displayName = "CustomPlyrInstance";
 
 interface CorePlayerProps {
-  title: string,
-  sources?: SourceInfo,
-  src: string
+  title: string;
+  sources?: SourceInfo;
+  src: string;
 }
 
 const CorePlayer = (props: CorePlayerProps, ref) => {
@@ -64,10 +65,10 @@ const CorePlayer = (props: CorePlayerProps, ref) => {
           props.sources !== undefined
             ? props.sources
             : [
-              {
-                src: props.src
-              }
-            ]
+                {
+                  src: props.src
+                }
+              ]
       }}
       options={{
         ratio: "16:9",
@@ -76,7 +77,7 @@ const CorePlayer = (props: CorePlayerProps, ref) => {
       }}
     />
   );
-}
+};
 
 const CorePlayerMemorized = React.memo(React.forwardRef(CorePlayer));
 
@@ -93,7 +94,8 @@ export interface PlayerProps {
   displaying: boolean;
 }
 
-const Plyr = dynamic(() => import("plyr-react"), { ssr: false });
+// 保留注释，未来会优化播放器组件
+// const Plyr = dynamic(() => import("plyr-react"), { ssr: false });
 
 export function Player(props: PlayerProps) {
   const playerRef = useRef();
@@ -106,7 +108,6 @@ export function Player(props: PlayerProps) {
   const [isCollected, setIsCollected] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [videoSource, setVideoSource] = useState("");
-  const [displaying, setDisplaying] = useState(false);
   const [openCommentDrawer, setOpenCommentDrawer] = useState(false);
 
   useEffect(() => {
@@ -119,101 +120,114 @@ export function Player(props: PlayerProps) {
     setIsFollowed(props.videoInfo.author?.isFollowing === true);
     setIsCollected(props.videoInfo.isCollected === true);
     setIsFavorite(props.videoInfo.isFavorite === true);
-    setDisplaying(props.displaying);
   }, [props.isCouldFollow, props.videoInfo]);
 
   const addFollowMutate = useFollowServiceAddFollow({});
   const addFollowHandle = () => {
-    addFollowMutate.mutate({
-      userId: props.userId
-    }).then((result: FollowServiceAddFollowResponse) => {
-      if (result?.code !== 0) {
-        message.error("关注失败");
-        return;
-      }
+    addFollowMutate
+      .mutate({
+        userId: props.userId
+      })
+      .then((result: FollowServiceAddFollowResponse) => {
+        if (result?.code !== 0) {
+          message.error("关注失败");
+          return;
+        }
 
-      message.info("关注成功");
-      setIsFollowed(true);
-    });
+        message.info("关注成功");
+        setIsFollowed(true);
+      });
   };
 
   const removeFollowMutate = useFollowServiceRemoveFollow({});
   const removeFollowMutateHandle = () => {
-    removeFollowMutate.mutate({
-      userId: props.userId
-    }).then((result: FollowServiceAddFollowResponse) => {
-      if (result?.code !== 0) {
-        message.error("取消关注失败");
-        return;
-      }
+    removeFollowMutate
+      .mutate({
+        userId: props.userId
+      })
+      .then((result: FollowServiceAddFollowResponse) => {
+        if (result?.code !== 0) {
+          message.error("取消关注失败");
+          return;
+        }
 
-      message.info("取消关注成功");
-      setIsFollowed(false);
-    })
+        message.info("取消关注成功");
+        setIsFollowed(false);
+      });
   };
 
   const addFavoriteMutate = useFavoriteServiceAddFavorite({});
-  const addFavoriteHandle =() => {
-    addFavoriteMutate.mutate({
-      id: props.videoInfo.id,
-      target: 0,
-      type: 0
-    }).then((result: FavoriteServiceAddFavoriteResponse) => {
-      if (result?.code !== 0) {
-        message.error("点赞失败");
-        return;
-      }
+  const addFavoriteHandle = () => {
+    addFavoriteMutate
+      .mutate({
+        id: props.videoInfo.id,
+        target: 0,
+        type: 0
+      })
+      .then((result: FavoriteServiceAddFavoriteResponse) => {
+        if (result?.code !== 0) {
+          message.error("点赞失败");
+          return;
+        }
 
-      message.info("点赞成功");
-      setIsFavorite(true);
-    });
+        message.info("点赞成功");
+        setIsFavorite(true);
+      });
   };
 
   const removeFavoriteMutate = useFavoriteServiceRemoveFavorite({});
   const removeFavoriteHandle = () => {
-    removeFavoriteMutate.mutate({
-      id: props.videoInfo.id,
-      target: 0,
-      type: 0
-    }).then((result: FavoriteServiceAddFavoriteResponse) => {
-      if (result?.code !== 0) {
-        message.error("取消点赞失败");
-        return;
-      }
+    removeFavoriteMutate
+      .mutate({
+        id: props.videoInfo.id,
+        target: 0,
+        type: 0
+      })
+      .then((result: FavoriteServiceAddFavoriteResponse) => {
+        if (result?.code !== 0) {
+          message.error("取消点赞失败");
+          return;
+        }
 
-      message.info("取消点赞成功");
-      setIsFavorite(false);
-    });
+        message.info("取消点赞成功");
+        setIsFavorite(false);
+      });
   };
 
-  const addVideo2DefaultCollectionMutate = useCollectionServiceAddVideo2Collection({});
+  const addVideo2DefaultCollectionMutate =
+    useCollectionServiceAddVideo2Collection({});
   const addVideo2DefaultCollectionHandle = () => {
-    addVideo2DefaultCollectionMutate.mutate({
-      videoId: props.videoInfo.id
-    }).then((result: CollectionServiceAddVideo2CollectionResponse) => {
-      if (result?.code !== 0) {
-        message.error("收藏失败");
-        return;
-      }
+    addVideo2DefaultCollectionMutate
+      .mutate({
+        videoId: props.videoInfo.id
+      })
+      .then((result: CollectionServiceAddVideo2CollectionResponse) => {
+        if (result?.code !== 0) {
+          message.error("收藏失败");
+          return;
+        }
 
-      message.info("收藏成功");
-      setIsCollected(true);
-    });
+        message.info("收藏成功");
+        setIsCollected(true);
+      });
   };
 
-  const removeVideoFromDefaultCollectionMutate = useCollectionServiceRemoveVideoFromCollection({});
+  const removeVideoFromDefaultCollectionMutate =
+    useCollectionServiceRemoveVideoFromCollection({});
   const removeVideoFromDefaultCollectionHandle = () => {
-    removeVideoFromDefaultCollectionMutate.mutate({
-      videoId: props.videoInfo.id
-    }).then((result: CollectionServiceAddVideo2CollectionResponse) => {
-      if (result?.code !== 0) {
-        message.error("取消收藏失败");
-        return;
-      }
+    removeVideoFromDefaultCollectionMutate
+      .mutate({
+        videoId: props.videoInfo.id
+      })
+      .then((result: CollectionServiceAddVideo2CollectionResponse) => {
+        if (result?.code !== 0) {
+          message.error("取消收藏失败");
+          return;
+        }
 
-      message.info("取消收藏成功");
-      setIsCollected(false);
-    });
+        message.info("取消收藏成功");
+        setIsCollected(false);
+      });
   };
 
   return (
@@ -222,11 +236,11 @@ export function Player(props: PlayerProps) {
       style={
         !haveSource
           ? {
-            position: "absolute",
-            top: "-100%",
-            left: "-100%",
-            opacity: 0
-          }
+              position: "absolute",
+              top: "-100%",
+              left: "-100%",
+              opacity: 0
+            }
           : {}
       }
     >
@@ -240,9 +254,7 @@ export function Player(props: PlayerProps) {
         }}
         mask={false}
       >
-        <CommentComponent
-          videoId={props.videoInfo.id}
-        />
+        <CommentComponent videoId={props.videoInfo.id} />
       </Drawer>
       <div
         className={"mask"}
@@ -250,12 +262,8 @@ export function Player(props: PlayerProps) {
           color: "white"
         }}
       >
-        <div
-          className={"down-left"}
-        >
-          <div
-            className={"publish-user-name"}
-          >
+        <div className={"down-left"}>
+          <div className={"publish-user-name"}>
             <div
               style={{
                 fontSize: "30px"
@@ -275,157 +283,149 @@ export function Player(props: PlayerProps) {
         <div className={"down-right"}>
           <div className={"mask-button-container"}>
             <div>
-              <Avatar
-                className={"mask-button"}
-                src={props.avatar}
-                size={70}
-              />
+              <Avatar className={"mask-button"} src={props.avatar} size={70} />
             </div>
             <div className={"follow-button"}>
-              {isCouldFollow && !isFollowed && <Button
-                size={"small"}
-                block={true}
-                style={{
-                  pointerEvents: "all"
-                }}
-                onClick={addFollowHandle}
-              >
-                关注
-              </Button>}
-              {isCouldFollow && isFollowed && <Button
-                size={"small"}
-                block={true}
-                style={{
-                  pointerEvents: "all"
-                }}
-                onClick={removeFollowMutateHandle}
-              >
-                <CheckOutlined />
-              </Button>}
+              {isCouldFollow && !isFollowed && (
+                <Button
+                  size={"small"}
+                  block={true}
+                  style={{
+                    pointerEvents: "all"
+                  }}
+                  onClick={addFollowHandle}
+                >
+                  关注
+                </Button>
+              )}
+              {isCouldFollow && isFollowed && (
+                <Button
+                  size={"small"}
+                  block={true}
+                  style={{
+                    pointerEvents: "all"
+                  }}
+                  onClick={removeFollowMutateHandle}
+                >
+                  <CheckOutlined />
+                </Button>
+              )}
             </div>
           </div>
-            <div className={"mask-button-container"}>
-              {isFavorite && (
-                <Button
-                  className={"mask-button"}
-                  ghost={true}
-                  block={true}
-                  onClick={removeFavoriteHandle}
-                >
-                  <HeartFilled
-                    style={{
-                      fontSize: "40px"
-                    }}
-                  />
-                </Button>
-              )}
-              {!isFavorite && (
-                <Button
-                  className={"mask-button"}
-                  ghost={true}
-                  block={true}
-                  onClick={addFavoriteHandle}
-                >
-                  <HeartOutlined
-                    style={{
-                      fontSize: "40px"
-                    }}
-                  />
-                </Button>
-              )}
-              <div
-                className={"number-div"}
-              >
-                {props.videoInfo.favoriteCount !== undefined ? props.videoInfo.favoriteCount : "喜欢"}
-              </div>
-            </div>
-            <div className={"mask-button-container"}>
+          <div className={"mask-button-container"}>
+            {isFavorite && (
               <Button
                 className={"mask-button"}
                 ghost={true}
-                onClick={() => {
-                  setOpenCommentDrawer(!openCommentDrawer);
-                }}
+                block={true}
+                onClick={removeFavoriteHandle}
               >
-                {openCommentDrawer && (
-                  <MessageFilled
-                    style={{
-                      fontSize: "40px"
-                    }}
-                  />
-                )}
-                {!openCommentDrawer && (
-                  <MessageOutlined
-                    style={{
-                      fontSize: "40px"
-                    }}
-                  />
-              )}
-              </Button>
-              <div
-                className={"number-div"}
-              >
-                {props.videoInfo.commentCount !== undefined ? props.videoInfo.commentCount : "评论"}
-              </div>
-            </div>
-            <div className={"mask-button-container"}>
-                {isCollected && (
-                  <Button
-                    className={"mask-button"}
-                    ghost={true}
-                    onClick={removeVideoFromDefaultCollectionHandle}
-                  >
-                    <StarFilled
-                      style={{
-                        fontSize: "40px"
-                      }}
-                    />
-                  </Button>
-                )}
-                {!isCollected && (
-                  <Button
-                    className={"mask-button"}
-                    ghost={true}
-                    onClick={addVideo2DefaultCollectionHandle}
-                  >
-                    <StarOutlined
-                      style={{
-                        fontSize: "40px"
-                      }}
-                    />
-                  </Button>
-                )}
-              <div
-                className={"number-div"}
-              >
-                {props.videoInfo.favoriteCount !== undefined ? props.videoInfo.favoriteCount : "收藏"}
-              </div>
-            </div>
-            <div className={"mask-button-container"}>
-              <Button
-                className={"mask-button"}
-                ghost={true}
-              >
-                <ShareAltOutlined
+                <HeartFilled
                   style={{
                     fontSize: "40px"
                   }}
                 />
               </Button>
+            )}
+            {!isFavorite && (
+              <Button
+                className={"mask-button"}
+                ghost={true}
+                block={true}
+                onClick={addFavoriteHandle}
+              >
+                <HeartOutlined
+                  style={{
+                    fontSize: "40px"
+                  }}
+                />
+              </Button>
+            )}
+            <div className={"number-div"}>
+              {props.videoInfo.favoriteCount !== undefined
+                ? props.videoInfo.favoriteCount
+                : "喜欢"}
             </div>
           </div>
+          <div className={"mask-button-container"}>
+            <Button
+              className={"mask-button"}
+              ghost={true}
+              onClick={() => {
+                setOpenCommentDrawer(!openCommentDrawer);
+              }}
+            >
+              {openCommentDrawer && (
+                <MessageFilled
+                  style={{
+                    fontSize: "40px"
+                  }}
+                />
+              )}
+              {!openCommentDrawer && (
+                <MessageOutlined
+                  style={{
+                    fontSize: "40px"
+                  }}
+                />
+              )}
+            </Button>
+            <div className={"number-div"}>
+              {props.videoInfo.commentCount !== undefined
+                ? props.videoInfo.commentCount
+                : "评论"}
+            </div>
+          </div>
+          <div className={"mask-button-container"}>
+            {isCollected && (
+              <Button
+                className={"mask-button"}
+                ghost={true}
+                onClick={removeVideoFromDefaultCollectionHandle}
+              >
+                <StarFilled
+                  style={{
+                    fontSize: "40px"
+                  }}
+                />
+              </Button>
+            )}
+            {!isCollected && (
+              <Button
+                className={"mask-button"}
+                ghost={true}
+                onClick={addVideo2DefaultCollectionHandle}
+              >
+                <StarOutlined
+                  style={{
+                    fontSize: "40px"
+                  }}
+                />
+              </Button>
+            )}
+            <div className={"number-div"}>
+              {props.videoInfo.favoriteCount !== undefined
+                ? props.videoInfo.favoriteCount
+                : "收藏"}
+            </div>
+          </div>
+          <div className={"mask-button-container"}>
+            <Button className={"mask-button"} ghost={true}>
+              <ShareAltOutlined
+                style={{
+                  fontSize: "40px"
+                }}
+              />
+            </Button>
+          </div>
         </div>
-        <CorePlayerMemorized
-          ref={playerRef}
-          title={props.title}
-          sources={props.sources}
-          src={videoSource}
-          ref={playerRef}
-        />
+      </div>
+      <CorePlayerMemorized
+        ref={playerRef}
+        title={props.title}
+        sources={props.sources}
+        src={videoSource}
+      />
     </div>
   );
 }
-
-
-
-

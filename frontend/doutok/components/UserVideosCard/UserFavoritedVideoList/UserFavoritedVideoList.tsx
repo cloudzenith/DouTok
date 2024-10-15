@@ -1,6 +1,7 @@
 import {
   FavoriteServiceListFavoriteVideoResponse,
-  SvapiVideo, useFavoriteServiceListFavoriteVideo,
+  SvapiVideo,
+  useFavoriteServiceListFavoriteVideo
 } from "@/api/svapi/api";
 import { message } from "antd";
 import React, { useEffect } from "react";

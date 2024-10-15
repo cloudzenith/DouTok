@@ -1,9 +1,7 @@
 import { Divider, Skeleton } from "antd";
 import React from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import {
-  SvapiVideo,
-} from "@/api/svapi/api";
+import { SvapiVideo } from "@/api/svapi/api";
 import { VideoList } from "@/components/VideoList/VideoList";
 
 export interface UserVideosListProps {

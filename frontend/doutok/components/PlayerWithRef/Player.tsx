@@ -1,11 +1,6 @@
 "use client";
 
-import React, {
-  MutableRefObject,
-  useEffect,
-  useRef,
-  useState
-} from "react";
+import React, { MutableRefObject, useEffect, useRef, useState } from "react";
 import "plyr-react/plyr.css";
 import "./Player.css";
 import { SourceInfo } from "plyr";

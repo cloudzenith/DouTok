@@ -136,5 +136,20 @@ func (a *Adapter) IsCollected(ctx context.Context, userId int64, videoIdList []i
 }
 
 func (a *Adapter) CountCollected4Video(ctx context.Context, videoIdList []int64) (map[int64]int64, error) {
-	req := &v1.CountColl
+	req := &v1.CountCollect4VideoRequest{
+		VideoIdList: videoIdList,
+	}
+
+	resp, err := a.collection.CountCollect4Video(ctx, req)
+	return respcheck.CheckT[map[int64]int64, *v1.Metadata](
+		resp, err,
+		func() map[int64]int64 {
+			result := make(map[int64]int64)
+			for _, item := range resp.CountResult {
+				result[item.Id] = item.Count
+			}
+
+			return result
+		},
+	)
 }

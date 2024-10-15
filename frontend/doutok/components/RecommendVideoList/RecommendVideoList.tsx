@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import {
   ShortVideoCoreVideoServiceFeedShortVideoResponse,
   SvapiVideo,
-  useShortVideoCoreVideoServiceFeedShortVideo,
+  useShortVideoCoreVideoServiceFeedShortVideo
 } from "@/api/svapi/api";
 import { message } from "antd";
 import { UserVideosList } from "@/components/UserVideosList/UserVideosList";

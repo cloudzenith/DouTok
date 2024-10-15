@@ -8,6 +8,7 @@ import (
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/repoiface"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/model"
 	"github.com/go-kratos/kratos/v2/log"
+	"time"
 )
 
 type Service struct {
@@ -27,7 +28,8 @@ func (s *Service) CreateComment(ctx context.Context, c *comment.Comment) (cmt *c
 	}()
 
 	// 创建评论
-	err = s.comment.Create(ctx, c.ToModel())
+	do := c.ToModel()
+	err = s.comment.Create(ctx, do)
 	if err != nil {
 		log.Context(ctx).Errorf("create comment failed, err: %v", err)
 		return nil, err
@@ -43,7 +45,8 @@ func (s *Service) CreateComment(ctx context.Context, c *comment.Comment) (cmt *c
 		}
 
 		parentDO := comment.NewWithModel(parent)
-		parentDO.AddFirstChildComments(c)
+		do.CreateTime = time.Now()
+		parentDO.AddFirstChildComments(comment.NewWithModel(do))
 		err = s.comment.Update(ctx, parentDO.ToModel())
 		if err != nil {
 			log.Context(ctx).Errorf("update parent comment failed, err: %v", err)

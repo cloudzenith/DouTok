@@ -10,9 +10,7 @@ import {
 } from "@ant-design/icons";
 
 import {
-  UserServiceGetUserInfoResponse,
   UserServiceLoginResponse,
-  useUserServiceGetUserInfo,
   useUserServiceLogin
 } from "@/api/svapi/api";
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/TremblingV5/box/dbtx"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/snowflakeutil"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/application/interface/collectionserviceiface"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/repoiface"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/model"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/query"
@@ -127,6 +128,20 @@ func (p *PersistRepository) UpdateCollectionVideoTx(ctx context.Context, collect
 		log.Context(ctx).Errorf("UpdateCollectionVideoTx: %v", info)
 		return err
 	})
+}
+
+func (s *PersistRepository) CountByVideoIdList(ctx context.Context, videoIdList []int64) ([]*collectionserviceiface.CountResult, error) {
+	var results []*collectionserviceiface.CountResult
+	err := query.Q.WithContext(ctx).CollectionVideo.Select(
+		query.Q.CollectionVideo.VideoID.As("id"),
+		query.Q.CollectionVideo.VideoID.Count().As("count"),
+	).Where(
+		query.Q.CollectionVideo.VideoID.In(videoIdList...),
+		query.Q.CollectionVideo.IsDeleted.Is(false),
+	).Group(
+		query.Q.CollectionVideo.VideoID,
+	).Scan(&results)
+	return results, err
 }
 
 var _ repoiface.CollectionRepository = (*PersistRepository)(nil)

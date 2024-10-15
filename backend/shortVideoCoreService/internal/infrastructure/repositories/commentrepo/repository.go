@@ -95,15 +95,19 @@ func (r *PersistRepository) count(ctx context.Context, conditions ...gen.Conditi
 	return query.Q.WithContext(ctx).Comment.Where(conditions...).Count()
 }
 
-func (r *PersistRepository) countWithGroup(ctx context.Context, targetFiled field.Int64, idList []int64) ([]*commentserviceiface.CountResult, error) {
+func (r *PersistRepository) countWithGroup(ctx context.Context, targetFiled field.Int64, noChildComments bool, idList []int64) ([]*commentserviceiface.CountResult, error) {
 	var result []*commentserviceiface.CountResult
+	var conditions []gen.Condition
+	conditions = append(conditions, targetFiled.In(idList...), query.Comment.IsDeleted.Is(false))
+	if noChildComments {
+		conditions = append(conditions, query.Comment.ParentID.Eq(0))
+	}
 
 	err := query.Q.WithContext(ctx).Comment.Select(
 		targetFiled.As("id"),
 		targetFiled.Count().As("count"),
 	).Where(
-		targetFiled.In(idList...),
-		query.Comment.IsDeleted.Is(false),
+		conditions...,
 	).Group(
 		targetFiled,
 	).Scan(&result)
@@ -111,11 +115,11 @@ func (r *PersistRepository) countWithGroup(ctx context.Context, targetFiled fiel
 }
 
 func (r *PersistRepository) CountByVideoId(ctx context.Context, videoId []int64) ([]*commentserviceiface.CountResult, error) {
-	return r.countWithGroup(ctx, query.Q.Comment.VideoID, videoId)
+	return r.countWithGroup(ctx, query.Q.Comment.VideoID, true, videoId)
 }
 
 func (r *PersistRepository) CountByUserId(ctx context.Context, userId []int64) ([]*commentserviceiface.CountResult, error) {
-	return r.countWithGroup(ctx, query.Q.Comment.UserID, userId)
+	return r.countWithGroup(ctx, query.Q.Comment.UserID, false, userId)
 }
 
 func (r *PersistRepository) CountParentCommentByVideoId(ctx context.Context, videoId int64) (int64, error) {

@@ -2,6 +2,7 @@ package repoiface
 
 import (
 	"context"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/application/interface/collectionserviceiface"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/model"
 )
 
@@ -21,4 +22,5 @@ type CollectionRepository interface {
 	ListCollectedVideoByGiven(ctx context.Context, userId int64, videoIdList []int64) ([]int64, error)
 	GetCollectionVideo(ctx context.Context, collectionId, videoId int64) (*model.CollectionVideo, error)
 	GetByIdTx(ctx context.Context, id int64) (*model.Collection, error)
+	CountByVideoIdList(ctx context.Context, videoIdList []int64) ([]*collectionserviceiface.CountResult, error)
 }

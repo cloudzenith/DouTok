@@ -48,6 +48,7 @@ func (a *Application) FeedShortVideo(ctx context.Context, request *svapi.FeedSho
 
 	videos := dto.ToPBVideoList(resp.Videos)
 	a.assembleUserIsFollowing(ctx, videos, userId)
+	a.assembleVideoCountInfo(ctx, videos)
 
 	return &svapi.FeedShortVideoResponse{
 		Videos: videos,
@@ -91,7 +92,26 @@ func (a *Application) assembleVideoCountInfo(ctx context.Context, list []*svapi.
 		videoIdList = append(videoIdList, video.GetId())
 	}
 
-	a.core.CreateComment()
+	commentCountMap, err := a.core.CountComments4Video(ctx, videoIdList)
+	if err != nil {
+		log.Context(ctx).Errorf("failed to count comments: %v", err)
+	}
+
+	favoriteCountMap, err := a.core.CountFavorite4Video(ctx, videoIdList)
+	if err != nil {
+		log.Context(ctx).Errorf("failed to count favorite: %v", err)
+	}
+
+	collectedCountMap, err := a.core.CountCollected4Video(ctx, videoIdList)
+	if err != nil {
+		log.Context(ctx).Errorf("failed to count collected: %v", err)
+	}
+
+	for _, video := range list {
+		video.CommentCount = commentCountMap[video.GetId()]
+		video.FavoriteCount = favoriteCountMap[video.GetId()]
+		video.CollectedCount = collectedCountMap[video.GetId()]
+	}
 }
 
 func (a *Application) GetVideoById(ctx context.Context, request *svapi.GetVideoByIdRequest) (*svapi.GetVideoByIdResponse, error) {

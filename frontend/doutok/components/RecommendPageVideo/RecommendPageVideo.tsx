@@ -5,7 +5,7 @@ import {
   useShortVideoCoreVideoServiceFeedShortVideo
 } from "@/api/svapi/api";
 import { Button, message } from "antd";
-import React, { useEffect} from "react";
+import React, { useEffect } from "react";
 import useUserStore from "@/components/UserStore/useUserStore";
 
 export interface RecommendPageVideoProps {

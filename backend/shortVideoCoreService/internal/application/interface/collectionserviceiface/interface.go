@@ -16,6 +16,11 @@ type ListCollectionVideoResult struct {
 	Count int64
 }
 
+type CountResult struct {
+	Id    int64
+	Count int64
+}
+
 type CollectionService interface {
 	CreateCollection(ctx context.Context, userId int64, name, description string) error
 	GetCollectionById(ctx context.Context, collectionId int64) (*collection.Collection, error)
@@ -27,4 +32,5 @@ type CollectionService interface {
 	ListCollectionVideo(ctx context.Context, collectionId int64, pagination *v1.PaginationRequest) (*ListCollectionVideoResult, error)
 	ListCollectedVideoByGiven(ctx context.Context, userId int64, videoIdList []int64) ([]int64, error)
 	GenerateDefaultCollection(ctx context.Context, userId int64) error
+	CountCollectedNumber4Video(ctx context.Context, videoId []int64) ([]*CountResult, error)
 }
