@@ -58,6 +58,10 @@ export function CommentComponent(props: CommentListProps) {
           return;
         }
 
+        if (result?.data?.comment !== undefined && result.data.comment.parentId === undefined) {
+          setData([result.data.comment, ...data]);
+        }
+
         setNewComment(undefined);
         setNewCommentParentId(undefined);
         setNewCommentReplyUserId(undefined);

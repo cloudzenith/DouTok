@@ -4,11 +4,12 @@ import {
   useCommentServiceListChildComment
 } from "@/api/svapi/api";
 import { List, message } from "antd";
-import React from "react";
+import React, { useEffect } from "react";
 
 export interface ChildCommentListProps {
   commentId?: string;
   initialComments: SvapiComment[];
+  newComment: SvapiComment;
 }
 
 export function ChildCommentList(props: ChildCommentListProps) {
