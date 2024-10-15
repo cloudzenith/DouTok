@@ -134,3 +134,7 @@ func (a *Adapter) IsCollected(ctx context.Context, userId int64, videoIdList []i
 		},
 	)
 }
+
+func (a *Adapter) CountCollected4Video(ctx context.Context, videoIdList []int64) (map[int64]int64, error) {
+	req := &v1.CountColl
+}

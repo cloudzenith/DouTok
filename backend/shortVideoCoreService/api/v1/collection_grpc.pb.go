@@ -31,6 +31,7 @@ type CollectionServiceClient interface {
 	RemoveVideoFromCollection(ctx context.Context, in *RemoveVideoFromCollectionRequest, opts ...grpc.CallOption) (*RemoveVideoFromCollectionResponse, error)
 	ListCollectionVideo(ctx context.Context, in *ListCollectionVideoRequest, opts ...grpc.CallOption) (*ListCollectionVideoResponse, error)
 	IsCollected(ctx context.Context, in *IsCollectedRequest, opts ...grpc.CallOption) (*IsCollectedResponse, error)
+	CountCollect4Video(ctx context.Context, in *CountCollect4VideoRequest, opts ...grpc.CallOption) (*CountCollect4VideoResponse, error)
 }
 
 type collectionServiceClient struct {
@@ -122,6 +123,15 @@ func (c *collectionServiceClient) IsCollected(ctx context.Context, in *IsCollect
 	return out, nil
 }
 
+func (c *collectionServiceClient) CountCollect4Video(ctx context.Context, in *CountCollect4VideoRequest, opts ...grpc.CallOption) (*CountCollect4VideoResponse, error) {
+	out := new(CountCollect4VideoResponse)
+	err := c.cc.Invoke(ctx, "/shortVideoCoreService.api.v1.CollectionService/CountCollect4Video", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CollectionServiceServer is the server API for CollectionService service.
 // All implementations must embed UnimplementedCollectionServiceServer
 // for forward compatibility
@@ -135,6 +145,7 @@ type CollectionServiceServer interface {
 	RemoveVideoFromCollection(context.Context, *RemoveVideoFromCollectionRequest) (*RemoveVideoFromCollectionResponse, error)
 	ListCollectionVideo(context.Context, *ListCollectionVideoRequest) (*ListCollectionVideoResponse, error)
 	IsCollected(context.Context, *IsCollectedRequest) (*IsCollectedResponse, error)
+	CountCollect4Video(context.Context, *CountCollect4VideoRequest) (*CountCollect4VideoResponse, error)
 	mustEmbedUnimplementedCollectionServiceServer()
 }
 
@@ -168,6 +179,9 @@ func (UnimplementedCollectionServiceServer) ListCollectionVideo(context.Context,
 }
 func (UnimplementedCollectionServiceServer) IsCollected(context.Context, *IsCollectedRequest) (*IsCollectedResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method IsCollected not implemented")
+}
+func (UnimplementedCollectionServiceServer) CountCollect4Video(context.Context, *CountCollect4VideoRequest) (*CountCollect4VideoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CountCollect4Video not implemented")
 }
 func (UnimplementedCollectionServiceServer) mustEmbedUnimplementedCollectionServiceServer() {}
 
@@ -344,6 +358,24 @@ func _CollectionService_IsCollected_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CollectionService_CountCollect4Video_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CountCollect4VideoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CollectionServiceServer).CountCollect4Video(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/shortVideoCoreService.api.v1.CollectionService/CountCollect4Video",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CollectionServiceServer).CountCollect4Video(ctx, req.(*CountCollect4VideoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CollectionService_ServiceDesc is the grpc.ServiceDesc for CollectionService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -386,6 +418,10 @@ var CollectionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "IsCollected",
 			Handler:    _CollectionService_IsCollected_Handler,
+		},
+		{
+			MethodName: "CountCollect4Video",
+			Handler:    _CollectionService_CountCollect4Video_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

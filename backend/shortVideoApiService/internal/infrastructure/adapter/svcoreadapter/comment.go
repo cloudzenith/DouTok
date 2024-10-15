@@ -81,5 +81,21 @@ func (a *Adapter) GetCommentById(ctx context.Context, commentId int64) (*v1.Comm
 	)
 }
 
-func (a *Adapter) CountComments4Video(ctx context.Context) {
+func (a *Adapter) CountComments4Video(ctx context.Context, videoIdList []int64) (map[int64]int64, error) {
+	req := &v1.CountComment4VideoRequest{
+		VideoId: videoIdList,
+	}
+
+	resp, err := a.comment.CountComment4Video(ctx, req)
+	return respcheck.CheckT[map[int64]int64, *v1.Metadata](
+		resp, err,
+		func() map[int64]int64 {
+			result := make(map[int64]int64)
+			for _, item := range resp.Results {
+				result[item.Id] = item.Count
+			}
+
+			return result
+		},
+	)
 }
