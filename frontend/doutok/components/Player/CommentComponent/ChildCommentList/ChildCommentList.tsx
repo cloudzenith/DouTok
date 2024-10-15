@@ -4,7 +4,7 @@ import {
   useCommentServiceListChildComment
 } from "@/api/svapi/api";
 import { List, message } from "antd";
-import React, { useEffect } from "react";
+import React from "react";
 
 export interface ChildCommentListProps {
   commentId?: string;
