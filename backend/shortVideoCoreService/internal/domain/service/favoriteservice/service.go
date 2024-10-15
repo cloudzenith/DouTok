@@ -68,9 +68,13 @@ func (s *Service) ListFavorite(ctx context.Context, dto *favoriteserviceiface.Ag
 	}
 
 	countResult, err := s.favorite.CountFavorite(ctx, []int64{dto.BizId}, int32(dto.AggType), int32(dto.FavoriteType))
-	if err != nil || len(countResult) == 0 {
+	if err != nil {
 		log.Context(ctx).Errorf("count favorite failed: %v", err)
 		return nil, err
+	}
+
+	if len(countResult) == 0 {
+		return pageresult.New(idList, 0), nil
 	}
 
 	return pageresult.New(idList, countResult[0].Cnt), nil

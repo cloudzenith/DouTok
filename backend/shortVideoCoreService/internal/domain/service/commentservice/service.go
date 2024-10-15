@@ -65,11 +65,13 @@ func (s *Service) ListComment4Video(ctx context.Context, videoId int64, limit, o
 		return nil, err
 	}
 
-	count, err := s.comment.CountByVideoId(ctx, videoId)
-	if err != nil {
+	countResult, err := s.comment.CountByVideoId(ctx, []int64{videoId})
+	if err != nil || len(countResult) != 1 {
 		log.Context(ctx).Errorf("count parent comment by video id failed, err: %v", err)
 		return nil, err
 	}
+
+	count := countResult[0].Count
 
 	// FIXME: 此处写法不够合理，先实现功能，后续需要优化此处写法
 	var parentComments []*comment.Comment
@@ -131,11 +133,11 @@ func (s *Service) GetCommentById(ctx context.Context, commentId int64) (cmt *com
 	return comment.NewWithModel(c), nil
 }
 
-func (s *Service) CountComment4Video(ctx context.Context, videoId int64) (int64, error) {
+func (s *Service) CountComment4Video(ctx context.Context, videoId []int64) ([]*commentserviceiface.CountResult, error) {
 	return s.comment.CountByVideoId(ctx, videoId)
 }
 
-func (s *Service) CountComment4User(ctx context.Context, userId int64) (int64, error) {
+func (s *Service) CountComment4User(ctx context.Context, userId []int64) ([]*commentserviceiface.CountResult, error) {
 	return s.comment.CountByUserId(ctx, userId)
 }
 

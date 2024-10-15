@@ -70,8 +70,9 @@ func (a *Application) ListFavorite(ctx context.Context, request *v1.ListFavorite
 	}
 
 	return &v1.ListFavoriteResponse{
-		Meta:  utils.GetSuccessMeta(),
-		BizId: data,
+		Meta:       utils.GetSuccessMeta(),
+		BizId:      data.Data,
+		Pagination: utils.GetPageResponse(data.Count, request.Pagination.Page, request.Pagination.Size),
 	}, nil
 }
 

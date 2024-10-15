@@ -1,14 +1,14 @@
 import {
-  CollectionServiceListCollectionResponse,
-  FavoriteServiceListFavoriteVideoResponse, SvapiListCollectionResponse,
+  CollectionServiceListCollectionResponse, CollectionServiceListVideo4CollectionResponse,
   SvapiVideo,
   useCollectionServiceListCollection,
   useCollectionServiceListVideo4Collection,
-  useFavoriteServiceListFavoriteVideo
+
 } from "@/api/svapi/api";
 import { message } from "antd";
 import React, { useEffect } from "react";
 import { UserVideosList } from "@/components/UserVideosList/UserVideosList";
+import { RequestComponent } from "@/components/RequestComponent/RequestComponent";
 
 export function UserCollectedVideoList() {
   const [total, setTotal] = React.useState(1);
@@ -19,6 +19,10 @@ export function UserCollectedVideoList() {
   const [defaultCollectionId, setDefaultCollectionId] = React.useState<string>();
 
   useCollectionServiceListCollection({
+    queryParams: {
+      "pagination.page": 1,
+      "pagination.size": 1
+    },
     resolve: (result: CollectionServiceListCollectionResponse) => {
       if (result?.code !== 0) {
         message.error("获取收藏夹失败");
@@ -26,7 +30,7 @@ export function UserCollectedVideoList() {
       }
 
       const collection = result?.data?.collections?.[0];
-      if (collection) {
+      if (collection !== undefined && collection.id !== undefined) {
         setDefaultCollectionId(collection.id);
       }
 
@@ -34,31 +38,47 @@ export function UserCollectedVideoList() {
     }
   });
 
-  const listFavoriteVideoMutate = useCollectionServiceListVideo4Collection({});
+  useEffect(() => {
+    if (defaultCollectionId === undefined) {
+      return;
+    }
+
+    loadData();
+  }, [defaultCollectionId]);
+
+  const { refetch: doFetchCollectionVideo } = useCollectionServiceListVideo4Collection({
+    lazy: true
+  });
+
   const loadData = () => {
     if (loading) {
       return;
     }
 
-    setLoading(true);
-    listFavoriteVideoMutate
-      .mutate({
-        page: page,
-        size: 10
-      })
-      .then((result: FavoriteServiceListFavoriteVideoResponse) => {
-        if (result?.code !== 0) {
-          message.error("获取视频列表失败");
-          return;
-        }
+    if (defaultCollectionId === undefined) {
+      return ;
+    }
 
-        setData([...data, ...(result.data?.videos ?? [])]);
-        setTotal(result?.data?.pagination?.total ?? 0);
-      })
-      .finally(() => {
-        setLoading(false);
-        setPage(page + 1);
-      });
+    setLoading(true);
+
+    doFetchCollectionVideo({
+      queryParams: {
+        collectionId: defaultCollectionId,
+        "pagination.page": page,
+        "pagination.size": 10
+      }
+    }).then((result: CollectionServiceListVideo4CollectionResponse | null) => {
+      if (result?.code !== 0) {
+        message.error("获取视频列表失败");
+        return;
+      }
+
+      setData([...data, ...(result.data?.videos ?? [])]);
+      setTotal(result?.data?.pagination?.total ?? 0);
+    }).finally(() => {
+      setLoading(false);
+      setPage(page + 1);
+    });
   };
 
   useEffect(() => {
@@ -66,12 +86,14 @@ export function UserCollectedVideoList() {
   }, []);
 
   return (
-    <UserVideosList
-      domId={"favorite-list"}
-      loadData={loadData}
-      total={total}
-      data={data}
-      loading={loading}
-    />
+    <>
+      <UserVideosList
+        domId={"favorite-list"}
+        loadData={loadData}
+        total={total}
+        data={data}
+        loading={loading}
+      />
+    </>
   );
 }

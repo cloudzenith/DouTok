@@ -3,6 +3,7 @@ package commentrepo
 import (
 	"context"
 	"github.com/TremblingV5/box/dbtx"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/application/interface/commentserviceiface"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/repoiface"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/model"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/query"
@@ -94,12 +95,27 @@ func (r *PersistRepository) count(ctx context.Context, conditions ...gen.Conditi
 	return query.Q.WithContext(ctx).Comment.Where(conditions...).Count()
 }
 
-func (r *PersistRepository) CountByVideoId(ctx context.Context, videoId int64) (int64, error) {
-	return r.count(ctx, query.Comment.VideoID.Eq(videoId), query.Comment.IsDeleted.Is(false))
+func (r *PersistRepository) countWithGroup(ctx context.Context, targetFiled field.Int64, idList []int64) ([]*commentserviceiface.CountResult, error) {
+	var result []*commentserviceiface.CountResult
+
+	err := query.Q.WithContext(ctx).Comment.Select(
+		targetFiled.As("id"),
+		targetFiled.Count().As("count"),
+	).Where(
+		targetFiled.In(idList...),
+		query.Comment.IsDeleted.Is(false),
+	).Group(
+		targetFiled,
+	).Scan(&result)
+	return result, err
 }
 
-func (r *PersistRepository) CountByUserId(ctx context.Context, userId int64) (int64, error) {
-	return r.count(ctx, query.Comment.UserID.Eq(userId), query.Comment.IsDeleted.Is(false))
+func (r *PersistRepository) CountByVideoId(ctx context.Context, videoId []int64) ([]*commentserviceiface.CountResult, error) {
+	return r.countWithGroup(ctx, query.Q.Comment.VideoID, videoId)
+}
+
+func (r *PersistRepository) CountByUserId(ctx context.Context, userId []int64) ([]*commentserviceiface.CountResult, error) {
+	return r.countWithGroup(ctx, query.Q.Comment.UserID, userId)
 }
 
 func (r *PersistRepository) CountParentCommentByVideoId(ctx context.Context, videoId int64) (int64, error) {

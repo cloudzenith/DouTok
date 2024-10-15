@@ -5,12 +5,12 @@ import dynamic from "next/dynamic";
 import "plyr-react/plyr.css";
 import "./Player.css";
 import { SourceInfo } from "plyr";
-import { Button, message } from "antd";
+import { Button, Drawer, message } from "antd";
 import Avatar from "antd/es/avatar/avatar";
 import {
   CheckOutlined,
   HeartFilled,
-  HeartOutlined,
+  HeartOutlined, MessageFilled,
   MessageOutlined,
   ShareAltOutlined, StarFilled,
   StarOutlined
@@ -27,6 +27,7 @@ import {
   useFollowServiceRemoveFollow
 } from "@/api/svapi/api";
 import { APITypes, PlyrProps, usePlyr } from "plyr-react";
+import { CommentComponent } from "@/components/Player/CommentComponent/CommentComponent";
 
 const CustomPlyrInstance = React.forwardRef<
   APITypes,
@@ -106,6 +107,7 @@ export function Player(props: PlayerProps) {
   const [isFavorite, setIsFavorite] = useState(false);
   const [videoSource, setVideoSource] = useState("");
   const [displaying, setDisplaying] = useState(false);
+  const [openCommentDrawer, setOpenCommentDrawer] = useState(false);
 
   useEffect(() => {
     setHaveSource(true);
@@ -228,6 +230,20 @@ export function Player(props: PlayerProps) {
           : {}
       }
     >
+      <Drawer
+        title={"评论"}
+        open={openCommentDrawer}
+        placement={"left"}
+        closable={true}
+        onClose={() => {
+          setOpenCommentDrawer(false);
+        }}
+        mask={false}
+      >
+        <CommentComponent
+          videoId={props.videoInfo.id}
+        />
+      </Drawer>
       <div
         className={"mask"}
         style={{
@@ -320,24 +336,36 @@ export function Player(props: PlayerProps) {
               <div
                 className={"number-div"}
               >
-                50万
+                {props.videoInfo.favoriteCount !== undefined ? props.videoInfo.favoriteCount : "喜欢"}
               </div>
             </div>
             <div className={"mask-button-container"}>
               <Button
                 className={"mask-button"}
                 ghost={true}
+                onClick={() => {
+                  setOpenCommentDrawer(!openCommentDrawer);
+                }}
               >
-                <MessageOutlined
-                  style={{
-                    fontSize: "40px"
-                  }}
-                />
+                {openCommentDrawer && (
+                  <MessageFilled
+                    style={{
+                      fontSize: "40px"
+                    }}
+                  />
+                )}
+                {!openCommentDrawer && (
+                  <MessageOutlined
+                    style={{
+                      fontSize: "40px"
+                    }}
+                  />
+              )}
               </Button>
               <div
                 className={"number-div"}
               >
-                50万
+                {props.videoInfo.commentCount !== undefined ? props.videoInfo.commentCount : "评论"}
               </div>
             </div>
             <div className={"mask-button-container"}>
@@ -370,7 +398,7 @@ export function Player(props: PlayerProps) {
               <div
                 className={"number-div"}
               >
-                50万
+                {props.videoInfo.favoriteCount !== undefined ? props.videoInfo.favoriteCount : "收藏"}
               </div>
             </div>
             <div className={"mask-button-container"}>

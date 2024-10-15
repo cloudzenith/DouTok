@@ -85,6 +85,15 @@ func (a *Application) assembleUserIsFollowing(ctx context.Context, list []*svapi
 	}
 }
 
+func (a *Application) assembleVideoCountInfo(ctx context.Context, list []*svapi.Video) {
+	var videoIdList []int64
+	for _, video := range list {
+		videoIdList = append(videoIdList, video.GetId())
+	}
+
+	a.core.CreateComment()
+}
+
 func (a *Application) GetVideoById(ctx context.Context, request *svapi.GetVideoByIdRequest) (*svapi.GetVideoByIdResponse, error) {
 	video, err := a.core.GetVideoById(ctx, request.GetVideoId())
 	if err != nil {

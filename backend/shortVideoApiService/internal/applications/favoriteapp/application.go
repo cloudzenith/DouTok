@@ -6,6 +6,7 @@ import (
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/adapter/svcoreadapter"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/utils/claims"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/utils/errorx"
+	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/utils/respcheck"
 	v1 "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1"
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -57,13 +58,13 @@ func (a *Application) ListFavoriteVideo(ctx context.Context, request *svapi.List
 		request.UserId = userId
 	}
 
-	videoIdList, err := a.core.ListUserFavoriteVideo(ctx, request.UserId, request.Page, request.Size)
+	resp, err := a.core.ListUserFavoriteVideo(ctx, request.UserId, request.Page, request.Size)
 	if err != nil {
 		log.Context(ctx).Errorf("failed to list favorite video: %v", err)
 		return nil, errorx.New(1, "获取喜欢列表失败")
 	}
 
-	if len(videoIdList) == 0 {
+	if len(resp.BizId) == 0 {
 		return &svapi.ListFavoriteVideoResponse{
 			Videos: make([]*svapi.Video, 0),
 			Pagination: &svapi.PaginationResponse{
@@ -74,7 +75,7 @@ func (a *Application) ListFavoriteVideo(ctx context.Context, request *svapi.List
 		}, nil
 	}
 
-	videoList, err := a.core.GetVideosByIdList(ctx, videoIdList)
+	videoList, err := a.core.GetVideosByIdList(ctx, resp.BizId)
 	if err != nil {
 		log.Context(ctx).Errorf("failed to get videos by id list: %v", err)
 		return nil, errorx.New(1, "获取喜欢列表失败")
@@ -93,10 +94,8 @@ func (a *Application) ListFavoriteVideo(ctx context.Context, request *svapi.List
 	}
 
 	return &svapi.ListFavoriteVideoResponse{
-		Videos: result,
-		Pagination: &svapi.PaginationResponse{
-			Page: request.Page,
-		},
+		Videos:     result,
+		Pagination: respcheck.ParseSvCorePagination(resp.Pagination),
 	}, nil
 }
 

@@ -208,6 +208,14 @@ export interface SvapiGetVideoByIdResponse {
   video?: SvapiVideo;
 }
 
+export interface SvapiListChildCommentRequest {
+  /**
+   * @gotags: json:"commentId,omitempty,string"
+   */
+  commentId?: string;
+  pagination?: SvapiPaginationRequest;
+}
+
 export interface SvapiListChildCommentResponse {
   comments?: SvapiComment[];
   pagination?: SvapiPaginationResponse;
@@ -216,6 +224,14 @@ export interface SvapiListChildCommentResponse {
 export interface SvapiListCollectionResponse {
   collections?: SvapiCollection[];
   pagination?: SvapiPaginationResponse;
+}
+
+export interface SvapiListComment4VideoRequest {
+  /**
+   * @gotags: json:"videoId,omitempty,string"
+   */
+  videoId?: string;
+  pagination?: SvapiPaginationRequest;
 }
 
 export interface SvapiListComment4VideoResponse {
@@ -1249,58 +1265,54 @@ export interface CommentServiceListChildCommentResponse {
   data?: SvapiListChildCommentResponse;
 }
 
-export interface CommentServiceListChildCommentQueryParams {
-  /**
-   * @gotags: json:"commentId,omitempty,string"
-   */
-  commentId?: string;
-  "pagination.page"?: number;
-  "pagination.size"?: number;
-}
-
 export type CommentServiceListChildCommentProps = Omit<
-  GetProps<
+  MutateProps<
     CommentServiceListChildCommentResponse,
     unknown,
-    CommentServiceListChildCommentQueryParams,
+    void,
+    SvapiListChildCommentRequest,
     void
   >,
-  "path"
+  "path" | "verb"
 >;
 
 export const CommentServiceListChildComment = (
   props: CommentServiceListChildCommentProps
 ) => (
-  <Get<
+  <Mutate<
     CommentServiceListChildCommentResponse,
     unknown,
-    CommentServiceListChildCommentQueryParams,
+    void,
+    SvapiListChildCommentRequest,
     void
   >
+    verb="POST"
     path={`/comment/child`}
     {...props}
   />
 );
 
 export type UseCommentServiceListChildCommentProps = Omit<
-  UseGetProps<
+  UseMutateProps<
     CommentServiceListChildCommentResponse,
     unknown,
-    CommentServiceListChildCommentQueryParams,
+    void,
+    SvapiListChildCommentRequest,
     void
   >,
-  "path"
+  "path" | "verb"
 >;
 
 export const useCommentServiceListChildComment = (
   props: UseCommentServiceListChildCommentProps
 ) =>
-  useGet<
+  useMutate<
     CommentServiceListChildCommentResponse,
     unknown,
-    CommentServiceListChildCommentQueryParams,
+    void,
+    SvapiListChildCommentRequest,
     void
-  >(`/comment/child`, props);
+  >("POST", `/comment/child`, props);
 
 export interface CommentServiceListComment4VideoResponse {
   /**
@@ -1314,23 +1326,15 @@ export interface CommentServiceListComment4VideoResponse {
   data?: SvapiListComment4VideoResponse;
 }
 
-export interface CommentServiceListComment4VideoQueryParams {
-  /**
-   * @gotags: json:"videoId,omitempty,string"
-   */
-  videoId?: string;
-  "pagination.page"?: number;
-  "pagination.size"?: number;
-}
-
 export type CommentServiceListComment4VideoProps = Omit<
-  GetProps<
+  MutateProps<
     CommentServiceListComment4VideoResponse,
     unknown,
-    CommentServiceListComment4VideoQueryParams,
+    void,
+    SvapiListComment4VideoRequest,
     void
   >,
-  "path"
+  "path" | "verb"
 >;
 
 /**
@@ -1339,25 +1343,28 @@ export type CommentServiceListComment4VideoProps = Omit<
 export const CommentServiceListComment4Video = (
   props: CommentServiceListComment4VideoProps
 ) => (
-  <Get<
+  <Mutate<
     CommentServiceListComment4VideoResponse,
     unknown,
-    CommentServiceListComment4VideoQueryParams,
+    void,
+    SvapiListComment4VideoRequest,
     void
   >
+    verb="POST"
     path={`/comment/video`}
     {...props}
   />
 );
 
 export type UseCommentServiceListComment4VideoProps = Omit<
-  UseGetProps<
+  UseMutateProps<
     CommentServiceListComment4VideoResponse,
     unknown,
-    CommentServiceListComment4VideoQueryParams,
+    void,
+    SvapiListComment4VideoRequest,
     void
   >,
-  "path"
+  "path" | "verb"
 >;
 
 /**
@@ -1366,12 +1373,13 @@ export type UseCommentServiceListComment4VideoProps = Omit<
 export const useCommentServiceListComment4Video = (
   props: UseCommentServiceListComment4VideoProps
 ) =>
-  useGet<
+  useMutate<
     CommentServiceListComment4VideoResponse,
     unknown,
-    CommentServiceListComment4VideoQueryParams,
+    void,
+    SvapiListComment4VideoRequest,
     void
-  >(`/comment/video`, props);
+  >("POST", `/comment/video`, props);
 
 export interface ShortVideoCoreVideoServicePreSign4UploadCoverResponse {
   /**

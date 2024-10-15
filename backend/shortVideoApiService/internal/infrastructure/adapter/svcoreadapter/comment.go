@@ -22,7 +22,7 @@ func (a *Adapter) CreateComment(ctx context.Context, options ...commentoptions.C
 	)
 }
 
-func (a *Adapter) ListComment4Video(ctx context.Context, videoId int64, page, size int32) ([]*v1.Comment, error) {
+func (a *Adapter) ListComment4Video(ctx context.Context, videoId int64, page, size int32) (*v1.ListComment4VideoResponse, error) {
 	req := &v1.ListComment4VideoRequest{
 		VideoId: videoId,
 		Pagination: &v1.PaginationRequest{
@@ -32,10 +32,10 @@ func (a *Adapter) ListComment4Video(ctx context.Context, videoId int64, page, si
 	}
 
 	resp, err := a.comment.ListComment4Video(ctx, req)
-	return respcheck.CheckT[[]*v1.Comment, *v1.Metadata](
+	return respcheck.CheckT[*v1.ListComment4VideoResponse, *v1.Metadata](
 		resp, err,
-		func() []*v1.Comment {
-			return resp.Comments
+		func() *v1.ListComment4VideoResponse {
+			return resp
 		},
 	)
 }
@@ -49,7 +49,7 @@ func (a *Adapter) RemoveComment(ctx context.Context, commentId int64) error {
 	return respcheck.Check[*v1.Metadata](resp, err)
 }
 
-func (a *Adapter) ListChildComments(ctx context.Context, commentId int64, page, size int32) ([]*v1.Comment, error) {
+func (a *Adapter) ListChildComments(ctx context.Context, commentId int64, page, size int32) (*v1.ListChildComment4CommentResponse, error) {
 	req := &v1.ListChildComment4CommentRequest{
 		CommentId: commentId,
 		Pagination: &v1.PaginationRequest{
@@ -59,10 +59,10 @@ func (a *Adapter) ListChildComments(ctx context.Context, commentId int64, page, 
 	}
 
 	resp, err := a.comment.ListChildComment4Comment(ctx, req)
-	return respcheck.CheckT[[]*v1.Comment, *v1.Metadata](
+	return respcheck.CheckT[*v1.ListChildComment4CommentResponse, *v1.Metadata](
 		resp, err,
-		func() []*v1.Comment {
-			return resp.Comments
+		func() *v1.ListChildComment4CommentResponse {
+			return resp
 		},
 	)
 }
@@ -79,4 +79,7 @@ func (a *Adapter) GetCommentById(ctx context.Context, commentId int64) (*v1.Comm
 			return resp.Comment
 		},
 	)
+}
+
+func (a *Adapter) CountComments4Video(ctx context.Context) {
 }

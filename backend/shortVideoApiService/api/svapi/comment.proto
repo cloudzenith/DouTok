@@ -53,13 +53,15 @@ service CommentService {
     // 列出视频的评论
     rpc ListComment4Video(ListComment4VideoRequest) returns (ListComment4VideoResponse) {
         option (google.api.http) = {
-            get: "/comment/video"
+            post: "/comment/video"
+            body: "*"
         };
     };
 
     rpc ListChildComment(ListChildCommentRequest) returns (ListChildCommentResponse) {
         option (google.api.http) = {
-            get: "/comment/child"
+            post: "/comment/child"
+            body: "*"
         };
     };
 }

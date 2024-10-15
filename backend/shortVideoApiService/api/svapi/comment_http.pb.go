@@ -38,8 +38,8 @@ func RegisterCommentServiceHTTPServer(s *http.Server, srv CommentServiceHTTPServ
 	r := s.Route("/")
 	r.POST("/comment", _CommentService_CreateComment0_HTTP_Handler(srv))
 	r.DELETE("/comment", _CommentService_RemoveComment0_HTTP_Handler(srv))
-	r.GET("/comment/video", _CommentService_ListComment4Video0_HTTP_Handler(srv))
-	r.GET("/comment/child", _CommentService_ListChildComment0_HTTP_Handler(srv))
+	r.POST("/comment/video", _CommentService_ListComment4Video0_HTTP_Handler(srv))
+	r.POST("/comment/child", _CommentService_ListChildComment0_HTTP_Handler(srv))
 }
 
 func _CommentService_CreateComment0_HTTP_Handler(srv CommentServiceHTTPServer) func(ctx http.Context) error {
@@ -87,6 +87,9 @@ func _CommentService_RemoveComment0_HTTP_Handler(srv CommentServiceHTTPServer) f
 func _CommentService_ListComment4Video0_HTTP_Handler(srv CommentServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in ListComment4VideoRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
@@ -105,6 +108,9 @@ func _CommentService_ListComment4Video0_HTTP_Handler(srv CommentServiceHTTPServe
 func _CommentService_ListChildComment0_HTTP_Handler(srv CommentServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in ListChildCommentRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
@@ -151,10 +157,10 @@ func (c *CommentServiceHTTPClientImpl) CreateComment(ctx context.Context, in *Cr
 func (c *CommentServiceHTTPClientImpl) ListChildComment(ctx context.Context, in *ListChildCommentRequest, opts ...http.CallOption) (*ListChildCommentResponse, error) {
 	var out ListChildCommentResponse
 	pattern := "/comment/child"
-	path := binding.EncodeURL(pattern, in, true)
+	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationCommentServiceListChildComment))
 	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -164,10 +170,10 @@ func (c *CommentServiceHTTPClientImpl) ListChildComment(ctx context.Context, in 
 func (c *CommentServiceHTTPClientImpl) ListComment4Video(ctx context.Context, in *ListComment4VideoRequest, opts ...http.CallOption) (*ListComment4VideoResponse, error) {
 	var out ListComment4VideoResponse
 	pattern := "/comment/video"
-	path := binding.EncodeURL(pattern, in, true)
+	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationCommentServiceListComment4Video))
 	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

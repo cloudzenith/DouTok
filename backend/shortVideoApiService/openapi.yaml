@@ -259,26 +259,16 @@ paths:
                                     data:
                                         $ref: '#/components/schemas/svapi.RemoveCommentResponse'
     /comment/child:
-        get:
+        post:
             tags:
                 - CommentService
             operationId: CommentService_ListChildComment
-            parameters:
-                - name: commentId
-                  in: query
-                  description: '@gotags: json:"commentId,omitempty,string"'
-                  schema:
-                    type: string
-                - name: pagination.page
-                  in: query
-                  schema:
-                    type: integer
-                    format: int32
-                - name: pagination.size
-                  in: query
-                  schema:
-                    type: integer
-                    format: int32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/svapi.ListChildCommentRequest'
+                required: true
             responses:
                 "200":
                     description: OK
@@ -295,27 +285,17 @@ paths:
                                     data:
                                         $ref: '#/components/schemas/svapi.ListChildCommentResponse'
     /comment/video:
-        get:
+        post:
             tags:
                 - CommentService
             description: 列出视频的评论
             operationId: CommentService_ListComment4Video
-            parameters:
-                - name: videoId
-                  in: query
-                  description: '@gotags: json:"videoId,omitempty,string"'
-                  schema:
-                    type: string
-                - name: pagination.page
-                  in: query
-                  schema:
-                    type: integer
-                    format: int32
-                - name: pagination.size
-                  in: query
-                  schema:
-                    type: integer
-                    format: int32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/svapi.ListComment4VideoRequest'
+                required: true
             responses:
                 "200":
                     description: OK
@@ -1147,6 +1127,14 @@ components:
                 video:
                     $ref: '#/components/schemas/svapi.Video'
             description: 获取视频信息响应消息类型
+        svapi.ListChildCommentRequest:
+            type: object
+            properties:
+                commentId:
+                    type: string
+                    description: '@gotags: json:"commentId,omitempty,string"'
+                pagination:
+                    $ref: '#/components/schemas/svapi.PaginationRequest'
         svapi.ListChildCommentResponse:
             type: object
             properties:
@@ -1165,6 +1153,14 @@ components:
                         $ref: '#/components/schemas/svapi.Collection'
                 pagination:
                     $ref: '#/components/schemas/svapi.PaginationResponse'
+        svapi.ListComment4VideoRequest:
+            type: object
+            properties:
+                videoId:
+                    type: string
+                    description: '@gotags: json:"videoId,omitempty,string"'
+                pagination:
+                    $ref: '#/components/schemas/svapi.PaginationRequest'
         svapi.ListComment4VideoResponse:
             type: object
             properties:
@@ -1590,16 +1586,19 @@ components:
                     type: string
                 favoriteCount:
                     type: string
-                    description: '@gotags: json:"favorite_count,omitempty,string"'
+                    description: '@gotags: json:"favoriteCount,omitempty,string"'
                 commentCount:
                     type: string
-                    description: '@gotags: json:"comment_count,omitempty,string"'
+                    description: '@gotags: json:"commentCount,omitempty,string"'
                 isFavorite:
                     type: boolean
                 title:
                     type: string
                 isCollected:
                     type: boolean
+                collectedCount:
+                    type: string
+                    description: '@gotags: json:"collectedCount,omitempty,string"'
         svapi.VideoAuthor:
             type: object
             properties:

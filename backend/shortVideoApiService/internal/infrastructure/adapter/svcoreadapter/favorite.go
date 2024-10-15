@@ -59,7 +59,7 @@ func (a *Adapter) IsUserFavoriteVideo(ctx context.Context, userId int64, videoId
 	)
 }
 
-func (a *Adapter) ListUserFavoriteVideo(ctx context.Context, userId int64, page, size int32) ([]int64, error) {
+func (a *Adapter) ListUserFavoriteVideo(ctx context.Context, userId int64, page, size int32) (*v1.ListFavoriteResponse, error) {
 	req := &v1.ListFavoriteRequest{
 		FavoriteType:  v1.FavoriteType_FAVORITE,
 		AggregateType: v1.FavoriteAggregateType_BY_USER,
@@ -71,10 +71,10 @@ func (a *Adapter) ListUserFavoriteVideo(ctx context.Context, userId int64, page,
 	}
 
 	resp, err := a.favorite.ListFavorite(ctx, req)
-	return respcheck.CheckT[[]int64, *v1.Metadata](
+	return respcheck.CheckT[*v1.ListFavoriteResponse, *v1.Metadata](
 		resp, err,
-		func() []int64 {
-			return resp.BizId
+		func() *v1.ListFavoriteResponse {
+			return resp
 		},
 	)
 }
