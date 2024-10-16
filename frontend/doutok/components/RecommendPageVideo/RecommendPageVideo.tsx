@@ -5,13 +5,16 @@ import {
   useShortVideoCoreVideoServiceFeedShortVideo
 } from "@/api/svapi/api";
 import { Button, message } from "antd";
-import React, { useEffect} from "react";
+import React, { useEffect } from "react";
+import useUserStore from "@/components/UserStore/useUserStore";
 
 export interface RecommendPageVideoProps {
   domId: string;
 }
 
 export function RecommendPageVideo(props: RecommendPageVideoProps) {
+  const currentUserId: string = useUserStore(state => state.currentUserId);
+
   const [data, setData] = React.useState<SvapiVideo[]>([]);
   const [current, setCurrent] = React.useState<number>(0);
   const [loading, setLoading] = React.useState(false);
@@ -48,7 +51,6 @@ export function RecommendPageVideo(props: RecommendPageVideoProps) {
       });
   };
 
-  // const [ref, setRef] = useState<MutableRefObject<APITypes>>();
   useEffect(() => {
     loadData();
   }, [props.domId]);
@@ -68,6 +70,10 @@ export function RecommendPageVideo(props: RecommendPageVideoProps) {
             username={item.author?.name}
             description={item.title}
             title={"test"}
+            userId={item.author?.id}
+            isCouldFollow={currentUserId !== item.author?.id}
+            videoInfo={item}
+            displaying={current === index}
           />
         </div>
       ))}

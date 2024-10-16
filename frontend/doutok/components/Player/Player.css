@@ -43,6 +43,12 @@
   border: none;
 }
 
+.mask-button {
+  .anticon {
+    color: #e12056;
+  }
+}
+
 .number-div {
   text-align: center;
   margin-top: 5px;
@@ -52,4 +58,15 @@
   color: white;
   position: absolute;
   left: 50px;
+}
+
+.follow-button {
+  .ant-btn {
+    background-color: #e12056;
+    color: white;
+  }
+
+  .anticon {
+    color: white;
+  }
 }

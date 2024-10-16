@@ -591,7 +591,7 @@ type AddVideo2CollectionRequest struct {
 	unknownFields protoimpl.UnknownFields
 
 	// @gotags: json:"collectionId,omitempty,string"
-	CollectionId int64 `protobuf:"varint,1,opt,name=collection_id,json=collectionId,proto3" json:"collectionId,omitempty,string"` // 收藏夹id
+	CollectionId int64 `protobuf:"varint,1,opt,name=collection_id,json=collectionId,proto3" json:"collectionId,omitempty,string"` // 收藏夹id，不传则添加到默认收藏夹
 	// @gotags: json:"videoId,omitempty,string"
 	VideoId int64 `protobuf:"varint,2,opt,name=video_id,json=videoId,proto3" json:"videoId,omitempty,string"` // 视频id
 }

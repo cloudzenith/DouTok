@@ -4,22 +4,25 @@ import (
 	"context"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/utils/respcheck"
 	v1 "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1"
+	"github.com/go-kratos/kratos/v2/log"
 )
 
-func (a *Adapter) AddVideo2Collection(ctx context.Context, collectionId, videoId int64) error {
+func (a *Adapter) AddVideo2Collection(ctx context.Context, userId, collectionId, videoId int64) error {
 	req := &v1.AddVideo2CollectionRequest{
 		CollectionId: collectionId,
 		VideoId:      videoId,
+		UserId:       userId,
 	}
 
 	resp, err := a.collection.AddVideo2Collection(ctx, req)
 	return respcheck.Check[*v1.Metadata](resp, err)
 }
 
-func (a *Adapter) RemoveVideoFromCollection(ctx context.Context, collectionId, videoId int64) error {
+func (a *Adapter) RemoveVideoFromCollection(ctx context.Context, userId, collectionId, videoId int64) error {
 	req := &v1.RemoveVideoFromCollectionRequest{
 		CollectionId: collectionId,
 		VideoId:      videoId,
+		UserId:       userId,
 	}
 
 	resp, err := a.collection.RemoveVideoFromCollection(ctx, req)
@@ -103,6 +106,50 @@ func (a *Adapter) GetCollectionById(ctx context.Context, collectionId int64) (*v
 		resp, err,
 		func() *v1.Collection {
 			return resp.Collection
+		},
+	)
+}
+
+func (a *Adapter) IsCollected(ctx context.Context, userId int64, videoIdList []int64) (map[int64]bool, error) {
+	req := &v1.IsCollectedRequest{
+		UserId:      userId,
+		VideoIdList: videoIdList,
+	}
+
+	resp, err := a.collection.IsCollected(ctx, req)
+	log.Context(ctx).Infof("IsCollected resp: %v", resp)
+	return respcheck.CheckT[map[int64]bool, *v1.Metadata](
+		resp, err,
+		func() map[int64]bool {
+			result := make(map[int64]bool)
+			if len(resp.VideoIdList) == 0 {
+				return result
+			}
+
+			for _, item := range resp.VideoIdList {
+				result[item] = true
+			}
+
+			return result
+		},
+	)
+}
+
+func (a *Adapter) CountCollected4Video(ctx context.Context, videoIdList []int64) (map[int64]int64, error) {
+	req := &v1.CountCollect4VideoRequest{
+		VideoIdList: videoIdList,
+	}
+
+	resp, err := a.collection.CountCollect4Video(ctx, req)
+	return respcheck.CheckT[map[int64]int64, *v1.Metadata](
+		resp, err,
+		func() map[int64]int64 {
+			result := make(map[int64]int64)
+			for _, item := range resp.CountResult {
+				result[item.Id] = item.Count
+			}
+
+			return result
 		},
 	)
 }

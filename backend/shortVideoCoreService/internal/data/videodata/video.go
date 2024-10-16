@@ -71,7 +71,6 @@ func (r *VideoRepo) GetVideoList(
 
 func (r *VideoRepo) GetVideoFeed(ctx context.Context, tx *query.Query, userId, latestTime, num int64) ([]*model.Video, error) {
 	videos, err := tx.Video.WithContext(ctx).
-		Where(tx.Video.UserID.Eq(userId)).
 		Where(tx.Video.CreatedAt.Lt(time.Unix(latestTime, 0).UTC())).
 		Limit(int(num)).
 		Order(tx.Video.ID.Desc()).Find()

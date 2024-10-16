@@ -58,3 +58,43 @@ func (a *Adapter) IsUserFavoriteVideo(ctx context.Context, userId int64, videoId
 		},
 	)
 }
+
+func (a *Adapter) ListUserFavoriteVideo(ctx context.Context, userId int64, page, size int32) (*v1.ListFavoriteResponse, error) {
+	req := &v1.ListFavoriteRequest{
+		FavoriteType:  v1.FavoriteType_FAVORITE,
+		AggregateType: v1.FavoriteAggregateType_BY_USER,
+		Id:            userId,
+		Pagination: &v1.PaginationRequest{
+			Page: page,
+			Size: size,
+		},
+	}
+
+	resp, err := a.favorite.ListFavorite(ctx, req)
+	return respcheck.CheckT[*v1.ListFavoriteResponse, *v1.Metadata](
+		resp, err,
+		func() *v1.ListFavoriteResponse {
+			return resp
+		},
+	)
+}
+
+func (a *Adapter) CountFavorite4Video(ctx context.Context, videoIdList []int64) (map[int64]int64, error) {
+	req := &v1.CountFavoriteRequest{
+		Id:            videoIdList,
+		AggregateType: v1.FavoriteAggregateType_BY_VIDEO,
+		FavoriteType:  v1.FavoriteType_FAVORITE,
+	}
+
+	resp, err := a.favorite.CountFavorite(ctx, req)
+	return respcheck.CheckT[map[int64]int64, *v1.Metadata](
+		resp, err,
+		func() map[int64]int64 {
+			result := make(map[int64]int64)
+			for _, item := range resp.Items {
+				result[item.BizId] = item.Count
+			}
+			return result
+		},
+	)
+}

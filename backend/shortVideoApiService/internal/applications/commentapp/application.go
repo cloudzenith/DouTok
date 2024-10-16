@@ -8,6 +8,7 @@ import (
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/adapter/svcoreadapter/commentoptions"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/adapter/svcoreadapter/useroptions"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/utils/claims"
+	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/utils/respcheck"
 	v1 "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1"
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -37,6 +38,10 @@ func (a *Application) generateCommentUserInfo(userInfo *v1.User) (commentUser *s
 }
 
 func (a *Application) CreateComment(ctx context.Context, request *svapi.CreateCommentRequest) (*svapi.CreateCommentResponse, error) {
+	if request.Content == "" || &request.Content == nil {
+		return nil, errorx.New(1, "评论内容不能为空")
+	}
+
 	userId, err := claims.GetUserId(ctx)
 	if err != nil {
 		return nil, errorx.New(1, "获取用户信息失败")
@@ -162,10 +167,11 @@ func (a *Application) ListComment4Video(ctx context.Context, request *svapi.List
 		return nil, errorx.New(1, "获取评论失败")
 	}
 
-	result := a.assembleCommentListResult(ctx, data, nil)
+	result := a.assembleCommentListResult(ctx, data.Comments, nil)
 
 	return &svapi.ListComment4VideoResponse{
-		Comments: result,
+		Comments:   result,
+		Pagination: respcheck.ParseSvCorePagination(data.Pagination),
 	}, nil
 }
 
@@ -201,10 +207,11 @@ func (a *Application) ListChildComment(ctx context.Context, request *svapi.ListC
 		return nil, errorx.New(1, "获取回复失败")
 	}
 
-	result := a.assembleCommentListResult(ctx, data, nil)
+	result := a.assembleCommentListResult(ctx, data.Comments, nil)
 
 	return &svapi.ListChildCommentResponse{
-		Comments: result,
+		Comments:   result,
+		Pagination: respcheck.ParseSvCorePagination(data.Pagination),
 	}, nil
 }
 

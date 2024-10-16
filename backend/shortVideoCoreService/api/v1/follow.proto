@@ -12,6 +12,7 @@ service FollowService {
     rpc AddFollow(AddFollowRequest) returns (AddFollowResponse);
     rpc RemoveFollow(RemoveFollowRequest) returns (RemoveFollowResponse);
     rpc ListFollowing(ListFollowingRequest) returns (ListFollowingResponse);
+    rpc IsFollowing(IsFollowingRequest) returns (IsFollowingResponse);
 }
 
 message AddFollowRequest {
@@ -48,4 +49,14 @@ message ListFollowingResponse {
     Metadata meta = 1;
     repeated int64 user_id_list = 2;
     PaginationResponse pagination = 3;
+}
+
+message IsFollowingRequest {
+    int64 user_id = 1;
+    repeated int64 target_user_id_list = 2;
+}
+
+message IsFollowingResponse {
+    Metadata meta = 1;
+    repeated int64 following_list = 2;
 }

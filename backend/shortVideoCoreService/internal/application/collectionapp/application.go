@@ -97,11 +97,7 @@ func (a *Application) ListCollection(ctx context.Context, request *v1.ListCollec
 	return &v1.ListCollectionResponse{
 		Meta:        utils.GetSuccessMeta(),
 		Collections: collections,
-		Pagination: &v1.PaginationResponse{
-			Page:  request.Pagination.Page,
-			Total: utils.GetPageInfo(data.Count, request.Pagination.Page, request.Pagination.Size),
-			Count: int32(data.Count),
-		},
+		Pagination:  utils.GetPageResponse(data.Count, request.Pagination.Page, request.Pagination.Size),
 	}, nil
 }
 
@@ -120,7 +116,15 @@ func (a *Application) UpdateCollection(ctx context.Context, request *v1.UpdateCo
 }
 
 func (a *Application) AddVideo2Collection(ctx context.Context, request *v1.AddVideo2CollectionRequest) (*v1.AddVideo2CollectionResponse, error) {
-	err := a.collection.AddVideo2Collection(ctx, request.GetCollectionId(), request.GetVideoId())
+	err := a.collection.GenerateDefaultCollection(ctx, request.GetUserId())
+	if err != nil {
+		log.Context(ctx).Errorf("failed to check default collection: %v", err)
+		return &v1.AddVideo2CollectionResponse{
+			Meta: utils.GetMetaWithError(err),
+		}, nil
+	}
+
+	err = a.collection.AddVideo2Collection(ctx, request.GetUserId(), request.GetCollectionId(), request.GetVideoId())
 	if err != nil {
 		log.Context(ctx).Errorf("AddVideo2Collection error: %v", err)
 		return &v1.AddVideo2CollectionResponse{
@@ -134,7 +138,15 @@ func (a *Application) AddVideo2Collection(ctx context.Context, request *v1.AddVi
 }
 
 func (a *Application) RemoveVideoFromCollection(ctx context.Context, request *v1.RemoveVideoFromCollectionRequest) (*v1.RemoveVideoFromCollectionResponse, error) {
-	err := a.collection.RemoveVideo2Collection(ctx, request.GetCollectionId(), request.GetVideoId())
+	err := a.collection.GenerateDefaultCollection(ctx, request.GetUserId())
+	if err != nil {
+		log.Context(ctx).Errorf("failed to check default collection: %v", err)
+		return &v1.RemoveVideoFromCollectionResponse{
+			Meta: utils.GetMetaWithError(err),
+		}, nil
+	}
+
+	err = a.collection.RemoveVideo2Collection(ctx, request.GetUserId(), request.GetCollectionId(), request.GetVideoId())
 	if err != nil {
 		log.Context(ctx).Errorf("RemoveVideoFromCollection error: %v", err)
 		return &v1.RemoveVideoFromCollectionResponse{
@@ -159,10 +171,44 @@ func (a *Application) ListCollectionVideo(ctx context.Context, request *v1.ListC
 	return &v1.ListCollectionVideoResponse{
 		Meta:        utils.GetSuccessMeta(),
 		VideoIdList: data.Data,
-		Pagination: &v1.PaginationResponse{
-			Page:  request.Pagination.Page,
-			Total: utils.GetPageInfo(data.Count, request.Pagination.Page, request.Pagination.Size),
-			Count: int32(data.Count),
-		},
+		Pagination:  utils.GetPageResponse(data.Count, request.Pagination.Page, request.Pagination.Size),
+	}, nil
+}
+
+func (a *Application) IsCollected(ctx context.Context, request *v1.IsCollectedRequest) (*v1.IsCollectedResponse, error) {
+	data, err := a.collection.ListCollectedVideoByGiven(ctx, request.GetUserId(), request.GetVideoIdList())
+	if err != nil {
+		log.Context(ctx).Errorf("IsCollected error: %v", err)
+		return &v1.IsCollectedResponse{
+			Meta: utils.GetMetaWithError(err),
+		}, nil
+	}
+
+	return &v1.IsCollectedResponse{
+		Meta:        utils.GetSuccessMeta(),
+		VideoIdList: data,
+	}, nil
+}
+
+func (a *Application) CountCollect4Video(ctx context.Context, request *v1.CountCollect4VideoRequest) (*v1.CountCollect4VideoResponse, error) {
+	countInfo, err := a.collection.CountCollectedNumber4Video(ctx, request.GetVideoIdList())
+	if err != nil {
+		log.Context(ctx).Errorf("CountCollect4Video error: %v", err)
+		return &v1.CountCollect4VideoResponse{
+			Meta: utils.GetMetaWithError(err),
+		}, nil
+	}
+
+	var results []*v1.CountCollect4VideoResult
+	for _, item := range countInfo {
+		results = append(results, &v1.CountCollect4VideoResult{
+			Id:    item.Id,
+			Count: item.Count,
+		})
+	}
+
+	return &v1.CountCollect4VideoResponse{
+		Meta:        utils.GetSuccessMeta(),
+		CountResult: results,
 	}, nil
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/repoiface"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/model"
 	"github.com/go-kratos/kratos/v2/log"
+	"time"
 )
 
 type Service struct {
@@ -27,7 +28,8 @@ func (s *Service) CreateComment(ctx context.Context, c *comment.Comment) (cmt *c
 	}()
 
 	// 创建评论
-	err = s.comment.Create(ctx, c.ToModel())
+	do := c.ToModel()
+	err = s.comment.Create(ctx, do)
 	if err != nil {
 		log.Context(ctx).Errorf("create comment failed, err: %v", err)
 		return nil, err
@@ -43,7 +45,8 @@ func (s *Service) CreateComment(ctx context.Context, c *comment.Comment) (cmt *c
 		}
 
 		parentDO := comment.NewWithModel(parent)
-		parentDO.AddFirstChildComments(c)
+		do.CreateTime = time.Now()
+		parentDO.AddFirstChildComments(comment.NewWithModel(do))
 		err = s.comment.Update(ctx, parentDO.ToModel())
 		if err != nil {
 			log.Context(ctx).Errorf("update parent comment failed, err: %v", err)
@@ -58,12 +61,20 @@ func (s *Service) RemoveComment(ctx context.Context, userId, commentId int64) er
 	return s.comment.RemoveById(ctx, commentId)
 }
 
-func (s *Service) ListComment4Video(ctx context.Context, videoId int64, limit, offset int) ([]*comment.Comment, error) {
+func (s *Service) ListComment4Video(ctx context.Context, videoId int64, limit, offset int) (*commentserviceiface.ListCommentsResult, error) {
 	comments, err := s.comment.ListParentCommentByVideoId(ctx, videoId, limit, offset)
 	if err != nil {
 		log.Context(ctx).Errorf("list comment for video failed, err: %v", err)
 		return nil, err
 	}
+
+	countResult, err := s.comment.CountByVideoId(ctx, []int64{videoId})
+	if err != nil || len(countResult) != 1 {
+		log.Context(ctx).Errorf("count parent comment by video id failed, err: %v", err)
+		return nil, err
+	}
+
+	count := countResult[0].Count
 
 	// FIXME: 此处写法不够合理，先实现功能，后续需要优化此处写法
 	var parentComments []*comment.Comment
@@ -79,13 +90,22 @@ func (s *Service) ListComment4Video(ctx context.Context, videoId int64, limit, o
 		parentComments = append(parentComments, commentDO)
 	}
 
-	return parentComments, nil
+	return &commentserviceiface.ListCommentsResult{
+		Data:  parentComments,
+		Total: count,
+	}, nil
 }
 
-func (s *Service) ListChildComment(ctx context.Context, commentId int64, limit, offset int) ([]*comment.Comment, error) {
+func (s *Service) ListChildComment(ctx context.Context, commentId int64, limit, offset int) (*commentserviceiface.ListCommentsResult, error) {
 	data, err := s.comment.ListChildCommentByCommentId(ctx, commentId, limit, offset)
 	if err != nil {
 		log.Context(ctx).Errorf("failed to list child comments: %v", err)
+		return nil, err
+	}
+
+	count, err := s.comment.CountByParentId(ctx, commentId)
+	if err != nil {
+		log.Context(ctx).Errorf("failed to count child comments: %v", err)
 		return nil, err
 	}
 
@@ -94,7 +114,10 @@ func (s *Service) ListChildComment(ctx context.Context, commentId int64, limit, 
 		result = append(result, comment.NewWithModel(item))
 	}
 
-	return result, nil
+	return &commentserviceiface.ListCommentsResult{
+		Data:  result,
+		Total: count,
+	}, nil
 }
 
 func (s *Service) GetCommentById(ctx context.Context, commentId int64) (cmt *comment.Comment, err error) {
@@ -113,11 +136,11 @@ func (s *Service) GetCommentById(ctx context.Context, commentId int64) (cmt *com
 	return comment.NewWithModel(c), nil
 }
 
-func (s *Service) CountComment4Video(ctx context.Context, videoId int64) (int64, error) {
+func (s *Service) CountComment4Video(ctx context.Context, videoId []int64) ([]*commentserviceiface.CountResult, error) {
 	return s.comment.CountByVideoId(ctx, videoId)
 }
 
-func (s *Service) CountComment4User(ctx context.Context, userId int64) (int64, error) {
+func (s *Service) CountComment4User(ctx context.Context, userId []int64) ([]*commentserviceiface.CountResult, error) {
 	return s.comment.CountByUserId(ctx, userId)
 }
 

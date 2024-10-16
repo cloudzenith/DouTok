@@ -3,9 +3,11 @@ package favoriteservice
 import (
 	"context"
 	"fmt"
+	"github.com/TremblingV5/box/dbtx"
 	v1 "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/application/interface/favoriteserviceiface"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/repoiface"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/utils/pageresult"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
@@ -19,13 +21,19 @@ func New(favorite repoiface.FavoriteRepository) *Service {
 	}
 }
 
-func (s *Service) AddFavorite(ctx context.Context, dto *favoriteserviceiface.WriteOpDTO) error {
+func (s *Service) AddFavorite(ctx context.Context, dto *favoriteserviceiface.WriteOpDTO) (err error) {
 	if err := dto.Check(); err != nil {
 		log.Context(ctx).Fatalf("invalid dto: %v, err: %v", dto, err)
 		return err
 	}
 
-	if err := s.favorite.AddFavorite(ctx, dto.UserId, dto.TargetId, int32(dto.TargetType), int32(dto.FavoriteType)); err != nil {
+	ctx, persist := dbtx.WithTXPersist(ctx)
+	defer func() {
+		persist(err)
+	}()
+
+	err = s.favorite.AddFavorite(ctx, dto.UserId, dto.TargetId, int32(dto.TargetType), int32(dto.FavoriteType))
+	if err != nil {
 		log.Context(ctx).Fatalf("add favorite failed: %v", err)
 		return err
 	}
@@ -47,13 +55,29 @@ func (s *Service) RemoveFavorite(ctx context.Context, dto *favoriteserviceiface.
 	return nil
 }
 
-func (s *Service) ListFavorite(ctx context.Context, dto *favoriteserviceiface.AggOpDTO, limit, offset int) ([]int64, error) {
+func (s *Service) ListFavorite(ctx context.Context, dto *favoriteserviceiface.AggOpDTO, limit, offset int) (*pageresult.R[int64], error) {
 	if err := dto.Check(); err != nil {
 		log.Context(ctx).Fatalf("invalid dto: %v, err: %v", dto, err)
 		return nil, err
 	}
 
-	return s.favorite.ListFavorite(ctx, dto.BizId, int32(dto.AggType), int32(dto.FavoriteType), limit, offset)
+	idList, err := s.favorite.ListFavorite(ctx, dto.BizId, int32(dto.AggType), int32(dto.FavoriteType), limit, offset)
+	if err != nil {
+		log.Context(ctx).Errorf("list favorite failed: %v", err)
+		return nil, err
+	}
+
+	countResult, err := s.favorite.CountFavorite(ctx, []int64{dto.BizId}, int32(dto.AggType), int32(dto.FavoriteType))
+	if err != nil {
+		log.Context(ctx).Errorf("count favorite failed: %v", err)
+		return nil, err
+	}
+
+	if len(countResult) == 0 {
+		return pageresult.New(idList, 0), nil
+	}
+
+	return pageresult.New(idList, countResult[0].Cnt), nil
 }
 
 func (s *Service) CountFavorite(ctx context.Context, dto *favoriteserviceiface.AggOpDTO) ([]*v1.CountFavoriteResponseItem, error) {

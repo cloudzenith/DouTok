@@ -29,6 +29,7 @@ func newCollectionVideo(db *gorm.DB, opts ...gen.DOOption) collectionVideo {
 	_collectionVideo.ALL = field.NewAsterisk(tableName)
 	_collectionVideo.ID = field.NewInt64(tableName, "id")
 	_collectionVideo.CollectionID = field.NewInt64(tableName, "collection_id")
+	_collectionVideo.UserID = field.NewInt64(tableName, "user_id")
 	_collectionVideo.VideoID = field.NewInt64(tableName, "video_id")
 	_collectionVideo.IsDeleted = field.NewBool(tableName, "is_deleted")
 	_collectionVideo.CreateTime = field.NewTime(tableName, "create_time")
@@ -45,6 +46,7 @@ type collectionVideo struct {
 	ALL          field.Asterisk
 	ID           field.Int64
 	CollectionID field.Int64
+	UserID       field.Int64
 	VideoID      field.Int64
 	IsDeleted    field.Bool
 	CreateTime   field.Time
@@ -67,6 +69,7 @@ func (c *collectionVideo) updateTableName(table string) *collectionVideo {
 	c.ALL = field.NewAsterisk(table)
 	c.ID = field.NewInt64(table, "id")
 	c.CollectionID = field.NewInt64(table, "collection_id")
+	c.UserID = field.NewInt64(table, "user_id")
 	c.VideoID = field.NewInt64(table, "video_id")
 	c.IsDeleted = field.NewBool(table, "is_deleted")
 	c.CreateTime = field.NewTime(table, "create_time")
@@ -87,9 +90,10 @@ func (c *collectionVideo) GetFieldByName(fieldName string) (field.OrderExpr, boo
 }
 
 func (c *collectionVideo) fillFieldMap() {
-	c.fieldMap = make(map[string]field.Expr, 6)
+	c.fieldMap = make(map[string]field.Expr, 7)
 	c.fieldMap["id"] = c.ID
 	c.fieldMap["collection_id"] = c.CollectionID
+	c.fieldMap["user_id"] = c.UserID
 	c.fieldMap["video_id"] = c.VideoID
 	c.fieldMap["is_deleted"] = c.IsDeleted
 	c.fieldMap["create_time"] = c.CreateTime

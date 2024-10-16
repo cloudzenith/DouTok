@@ -2,7 +2,9 @@
 
 import React from "react";
 import { Card, Tabs } from "antd";
-import { UserPublishedVideoList } from "@/components/UserPublishedVideoList/UserPublishedVideoList";
+import { UserPublishedVideoList } from "@/components/UserVideosCard/UserPublishedVideoList/UserPublishedVideoList";
+import { UserFavoritedVideoList } from "@/components/UserVideosCard/UserFavoritedVideoList/UserFavoritedVideoList";
+import { UserCollectedVideoList } from "@/components/UserVideosCard/UserCollectedVideoList/UserCollectedVideoList";
 
 type PageType = "published" | "liked" | "collected" | "history" | "want";
 
@@ -25,6 +27,16 @@ export function UserVideosCard() {
         {pageType === "published" && (
           <>
             <UserPublishedVideoList />
+          </>
+        )}
+        {pageType === "liked" && (
+          <>
+            <UserFavoritedVideoList />
+          </>
+        )}
+        {pageType === "collected" && (
+          <>
+            <UserCollectedVideoList />
           </>
         )}
       </Card>

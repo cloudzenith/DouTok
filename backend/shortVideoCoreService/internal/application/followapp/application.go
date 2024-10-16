@@ -57,11 +57,22 @@ func (a *Application) ListFollowing(ctx context.Context, request *v1.ListFollowi
 	return &v1.ListFollowingResponse{
 		Meta:       utils.GetSuccessMeta(),
 		UserIdList: data.UserIdList,
-		Pagination: &v1.PaginationResponse{
-			Page:  request.Pagination.Page,
-			Total: utils.GetPageInfo(data.Count, request.Pagination.Page, request.Pagination.Size),
-			Count: int32(data.Count),
-		},
+		Pagination: utils.GetPageResponse(data.Count, request.Pagination.Page, request.Pagination.Size),
+	}, nil
+}
+
+func (a *Application) IsFollowing(ctx context.Context, request *v1.IsFollowingRequest) (*v1.IsFollowingResponse, error) {
+	result, err := a.follow.ListFollowingInGivenList(ctx, request.UserId, request.TargetUserIdList)
+	if err != nil {
+		log.Context(ctx).Errorf("failed to check follow: %v", err)
+		return &v1.IsFollowingResponse{
+			Meta: utils.GetMetaWithError(err),
+		}, nil
+	}
+
+	return &v1.IsFollowingResponse{
+		Meta:          utils.GetSuccessMeta(),
+		FollowingList: result,
 	}, nil
 }
 

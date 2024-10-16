@@ -19,12 +19,39 @@ func New() *PersistRepository {
 }
 
 func (r *PersistRepository) AddFollow(ctx context.Context, userId, targetUserId int64) error {
-	f := &model.Follow{
-		ID:           snowflakeutil.GetSnowflakeId(),
-		UserID:       userId,
-		TargetUserID: targetUserId,
-	}
-	return query.Q.WithContext(ctx).Follow.Create(f)
+	return dbtx.TxDo(ctx, func(tx *query.QueryTx) error {
+		f := &model.Follow{
+			ID:           snowflakeutil.GetSnowflakeId(),
+			UserID:       userId,
+			TargetUserID: targetUserId,
+		}
+		return tx.WithContext(ctx).Follow.Create(f)
+	})
+}
+
+func (r *PersistRepository) GetFirstFollowRelation(ctx context.Context, userId, targetUserId int64) (int64, error) {
+	return dbtx.TxDoGetValue(ctx, func(tx *query.QueryTx) (int64, error) {
+		data, err := tx.WithContext(ctx).Follow.Where(
+			query.Q.Follow.UserID.Eq(userId),
+			query.Q.Follow.TargetUserID.Eq(targetUserId),
+		).First()
+		if err != nil {
+			return 0, err
+		}
+
+		return data.ID, nil
+	})
+}
+
+func (r *PersistRepository) UpdateRelation2UnDeleted(ctx context.Context, id int64) error {
+	return dbtx.TxDo(ctx, func(tx *query.QueryTx) error {
+		_, err := tx.WithContext(ctx).Follow.Where(
+			query.Q.Follow.ID.Eq(id),
+		).Update(
+			query.Q.Follow.IsDeleted, false,
+		)
+		return err
+	})
 }
 
 func (r *PersistRepository) RemoveFollow(ctx context.Context, userId, targetUserId int64) error {
@@ -64,7 +91,7 @@ func (r *PersistRepository) ListFollowing(ctx context.Context, userId int64, fol
 	}
 
 	return dbtx.TxDoGetValue(ctx, func(tx *query.QueryTx) ([]int64, error) {
-		data, err := query.Q.WithContext(ctx).Follow.Where(conditions...).Limit(limit).Offset(offset).Find()
+		data, err := tx.WithContext(ctx).Follow.Where(conditions...).Limit(limit).Offset(offset).Find()
 		if err != nil {
 			return nil, err
 		}
@@ -99,6 +126,25 @@ func (r *PersistRepository) CountFollowing(ctx context.Context, userId int64, fo
 	return dbtx.TxDoGetValue(ctx, func(tx *query.QueryTx) (int64, error) {
 		return tx.Follow.Where(conditions...).Count()
 	})
+}
+
+func (r *PersistRepository) ListFollowingInGivenList(ctx context.Context, userId int64, targetUserIdList []int64) ([]int64, error) {
+	data, err := query.Q.WithContext(ctx).Follow.Select(
+		query.Q.Follow.TargetUserID,
+	).Where(
+		query.Q.Follow.UserID.Eq(userId),
+		query.Q.Follow.TargetUserID.In(targetUserIdList...),
+		query.Q.Follow.IsDeleted.Is(false),
+	).Find()
+	if err != nil {
+		return nil, err
+	}
+
+	var result []int64
+	for _, item := range data {
+		result = append(result, item.TargetUserID)
+	}
+	return result, nil
 }
 
 var _ repoiface.FollowRepository = (*PersistRepository)(nil)

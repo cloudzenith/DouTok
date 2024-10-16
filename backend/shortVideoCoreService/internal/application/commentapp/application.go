@@ -64,7 +64,7 @@ func (a *Application) ListComment4Video(ctx context.Context, request *v1.ListCom
 		int(request.Pagination.Size),
 	)
 
-	comments, err := a.comment.ListComment4Video(
+	data, err := a.comment.ListComment4Video(
 		ctx,
 		request.VideoId,
 		limit, offset,
@@ -77,13 +77,22 @@ func (a *Application) ListComment4Video(ctx context.Context, request *v1.ListCom
 	}
 
 	var commentsProto []*v1.Comment
-	for _, c := range comments {
-		commentsProto = append(commentsProto, c.ToProto())
+	if data != nil && data.Data != nil {
+		for _, c := range data.Data {
+			commentsProto = append(commentsProto, c.ToProto())
+		}
+	}
+
+	if data == nil {
+		data = &commentserviceiface.ListCommentsResult{
+			Total: 0,
+		}
 	}
 
 	return &v1.ListComment4VideoResponse{
-		Meta:     utils.GetSuccessMeta(),
-		Comments: commentsProto,
+		Meta:       utils.GetSuccessMeta(),
+		Comments:   commentsProto,
+		Pagination: utils.GetPageResponse(data.Total, request.Pagination.Page, request.Pagination.Size),
 	}, nil
 }
 
@@ -93,7 +102,7 @@ func (a *Application) ListChildComment4Comment(ctx context.Context, request *v1.
 		int(request.Pagination.Size),
 	)
 
-	comments, err := a.comment.ListChildComment(
+	data, err := a.comment.ListChildComment(
 		ctx,
 		request.CommentId,
 		limit, offset,
@@ -106,13 +115,22 @@ func (a *Application) ListChildComment4Comment(ctx context.Context, request *v1.
 	}
 
 	var commentsProto []*v1.Comment
-	for _, c := range comments {
-		commentsProto = append(commentsProto, c.ToProto())
+	if data != nil && data.Data != nil {
+		for _, c := range data.Data {
+			commentsProto = append(commentsProto, c.ToProto())
+		}
+	}
+
+	if data == nil {
+		data = &commentserviceiface.ListCommentsResult{
+			Total: 0,
+		}
 	}
 
 	return &v1.ListChildComment4CommentResponse{
-		Meta:     utils.GetSuccessMeta(),
-		Comments: commentsProto,
+		Meta:       utils.GetSuccessMeta(),
+		Comments:   commentsProto,
+		Pagination: utils.GetPageResponse(data.Total, request.Pagination.Page, request.Pagination.Size),
 	}, nil
 }
 
@@ -131,6 +149,18 @@ func (a *Application) GetCommentById(ctx context.Context, request *v1.GetComment
 	}, nil
 }
 
+func (a *Application) parseCountResult(num []*commentserviceiface.CountResult) []*v1.CountResult {
+	var results []*v1.CountResult
+	for _, item := range num {
+		results = append(results, &v1.CountResult{
+			Id:    item.Id,
+			Count: item.Count,
+		})
+	}
+
+	return results
+}
+
 func (a *Application) CountComment4Video(ctx context.Context, request *v1.CountComment4VideoRequest) (*v1.CountComment4VideoResponse, error) {
 	num, err := a.comment.CountComment4Video(ctx, request.VideoId)
 	if err != nil {
@@ -141,8 +171,8 @@ func (a *Application) CountComment4Video(ctx context.Context, request *v1.CountC
 	}
 
 	return &v1.CountComment4VideoResponse{
-		Meta:  utils.GetSuccessMeta(),
-		Count: num,
+		Meta:    utils.GetSuccessMeta(),
+		Results: a.parseCountResult(num),
 	}, nil
 }
 
@@ -156,8 +186,8 @@ func (a *Application) CountComment4User(ctx context.Context, request *v1.CountCo
 	}
 
 	return &v1.CountComment4UserResponse{
-		Meta:  utils.GetSuccessMeta(),
-		Count: num,
+		Meta:    utils.GetSuccessMeta(),
+		Results: a.parseCountResult(num),
 	}, nil
 }
 

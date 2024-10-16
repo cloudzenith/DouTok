@@ -7,7 +7,11 @@ const useUserStore = create(set => ({
   avatar: localStorage.getItem("avatar") || "",
   setAvatar: () =>
     set((state: { avatar: string }) => ({ avatar: state.avatar })),
-  removeAvatar: () => set({ avatar: "" })
+  currentUserId: localStorage.getItem("currentUserId") || "",
+  setCurrentUserId: () =>
+    set((state: { currentUserId: string }) => ({
+      currentUserId: state.currentUserId
+    }))
 }));
 
 export default useUserStore;

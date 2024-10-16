@@ -20,10 +20,12 @@ var _ = binding.EncodeURL
 const _ = http.SupportPackageIsVersion1
 
 const OperationFavoriteServiceAddFavorite = "/svapi.FavoriteService/AddFavorite"
+const OperationFavoriteServiceListFavoriteVideo = "/svapi.FavoriteService/ListFavoriteVideo"
 const OperationFavoriteServiceRemoveFavorite = "/svapi.FavoriteService/RemoveFavorite"
 
 type FavoriteServiceHTTPServer interface {
 	AddFavorite(context.Context, *AddFavoriteRequest) (*AddFavoriteResponse, error)
+	ListFavoriteVideo(context.Context, *ListFavoriteVideoRequest) (*ListFavoriteVideoResponse, error)
 	RemoveFavorite(context.Context, *RemoveFavoriteRequest) (*RemoveFavoriteResponse, error)
 }
 
@@ -31,6 +33,7 @@ func RegisterFavoriteServiceHTTPServer(s *http.Server, srv FavoriteServiceHTTPSe
 	r := s.Route("/")
 	r.POST("/favorite", _FavoriteService_AddFavorite0_HTTP_Handler(srv))
 	r.DELETE("/favorite", _FavoriteService_RemoveFavorite0_HTTP_Handler(srv))
+	r.POST("/favorite/video/list", _FavoriteService_ListFavoriteVideo0_HTTP_Handler(srv))
 }
 
 func _FavoriteService_AddFavorite0_HTTP_Handler(srv FavoriteServiceHTTPServer) func(ctx http.Context) error {
@@ -75,8 +78,30 @@ func _FavoriteService_RemoveFavorite0_HTTP_Handler(srv FavoriteServiceHTTPServer
 	}
 }
 
+func _FavoriteService_ListFavoriteVideo0_HTTP_Handler(srv FavoriteServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in ListFavoriteVideoRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationFavoriteServiceListFavoriteVideo)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ListFavoriteVideo(ctx, req.(*ListFavoriteVideoRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		return ctx.Result(200, out)
+	}
+}
+
 type FavoriteServiceHTTPClient interface {
 	AddFavorite(ctx context.Context, req *AddFavoriteRequest, opts ...http.CallOption) (rsp *AddFavoriteResponse, err error)
+	ListFavoriteVideo(ctx context.Context, req *ListFavoriteVideoRequest, opts ...http.CallOption) (rsp *ListFavoriteVideoResponse, err error)
 	RemoveFavorite(ctx context.Context, req *RemoveFavoriteRequest, opts ...http.CallOption) (rsp *RemoveFavoriteResponse, err error)
 }
 
@@ -93,6 +118,19 @@ func (c *FavoriteServiceHTTPClientImpl) AddFavorite(ctx context.Context, in *Add
 	pattern := "/favorite"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationFavoriteServiceAddFavorite))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *FavoriteServiceHTTPClientImpl) ListFavoriteVideo(ctx context.Context, in *ListFavoriteVideoRequest, opts ...http.CallOption) (*ListFavoriteVideoResponse, error) {
+	var out ListFavoriteVideoResponse
+	pattern := "/favorite/video/list"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationFavoriteServiceListFavoriteVideo))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

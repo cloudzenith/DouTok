@@ -14,7 +14,7 @@ export function UserAvatar() {
   const setAvatarState = useUserStore(state => state.setAvatar);
 
   const [avatar, setAvatar] = React.useState<string>("no-login.svg");
-
+  const setCurrentUserId = useUserStore(state => state.setCurrentUserId);
   useEffect(() => {
     setAvatar(avatarState);
   }, [avatarState]);
@@ -36,6 +36,10 @@ export function UserAvatar() {
           ? "http://localhost:9000/shortvideo/" + data.user.avatar
           : "no-login.svg"
       );
+      setCurrentUserId(data.user?.id);
+      if (data.user?.id !== undefined) {
+        window.localStorage.setItem("currentUserId", data.user?.id);
+      }
       return resp;
     }
   });

@@ -24,6 +24,8 @@ service CollectionService {
     rpc AddVideo2Collection(AddVideo2CollectionRequest) returns (AddVideo2CollectionResponse);
     rpc RemoveVideoFromCollection(RemoveVideoFromCollectionRequest) returns (RemoveVideoFromCollectionResponse);
     rpc ListCollectionVideo(ListCollectionVideoRequest) returns (ListCollectionVideoResponse);
+    rpc IsCollected(IsCollectedRequest) returns (IsCollectedResponse);
+    rpc CountCollect4Video(CountCollect4VideoRequest) returns (CountCollect4VideoResponse);
 }
 
 message CreateCollectionRequest {
@@ -75,8 +77,9 @@ message UpdateCollectionResponse {
 }
 
 message AddVideo2CollectionRequest {
-    int64 collection_id = 1;
+    int64 collection_id = 1; // 不传则添加到默认收藏夹
     int64 video_id = 2;
+    int64 user_id = 3;
 }
 
 message AddVideo2CollectionResponse {
@@ -86,6 +89,7 @@ message AddVideo2CollectionResponse {
 message RemoveVideoFromCollectionRequest {
     int64 collection_id = 1;
     int64 video_id = 2;
+    int64 user_id = 3;
 }
 
 message RemoveVideoFromCollectionResponse {
@@ -101,4 +105,28 @@ message ListCollectionVideoResponse {
     repeated int64 video_id_list = 1;
     Metadata meta = 2;
     PaginationResponse pagination = 3;
+}
+
+message IsCollectedRequest {
+    int64 user_id = 1;
+    repeated int64 video_id_list = 2;
+}
+
+message IsCollectedResponse {
+    repeated int64 video_id_list = 1;
+    Metadata meta = 2;
+}
+
+message CountCollect4VideoResult {
+    int64 id = 1;
+    int64 count = 2;
+}
+
+message CountCollect4VideoRequest {
+    repeated int64 video_id_list = 1;
+}
+
+message CountCollect4VideoResponse {
+    repeated CountCollect4VideoResult count_result = 1;
+    Metadata meta = 2;
 }

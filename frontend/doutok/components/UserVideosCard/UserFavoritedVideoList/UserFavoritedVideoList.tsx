@@ -1,41 +1,42 @@
-import React, { useEffect } from "react";
 import {
-  ShortVideoCoreVideoServiceFeedShortVideoResponse,
+  FavoriteServiceListFavoriteVideoResponse,
   SvapiVideo,
-  useShortVideoCoreVideoServiceFeedShortVideo
+  useFavoriteServiceListFavoriteVideo
 } from "@/api/svapi/api";
 import { message } from "antd";
+import React, { useEffect } from "react";
 import { UserVideosList } from "@/components/UserVideosList/UserVideosList";
 
-export function RecommendVideoList() {
-  const [total, setTotal] = React.useState(0);
+export function UserFavoritedVideoList() {
+  const [total, setTotal] = React.useState(1);
   const [data, setData] = React.useState<SvapiVideo[]>([]);
   const [loading, setLoading] = React.useState(false);
-  const [latestTime] = React.useState<string>();
+  const [page, setPage] = React.useState(1);
 
-  const feedMutate = useShortVideoCoreVideoServiceFeedShortVideo({});
+  const listFavoriteVideoMutate = useFavoriteServiceListFavoriteVideo({});
   const loadData = () => {
     if (loading) {
       return;
     }
 
     setLoading(true);
-    feedMutate
+    listFavoriteVideoMutate
       .mutate({
-        latestTime: latestTime,
-        feedNum: "10"
+        page: page,
+        size: 10
       })
-      .then((result: ShortVideoCoreVideoServiceFeedShortVideoResponse) => {
+      .then((result: FavoriteServiceListFavoriteVideoResponse) => {
         if (result?.code !== 0) {
           message.error("获取视频列表失败");
           return;
         }
 
         setData([...data, ...(result.data?.videos ?? [])]);
-        setTotal(total + (result.data?.videos?.length ?? 0));
+        setTotal(result?.data?.pagination?.total ?? 0);
       })
       .finally(() => {
         setLoading(false);
+        setPage(page + 1);
       });
   };
 
@@ -45,7 +46,7 @@ export function RecommendVideoList() {
 
   return (
     <UserVideosList
-      domId={"recommend-list"}
+      domId={"favorite-list"}
       loadData={loadData}
       total={total}
       data={data}

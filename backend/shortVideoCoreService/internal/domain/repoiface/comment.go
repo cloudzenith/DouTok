@@ -2,6 +2,7 @@ package repoiface
 
 import (
 	"context"
+	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/application/interface/commentserviceiface"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/persistence/model"
 )
 
@@ -15,6 +16,8 @@ type CommentRepository interface {
 	CountChildComments(ctx context.Context, commentId int64) (int64, error)
 	GetById(ctx context.Context, commentId int64) (*model.Comment, error)
 	GetByIdList(ctx context.Context, commentIdList []int64) ([]*model.Comment, error)
-	CountByVideoId(ctx context.Context, videoId int64) (int64, error)
-	CountByUserId(ctx context.Context, userId int64) (int64, error)
+	CountByVideoId(ctx context.Context, videoId []int64) ([]*commentserviceiface.CountResult, error)
+	CountParentCommentByVideoId(ctx context.Context, videoId int64) (int64, error)
+	CountByUserId(ctx context.Context, userId []int64) ([]*commentserviceiface.CountResult, error)
+	CountByParentId(ctx context.Context, parentId int64) (int64, error)
 }

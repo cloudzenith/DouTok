@@ -46,9 +46,72 @@ func (a *Application) FeedShortVideo(ctx context.Context, request *svapi.FeedSho
 		return nil, errorx.New(1, "failed to feed short video")
 	}
 
+	videos := dto.ToPBVideoList(resp.Videos)
+	a.assembleUserIsFollowing(ctx, videos, userId)
+	a.assembleVideoCountInfo(ctx, videos)
+
 	return &svapi.FeedShortVideoResponse{
-		Videos: dto.ToPBVideoList(resp.Videos),
+		Videos: videos,
 	}, nil
+}
+
+func (a *Application) assembleUserIsFollowing(ctx context.Context, list []*svapi.Video, userId int64) {
+	var targetUserId []int64
+	var targetVideoId []int64
+	for _, video := range list {
+		targetUserId = append(targetUserId, video.GetAuthor().GetId())
+		targetVideoId = append(targetVideoId, video.GetId())
+	}
+
+	isFollowingMap, err := a.core.IsFollowing(ctx, userId, targetUserId)
+	if err != nil {
+		log.Context(ctx).Errorf("failed to check is following: %v", err)
+	}
+
+	isCollectedMap, err := a.core.IsCollected(ctx, userId, targetVideoId)
+	if err != nil {
+		log.Context(ctx).Errorf("failed to check is collected: %v", err)
+	}
+
+	isFavoriteMap, err := a.core.IsUserFavoriteVideo(ctx, userId, targetVideoId)
+	if err != nil {
+		log.Context(ctx).Errorf("failed to check is favorite: %v", err)
+	}
+
+	for _, video := range list {
+		author := video.GetAuthor()
+		author.IsFollowing = isFollowingMap[author.GetId()]
+		video.IsCollected = isCollectedMap[video.GetId()]
+		video.IsFavorite = isFavoriteMap[video.GetId()]
+	}
+}
+
+func (a *Application) assembleVideoCountInfo(ctx context.Context, list []*svapi.Video) {
+	var videoIdList []int64
+	for _, video := range list {
+		videoIdList = append(videoIdList, video.GetId())
+	}
+
+	commentCountMap, err := a.core.CountComments4Video(ctx, videoIdList)
+	if err != nil {
+		log.Context(ctx).Errorf("failed to count comments: %v", err)
+	}
+
+	favoriteCountMap, err := a.core.CountFavorite4Video(ctx, videoIdList)
+	if err != nil {
+		log.Context(ctx).Errorf("failed to count favorite: %v", err)
+	}
+
+	collectedCountMap, err := a.core.CountCollected4Video(ctx, videoIdList)
+	if err != nil {
+		log.Context(ctx).Errorf("failed to count collected: %v", err)
+	}
+
+	for _, video := range list {
+		video.CommentCount = commentCountMap[video.GetId()]
+		video.FavoriteCount = favoriteCountMap[video.GetId()]
+		video.CollectedCount = collectedCountMap[video.GetId()]
+	}
 }
 
 func (a *Application) GetVideoById(ctx context.Context, request *svapi.GetVideoByIdRequest) (*svapi.GetVideoByIdResponse, error) {
