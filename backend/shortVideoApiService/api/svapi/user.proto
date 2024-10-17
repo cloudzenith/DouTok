@@ -142,6 +142,9 @@ message UpdateUserInfoRequest {
     string avatar = 3;
     string background_image = 4;
     string signature = 5;
+    string following = 6;
+    string follower = 7;
+    string beFavorite = 8;
 }
 
 message UpdateUserInfoResponse {

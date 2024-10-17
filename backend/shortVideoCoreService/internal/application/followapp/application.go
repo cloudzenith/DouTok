@@ -76,4 +76,20 @@ func (a *Application) IsFollowing(ctx context.Context, request *v1.IsFollowingRe
 	}, nil
 }
 
+func (a *Application) CountFollow(ctx context.Context, request *v1.CountFollowRequest) (*v1.CountFollowResponse, error) {
+	followingNum, followerNum, err := a.follow.CountFollow(ctx, request.UserId)
+	if err != nil {
+		log.Context(ctx).Errorf("failed to count follow: %v", err)
+		return &v1.CountFollowResponse{
+			Meta: utils.GetMetaWithError(err),
+		}, nil
+	}
+
+	return &v1.CountFollowResponse{
+		Meta:           utils.GetSuccessMeta(),
+		FollowingCount: followingNum,
+		FollowerCount:  followerNum,
+	}, nil
+}
+
 //var _ v1.FollowServiceServer = (*Application)(nil)

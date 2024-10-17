@@ -1536,6 +1536,12 @@ components:
                     type: string
                 signature:
                     type: string
+                following:
+                    type: string
+                follower:
+                    type: string
+                beFavorite:
+                    type: string
         svapi.UpdateUserInfoResponse:
             type: object
             properties: {}

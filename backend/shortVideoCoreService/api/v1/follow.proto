@@ -13,6 +13,7 @@ service FollowService {
     rpc RemoveFollow(RemoveFollowRequest) returns (RemoveFollowResponse);
     rpc ListFollowing(ListFollowingRequest) returns (ListFollowingResponse);
     rpc IsFollowing(IsFollowingRequest) returns (IsFollowingResponse);
+    rpc CountFollow(CountFollowRequest) returns (CountFollowResponse);
 }
 
 message AddFollowRequest {
@@ -59,4 +60,14 @@ message IsFollowingRequest {
 message IsFollowingResponse {
     Metadata meta = 1;
     repeated int64 following_list = 2;
+}
+
+message CountFollowRequest {
+    int64 user_id = 1;
+}
+
+message CountFollowResponse {
+    Metadata meta = 1;
+    int64 following_count = 2;
+    int64 follower_count = 3;
 }

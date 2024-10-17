@@ -69,3 +69,12 @@ func (a *Adapter) IsFollowing(ctx context.Context, userId int64, targetUserIdLis
 		},
 	)
 }
+
+func (a *Adapter) CountFollow4User(ctx context.Context, userId int64) error {
+	req := &v1.CountF{
+		UserId: userId,
+	}
+
+	resp, err := a.follow.CountFollow(ctx, req)
+	return respcheck.Check[*v1.Metadata](resp, err)
+}
