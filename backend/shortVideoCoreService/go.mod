@@ -3,7 +3,9 @@ module github.com/cloudzenith/DouTok/backend/shortVideoCoreService
 go 1.22.2
 
 require (
+	github.com/TremblingV5/box v0.0.7
 	github.com/bwmarrin/snowflake v0.3.0
+	github.com/bytedance/sonic v1.12.2
 	github.com/cloudzenith/DouTok/backend/baseService v0.0.0-20240825073919-27961fd4a430
 	github.com/cloudzenith/DouTok/backend/gopkgs v0.0.9
 	github.com/envoyproxy/protoc-gen-validate v1.1.0
@@ -22,9 +24,7 @@ require (
 require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.34.2-20240508200655-46a4cf4ba109.2 // indirect
 	dario.cat/mergo v1.0.0 // indirect
-	github.com/TremblingV5/box v0.0.7 // indirect
 	github.com/armon/go-metrics v0.4.1 // indirect
-	github.com/bytedance/sonic v1.12.2 // indirect
 	github.com/bytedance/sonic/loader v0.2.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cloudwego/base64x v0.1.4 // indirect

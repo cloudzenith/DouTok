@@ -4,6 +4,7 @@ go 1.22.2
 
 require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.34.2-20240717164558-a6c49f84cc0f.2
+	github.com/bytedance/sonic v1.12.2
 	github.com/cloudzenith/DouTok/backend/baseService v0.0.1
 	github.com/cloudzenith/DouTok/backend/gopkgs v0.0.9
 	github.com/cloudzenith/DouTok/backend/shortVideoCoreService v0.1.10
@@ -20,7 +21,6 @@ require (
 	github.com/TremblingV5/box v0.0.7 // indirect
 	github.com/armon/go-metrics v0.4.1 // indirect
 	github.com/bwmarrin/snowflake v0.3.0 // indirect
-	github.com/bytedance/sonic v1.12.2 // indirect
 	github.com/bytedance/sonic/loader v0.2.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cloudwego/base64x v0.1.4 // indirect
