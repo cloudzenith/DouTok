@@ -52,21 +52,37 @@ func (a *Application) GetUserInfo(ctx context.Context, request *svapi.GetUserInf
 		return nil, errorx.New(1, "failed to get user info")
 	}
 
+	result := &svapi.User{
+		Id:              userInfo.Id,
+		Name:            userInfo.Name,
+		Avatar:          userInfo.Avatar,
+		BackgroundImage: userInfo.BackgroundImage,
+		Signature:       userInfo.Signature,
+		Mobile:          userInfo.Mobile,
+		Email:           userInfo.Email,
+		WorkCount:       userInfo.WorkCount,
+		FavoriteCount:   userInfo.FavoriteCount,
+	}
+
+	followCount, err := a.core.CountFollow4User(ctx, userId)
+	if err != nil {
+		log.Context(ctx).Errorf("failed to count follow: %v", err)
+	}
+	if err == nil && len(followCount) == 2 {
+		result.FollowCount = followCount[0]
+		result.FollowerCount = followCount[1]
+	}
+
+	beFavoriteCount, err := a.core.CountBeFavoriteNumber4User(ctx, userId)
+	if err != nil {
+		log.Context(ctx).Errorf("failed to count be favorite: %v", err)
+	}
+	if err == nil {
+		result.TotalFavorited = beFavoriteCount
+	}
+
 	return &svapi.GetUserInfoResponse{
-		User: &svapi.User{
-			Id:              userInfo.Id,
-			Name:            userInfo.Name,
-			Avatar:          userInfo.Avatar,
-			BackgroundImage: userInfo.BackgroundImage,
-			Signature:       userInfo.Signature,
-			Mobile:          userInfo.Mobile,
-			Email:           userInfo.Email,
-			FollowCount:     userInfo.FollowCount,
-			FollowerCount:   userInfo.FollowerCount,
-			TotalFavorited:  userInfo.TotalFavorited,
-			WorkCount:       userInfo.WorkCount,
-			FavoriteCount:   userInfo.FavoriteCount,
-		},
+		User: result,
 	}, nil
 }
 

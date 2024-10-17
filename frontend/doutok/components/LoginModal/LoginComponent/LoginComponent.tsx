@@ -9,10 +9,7 @@ import {
   UserOutlined
 } from "@ant-design/icons";
 
-import {
-  UserServiceLoginResponse,
-  useUserServiceLogin
-} from "@/api/svapi/api";
+import { UserServiceLoginResponse, useUserServiceLogin } from "@/api/svapi/api";
 
 import "./LoginComponent.css";
 import useUserStore from "@/components/UserStore/useUserStore";

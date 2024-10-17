@@ -98,6 +98,11 @@ func (s *Service) ListFollowingInGivenList(ctx context.Context, userId int64, ta
 }
 
 func (s *Service) CountFollow(ctx context.Context, userId int64) (followingNum int64, followerNum int64, err error) {
+	ctx, persist := dbtx.WithTXPersist(ctx)
+	defer func() {
+		persist(err)
+	}()
+
 	followingNum, err = s.follow.CountFollowing(ctx, userId, int32(v1.FollowType_FOLLOWING))
 	if err != nil {
 		log.Context(ctx).Errorf("failed to count following: %v", err)
