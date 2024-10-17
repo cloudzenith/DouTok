@@ -98,3 +98,23 @@ func (a *Adapter) CountFavorite4Video(ctx context.Context, videoIdList []int64) 
 		},
 	)
 }
+
+func (a *Adapter) CountBeFavoriteNumber4User(ctx context.Context, userId int64) (int64, error) {
+	req := &v1.CountFavoriteRequest{
+		Id:            []int64{userId},
+		AggregateType: v1.FavoriteAggregateType_BY_USER,
+		FavoriteType:  v1.FavoriteType_FAVORITE,
+	}
+
+	resp, err := a.favorite.CountFavorite(ctx, req)
+	return respcheck.CheckT[int64, *v1.Metadata](
+		resp, err,
+		func() int64 {
+			if len(resp.Items) == 0 {
+				return 0
+			}
+
+			return resp.Items[0].Count
+		},
+	)
+}

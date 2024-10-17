@@ -7,7 +7,7 @@ require (
 	github.com/bytedance/sonic v1.12.2
 	github.com/cloudzenith/DouTok/backend/baseService v0.0.1
 	github.com/cloudzenith/DouTok/backend/gopkgs v0.0.9
-	github.com/cloudzenith/DouTok/backend/shortVideoCoreService v0.1.10
+	github.com/cloudzenith/DouTok/backend/shortVideoCoreService v0.1.11
 	github.com/go-kratos/kratos/v2 v2.8.0
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/google/wire v0.6.0

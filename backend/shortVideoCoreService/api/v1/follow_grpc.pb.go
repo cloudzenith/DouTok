@@ -26,6 +26,7 @@ type FollowServiceClient interface {
 	RemoveFollow(ctx context.Context, in *RemoveFollowRequest, opts ...grpc.CallOption) (*RemoveFollowResponse, error)
 	ListFollowing(ctx context.Context, in *ListFollowingRequest, opts ...grpc.CallOption) (*ListFollowingResponse, error)
 	IsFollowing(ctx context.Context, in *IsFollowingRequest, opts ...grpc.CallOption) (*IsFollowingResponse, error)
+	CountFollow(ctx context.Context, in *CountFollowRequest, opts ...grpc.CallOption) (*CountFollowResponse, error)
 }
 
 type followServiceClient struct {
@@ -72,6 +73,15 @@ func (c *followServiceClient) IsFollowing(ctx context.Context, in *IsFollowingRe
 	return out, nil
 }
 
+func (c *followServiceClient) CountFollow(ctx context.Context, in *CountFollowRequest, opts ...grpc.CallOption) (*CountFollowResponse, error) {
+	out := new(CountFollowResponse)
+	err := c.cc.Invoke(ctx, "/shortVideoCoreService.api.v1.FollowService/CountFollow", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FollowServiceServer is the server API for FollowService service.
 // All implementations must embed UnimplementedFollowServiceServer
 // for forward compatibility
@@ -80,6 +90,7 @@ type FollowServiceServer interface {
 	RemoveFollow(context.Context, *RemoveFollowRequest) (*RemoveFollowResponse, error)
 	ListFollowing(context.Context, *ListFollowingRequest) (*ListFollowingResponse, error)
 	IsFollowing(context.Context, *IsFollowingRequest) (*IsFollowingResponse, error)
+	CountFollow(context.Context, *CountFollowRequest) (*CountFollowResponse, error)
 	mustEmbedUnimplementedFollowServiceServer()
 }
 
@@ -98,6 +109,9 @@ func (UnimplementedFollowServiceServer) ListFollowing(context.Context, *ListFoll
 }
 func (UnimplementedFollowServiceServer) IsFollowing(context.Context, *IsFollowingRequest) (*IsFollowingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method IsFollowing not implemented")
+}
+func (UnimplementedFollowServiceServer) CountFollow(context.Context, *CountFollowRequest) (*CountFollowResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CountFollow not implemented")
 }
 func (UnimplementedFollowServiceServer) mustEmbedUnimplementedFollowServiceServer() {}
 
@@ -184,6 +198,24 @@ func _FollowService_IsFollowing_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FollowService_CountFollow_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CountFollowRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FollowServiceServer).CountFollow(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/shortVideoCoreService.api.v1.FollowService/CountFollow",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FollowServiceServer).CountFollow(ctx, req.(*CountFollowRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FollowService_ServiceDesc is the grpc.ServiceDesc for FollowService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -206,6 +238,10 @@ var FollowService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "IsFollowing",
 			Handler:    _FollowService_IsFollowing_Handler,
+		},
+		{
+			MethodName: "CountFollow",
+			Handler:    _FollowService_CountFollow_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

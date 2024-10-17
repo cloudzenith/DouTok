@@ -190,13 +190,11 @@ export function UserCard() {
           </>
         )}
       </Card>
-      {openLoginModal && (
-        <LoginModal
-          open={openLoginModal}
-          onCancel={() => setOpenLoginModal(false)}
-          type={"login"}
-        />
-      )}
+      <LoginModal
+        open={openLoginModal}
+        onCancel={() => setOpenLoginModal(false)}
+        type={"login"}
+      />
       {oepnEditUserInfoModal && (
         <UpdateUserInfoForm
           open={oepnEditUserInfoModal}

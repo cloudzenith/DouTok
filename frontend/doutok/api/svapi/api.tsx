@@ -594,23 +594,23 @@ export interface SvapiUser {
   mobile?: string;
   email?: string;
   /**
-   * @gotags: json:"follow_count,omitempty,string"
+   * @gotags: json:"followCount,omitempty,string"
    */
   followCount?: string;
   /**
-   * @gotags: json:"follower_count,omitempty,string"
+   * @gotags: json:"followerCount,omitempty,string"
    */
   followerCount?: string;
   /**
-   * @gotags: json:"total_favorited,omitempty,string"
+   * @gotags: json:"totalFavorited,omitempty,string"
    */
   totalFavorited?: string;
   /**
-   * @gotags: json:"work_count,omitempty,string"
+   * @gotags: json:"workCount,omitempty,string"
    */
   workCount?: string;
   /**
-   * @gotags: json:"favorite_count,omitempty,string"
+   * @gotags: json:"favoriteCount,omitempty,string"
    */
   favoriteCount?: string;
 }
@@ -624,16 +624,20 @@ export interface SvapiVideo {
   playUrl?: string;
   coverUrl?: string;
   /**
-   * @gotags: json:"favorite_count,omitempty,string"
+   * @gotags: json:"favoriteCount,omitempty,string"
    */
   favoriteCount?: string;
   /**
-   * @gotags: json:"comment_count,omitempty,string"
+   * @gotags: json:"commentCount,omitempty,string"
    */
   commentCount?: string;
   isFavorite?: boolean;
   title?: string;
   isCollected?: boolean;
+  /**
+   * @gotags: json:"collectedCount,omitempty,string"
+   */
+  collectedCount?: string;
 }
 
 export interface SvapiVideoAuthor {

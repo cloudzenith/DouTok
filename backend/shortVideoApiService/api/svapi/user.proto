@@ -71,16 +71,16 @@ message User {
     string signature = 5; // 个人简介
     string mobile = 6; // 手机号
     string email = 7; // 邮箱
-    // @gotags: json:"follow_count,omitempty,string"
-    int64 follow_count = 8; // 关注总数
-    // @gotags: json:"follower_count,omitempty,string"
-    int64 follower_count = 9; // 粉丝总数
-    // @gotags: json:"total_favorited,omitempty,string"
-    int64 total_favorited = 10; // 获赞数量
-    // @gotags: json:"work_count,omitempty,string"
-    int64 work_count = 11; // 作品数量
-    // @gotags: json:"favorite_count,omitempty,string"
-    int64 favorite_count = 12; // 点赞数量
+    // @gotags: json:"followCount,omitempty,string"
+    int64 followCount = 8; // 关注总数
+    // @gotags: json:"followerCount,omitempty,string"
+    int64 followerCount = 9; // 粉丝总数
+    // @gotags: json:"totalFavorited,omitempty,string"
+    int64 totalFavorited = 10; // 获赞数量
+    // @gotags: json:"workCount,omitempty,string"
+    int64 workCount = 11; // 作品数量
+    // @gotags: json:"favoriteCount,omitempty,string"
+    int64 favoriteCount = 12; // 点赞数量
 }
 
 message GetVerificationCodeRequest {

@@ -97,4 +97,25 @@ func (s *Service) ListFollowingInGivenList(ctx context.Context, userId int64, ta
 	return result, nil
 }
 
+func (s *Service) CountFollow(ctx context.Context, userId int64) (followingNum int64, followerNum int64, err error) {
+	ctx, persist := dbtx.WithTXPersist(ctx)
+	defer func() {
+		persist(err)
+	}()
+
+	followingNum, err = s.follow.CountFollowing(ctx, userId, int32(v1.FollowType_FOLLOWING))
+	if err != nil {
+		log.Context(ctx).Errorf("failed to count following: %v", err)
+		return 0, 0, err
+	}
+
+	followerNum, err = s.follow.CountFollowing(ctx, userId, int32(v1.FollowType_FOLLOWER))
+	if err != nil {
+		log.Context(ctx).Errorf("failed to count follower: %v", err)
+		return 0, 0, err
+	}
+
+	return followingNum, followerNum, nil
+}
+
 var _ followserviceiface.FollowService = (*Service)(nil)
