@@ -3,7 +3,6 @@ package userdomain
 import (
 	"context"
 	"fmt"
-	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/conf"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/data/userdata"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/dto"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/domain/entity"
@@ -15,9 +14,8 @@ import (
 )
 
 type UserUsecase struct {
-	config *conf.Config
-	repo   userdata.IUserRepo
-	log    *log.Helper
+	repo userdata.IUserRepo
+	log  *log.Helper
 }
 
 func NewUserUsecase(
