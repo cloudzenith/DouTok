@@ -49,7 +49,7 @@ jobs:
           github_token: ${{ secrets.github_token }}
           golangci_lint_flags: "--timeout 10m --exclude-use-default=false"
           level: "error"
-          reporter: github-pr-preview
+          reporter: github-preview
           filter_mode: nofilter
           workdir: ${{ matrix.project }}
 
