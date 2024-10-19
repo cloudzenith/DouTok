@@ -51,6 +51,7 @@ jobs:
           level: "error"
           reporter: github-pr-check
           filter_mode: nofilter
+          workdir: ${{ matrix.project }}
 
       - name: Build ${{ matrix.project }}
         run: go build -v ./...
