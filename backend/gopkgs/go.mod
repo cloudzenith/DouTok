@@ -5,6 +5,7 @@ go 1.22.2
 require (
 	github.com/TremblingV5/box v0.0.7
 	github.com/apache/rocketmq-client-go/v2 v2.1.2
+	github.com/bsm/redislock v0.9.4
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/bytedance/sonic v1.11.2
 	github.com/go-kratos/kratos/contrib/log/zap/v2 v2.0.0-20240815090334-084c8b4167e7
@@ -31,7 +32,6 @@ require (
 require (
 	dario.cat/mergo v1.0.0 // indirect
 	github.com/armon/go-metrics v0.4.1 // indirect
-	github.com/bsm/redislock v0.9.4 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20230717121745-296ad89f973d // indirect
 	github.com/chenzhuoyu/iasm v0.9.1 // indirect
