@@ -24,6 +24,7 @@ jobs:
           'backend/shortVideoApiService',
           'backend/shortVideoCoreService'
         ]
+      fail-fast: false
     steps:
       - uses: actions/checkout@v4
         with:
@@ -59,3 +60,5 @@ jobs:
       - name: Run coverage ${{ matrix.project }}
         run: cd ${{ matrix.project }} && go test -race -coverprofile=coverage.out -covermode=atomic
 
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
