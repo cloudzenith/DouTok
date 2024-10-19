@@ -47,7 +47,7 @@ jobs:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           github_token: ${{ secrets.github_token }}
-          golangci_lint_flags: "--timeout 10m --exclude-use-default=false"
+          golangci_lint_flags: "--timeout 10m --exclude-use-default=false --exclude-files .*pb\.go$"
           level: "error"
           reporter: github-pr-check
           filter_mode: nofilter
