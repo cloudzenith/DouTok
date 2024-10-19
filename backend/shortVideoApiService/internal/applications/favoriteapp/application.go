@@ -50,7 +50,7 @@ func (a *Application) RemoveFavorite(ctx context.Context, request *svapi.RemoveF
 }
 
 func (a *Application) ListFavoriteVideo(ctx context.Context, request *svapi.ListFavoriteVideoRequest) (*svapi.ListFavoriteVideoResponse, error) {
-	if &request.UserId == nil || request.UserId == 0 {
+	if request.UserId == 0 {
 		userId, err := claims.GetUserId(ctx)
 		if err != nil {
 			return nil, errorx.New(1, "获取用户信息失败")
