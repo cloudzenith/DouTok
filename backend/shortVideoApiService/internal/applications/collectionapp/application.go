@@ -23,7 +23,7 @@ func New(
 }
 
 func (a *Application) checkCollectionBelongUser(ctx context.Context, collectionId int64) error {
-	if collectionId == 0 || &collectionId == nil {
+	if collectionId == 0 {
 		log.Context(ctx).Warnf("collectionId is empty")
 		return nil
 	}

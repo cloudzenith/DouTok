@@ -4,10 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"time"
+
 	"github.com/cloudzenith/DouTok/backend/gopkgs/gofer"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/redis/go-redis/v9"
-	"time"
 )
 
 const (
@@ -24,8 +26,8 @@ type Cache[T any] struct {
 	useBarrier  bool
 	useLocal    bool
 	useFallback bool
-	localTTL    time.Duration
-	redisTTL    time.Duration
+	localTTL    *time.Duration
+	redisTTL    *time.Duration
 	client      *redis.Client
 }
 
@@ -40,12 +42,12 @@ func NewCache[T any](options ...CacheOption[T]) *Cache[T] {
 		panic("not assign redis client to cache")
 	}
 
-	if &cache.localTTL == nil {
-		cache.localTTL = DefaultTTL
+	if cache.localTTL == nil {
+		cache.localTTL = &DefaultTTL
 	}
 
-	if &cache.redisTTL == nil {
-		cache.redisTTL = DefaultTTL
+	if cache.redisTTL == nil {
+		cache.redisTTL = &DefaultTTL
 	}
 
 	return cache
@@ -55,7 +57,7 @@ func (c *Cache[T]) fetchSet(ctx context.Context, key string, fetch func(ctx cont
 	value, err := fetch(ctx)
 	if err != nil {
 		if c.useBarrier {
-			_ = c.client.Set(ctx, key, NotFoundBarrier, c.redisTTL).Err()
+			_ = c.client.Set(ctx, key, NotFoundBarrier, *c.redisTTL).Err()
 			return t, ErrNotFoundBarrier
 		}
 		return t, err
@@ -67,17 +69,18 @@ func (c *Cache[T]) fetchSet(ctx context.Context, key string, fetch func(ctx cont
 	}
 
 	ttl := c.redisTTL
-	err = c.client.Set(ctx, key, val, ttl).Err()
+	err = c.client.Set(ctx, key, val, *ttl).Err()
 	if err != nil {
 		log.Context(ctx).Warnf("fetchSet write redis failed: %v", err)
 	}
 
 	if c.useLocal {
-		if c.localTTL > 0 {
+		if *c.localTTL > 0 {
 			ttl = c.localTTL
 		}
 
 		// TODO: set local cache
+		fmt.Println("when use local will todo something", ttl)
 	}
 
 	return value, nil
@@ -86,6 +89,7 @@ func (c *Cache[T]) fetchSet(ctx context.Context, key string, fetch func(ctx cont
 func (c *Cache[T]) getCache(ctx context.Context, key string) ([]byte, error) {
 	if c.useLocal {
 		// TODO: 读本地缓存并返回
+		fmt.Println("when use local will todo something")
 	}
 
 	result, err := c.client.Get(ctx, key).Result()

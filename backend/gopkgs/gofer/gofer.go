@@ -19,7 +19,7 @@ func SetUseGlobalPool(value bool) {
 
 func Go(f func()) {
 	if useGlobalPool {
-		pool.Submit(f)
+		_ = pool.Submit(f)
 		return
 	}
 
@@ -31,7 +31,7 @@ func Go(f func()) {
 
 func GoWithCtx(ctx context.Context, f func(context.Context)) {
 	if useGlobalPool {
-		pool.Submit(func() {
+		_ = pool.Submit(func() {
 			f(ctx)
 		})
 		return

@@ -11,7 +11,7 @@ import (
 
 var (
 	globalClientMap = sync.Map{}
-	globalConfigMap = make(components.ConfigMap[*Config])
+	globalConfigMap = make(components.ConfigMap[*Config]) // nolint
 )
 
 func getGlobalClientMapKey(configKey, dbName string) string {

@@ -3,6 +3,7 @@ package accountapp
 import (
 	"context"
 	"errors"
+
 	"github.com/cloudzenith/DouTok/backend/baseService/api"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/applications/interface/accountserviceiface"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/utils"
@@ -33,7 +34,7 @@ func (a *AccountApplication) Register(ctx context.Context, request *api.Register
 	}, nil
 }
 
-func (a *AccountApplication) checkPassword(ctx context.Context, checkFunc func() (int64, error)) (*api.CheckAccountResponse, error) {
+func (a *AccountApplication) checkPassword(checkFunc func() (int64, error)) (*api.CheckAccountResponse, error) {
 	accountId, err := checkFunc()
 	if err != nil {
 		return &api.CheckAccountResponse{
@@ -49,19 +50,19 @@ func (a *AccountApplication) checkPassword(ctx context.Context, checkFunc func()
 
 func (a *AccountApplication) CheckAccount(ctx context.Context, request *api.CheckAccountRequest) (*api.CheckAccountResponse, error) {
 	if request.GetAccountId() != 0 {
-		return a.checkPassword(ctx, func() (int64, error) {
+		return a.checkPassword(func() (int64, error) {
 			return a.accountService.CheckPasswordById(ctx, request.GetAccountId(), request.GetPassword())
 		})
 	}
 
 	if request.GetMobile() != "" {
-		return a.checkPassword(ctx, func() (int64, error) {
+		return a.checkPassword(func() (int64, error) {
 			return a.accountService.CheckPasswordByMobile(ctx, request.GetMobile(), request.GetPassword())
 		})
 	}
 
 	if request.GetEmail() != "" {
-		return a.checkPassword(ctx, func() (int64, error) {
+		return a.checkPassword(func() (int64, error) {
 			return a.accountService.CheckPasswordByEmail(ctx, request.GetEmail(), request.GetPassword())
 		})
 	}

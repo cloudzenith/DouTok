@@ -8,10 +8,6 @@ type PaginationRequest struct {
 	SortFields []*SortField `json:"sort_fields"`
 }
 
-func (p *PaginationRequest) getOffset() int32 {
-	return (p.PageNum - 1) * p.PageSize
-}
-
 type SortField struct {
 	Field string `json:"field"`
 	Order int32  `json:"order"` // 0: asc, 1: desc

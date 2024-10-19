@@ -15,7 +15,6 @@ import (
 
 type UserUsecase struct {
 	repo userdata.IUserRepo
-	log  *log.Helper
 }
 
 func NewUserUsecase(

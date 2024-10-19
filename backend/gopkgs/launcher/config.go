@@ -1,7 +1,7 @@
 package launcher
 
 type App struct {
-	Name    string `json:"name" json:"name"`
-	Version string `json:"version" json:"version"`
-	Node    int64  `json:"node" json:"node"`
+	Name    string `yaml:"name" json:"name"`
+	Version string `yaml:"version" json:"version"`
+	Node    int64  `yaml:"node" json:"node"`
 }

@@ -2,7 +2,6 @@ package favoriteserviceiface
 
 import (
 	"context"
-	"errors"
 	v1 "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1"
 	"github.com/cloudzenith/DouTok/backend/shortVideoCoreService/internal/infrastructure/utils/pageresult"
 )
@@ -23,9 +22,9 @@ type WriteOpDTO struct {
 }
 
 func (dto *WriteOpDTO) Check() error {
-	if &dto.TargetType == nil || &dto.FavoriteType == nil {
-		return errors.New("查询类型错误")
-	}
+	//if &dto.TargetType == nil || &dto.FavoriteType == nil {
+	//	return errors.New("查询类型错误")
+	//}
 
 	return nil
 }
@@ -38,9 +37,9 @@ type AggOpDTO struct {
 }
 
 func (dto *AggOpDTO) Check() error {
-	if &dto.AggType == nil || &dto.FavoriteType == nil {
-		return errors.New("查询类型错误")
-	}
+	//if &dto.AggType == nil || &dto.FavoriteType == nil {
+	//	return errors.New("查询类型错误")
+	//}
 
 	return nil
 }

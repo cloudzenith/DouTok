@@ -18,9 +18,8 @@ import (
 )
 
 type ComponentsLauncher struct {
-	group      *gofer.Group
-	components map[string]func() error
-	config     map[string]config.Value
+	group  *gofer.Group
+	config map[string]config.Value
 }
 
 func NewComponentsLauncher(config config.Config) *ComponentsLauncher {
@@ -34,8 +33,7 @@ func NewComponentsLauncher(config config.Config) *ComponentsLauncher {
 			context.Background(),
 			gofer.UseErrorGroup(),
 		),
-		components: make(map[string]func() error),
-		config:     configMap,
+		config: configMap,
 	}
 }
 
@@ -67,10 +65,6 @@ func (l *ComponentsLauncher) Launch() {
 		launchWrapper(cfg, componentsName)
 	}
 
-	for _, fn := range l.components {
-		l.group.Run(fn)
-	}
-
 	if err := l.group.Wait(); err != nil {
 		panic("launch components error: " + err.Error())
 	}
@@ -86,8 +80,4 @@ func launchComponent[T any](cfg config.Value, initMethod func(cfg components.Con
 	if err := component.Start(); err != nil {
 		panic("launch component error: " + err.Error())
 	}
-}
-
-func (l *ComponentsLauncher) register(name string, fn func() error) {
-	l.components[name] = fn
 }

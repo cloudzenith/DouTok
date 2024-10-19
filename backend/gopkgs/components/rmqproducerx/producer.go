@@ -11,12 +11,9 @@ import (
 
 var (
 	globalClientMap = sync.Map{}
-	globalConfigMap = make(components.ConfigMap[*Config])
 )
 
 func Init(cm components.ConfigMap[*Config]) (func() error, error) {
-	globalConfigMap = cm
-
 	for k, v := range cm {
 		Connect(k, v)
 	}
