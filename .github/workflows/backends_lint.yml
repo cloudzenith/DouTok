@@ -44,7 +44,7 @@ jobs:
         with:
           golangci_lint_flags: "--timeout 10m --exclude-use-default=false"
           fail_on_error: false
-          reporter: github-pr-review
+          reporter: github-pr-check
           filter_mode: file
           workdir: ${{ matrix.project }}
           level: "error"
