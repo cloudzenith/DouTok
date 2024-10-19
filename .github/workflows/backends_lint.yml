@@ -43,23 +43,14 @@ jobs:
           cd ${{ matrix.project }}
 
       - uses: reviewdog/action-golangci-lint@v2
-#        env:
-#          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        with:
-#          github_token: ${{ secrets.github_token }}
-#          golangci_lint_flags: "--timeout 10m --exclude-use-default=false"
-#          level: "error"
-#          reporter: github-check
-#          filter_mode: nofilter
-#          workdir: ${{ matrix.project }}
-
-      - name: gofumpt -s with reviewdog
         env:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          go install mvdan.cc/gofumpt@v0.2.0
-          gofumpt -e -d . | \
-          reviewdog -name="gofumpt" -f=diff -f.diff.strip=0 -reporter=github-pr-review
+        with:
+          github_token: ${{ secrets.github_token }}
+          golangci_lint_flags: "--timeout 10m --exclude-use-default=false"
+          reporter: github-pr-review
+          filter_mode: nofilter
+          workdir: ${{ matrix.project }}
 
       - name: Build ${{ matrix.project }}
         run: go build -v ./...
