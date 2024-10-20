@@ -179,7 +179,6 @@ func (a *Application) Register(ctx context.Context, request *svapi.RegisterReque
 	token, err := a.setToken2Header(ctx, claims.New(userId))
 	if err != nil {
 		log.Context(ctx).Error("failed to generate token: %v", err)
-		return nil, errorx.New(1, "failed to generate token")
 	}
 	return &svapi.RegisterResponse{
 		UserId: userId,
