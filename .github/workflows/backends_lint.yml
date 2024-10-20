@@ -58,10 +58,7 @@ jobs:
         run: cd ${{ matrix.project }} && go build -v ./...
 
       - name: Test ${{ matrix.project }}
-        run: cd ${{ matrix.project }} && go test -v ./...
-
-      - name: Run coverage ${{ matrix.project }}
-        run: cd ${{ matrix.project }} && go test -race -coverprofile=coverage.out -covermode=atomic
+        run: cd ${{ matrix.project }} && go test -v ./... -race -coverprofile=coverage.out -covermode=atomic
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
