@@ -145,6 +145,10 @@ func (a *Application) Register(ctx context.Context, request *svapi.RegisterReque
 		return nil, errorx.New(1, "invalid verification code")
 	}
 
+	if request.Mobile == "" && request.Email == "" {
+		return nil, errorx.New(1, "Please enter your phone number or email address to register!")
+	}
+
 	var options []accountoptions.RegisterOptions
 	if request.Mobile != "" {
 		options = append(options, accountoptions.RegisterWithMobile(request.Mobile))
@@ -170,8 +174,16 @@ func (a *Application) Register(ctx context.Context, request *svapi.RegisterReque
 		log.Context(ctx).Error(fmt.Sprintf("failed to create user: %v", err))
 		return nil, errorx.New(1, fmt.Sprintf("failed to create user: %v", err))
 	}
+
+	// 返回token
+	token, err := a.setToken2Header(ctx, claims.New(userId))
+	if err != nil {
+		log.Context(ctx).Error("failed to generate token: %v", err)
+		return nil, errorx.New(1, "failed to generate token")
+	}
 	return &svapi.RegisterResponse{
 		UserId: userId,
+		Token:  token,
 	}, nil
 }
 

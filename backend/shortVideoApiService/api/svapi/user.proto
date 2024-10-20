@@ -108,6 +108,7 @@ message RegisterRequest {
 message RegisterResponse {
     // @gotags: json:"user_id,omitempty,string"
     int64 user_id = 1;
+    string token = 2;
 }
 
 message LoginRequest {
