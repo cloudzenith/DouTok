@@ -38,7 +38,7 @@ func (a *Application) generateCommentUserInfo(userInfo *v1.User) (commentUser *s
 }
 
 func (a *Application) CreateComment(ctx context.Context, request *svapi.CreateCommentRequest) (*svapi.CreateCommentResponse, error) {
-	if request.Content == "" || &request.Content == nil {
+	if request.Content == "" {
 		return nil, errorx.New(1, "评论内容不能为空")
 	}
 
@@ -67,7 +67,7 @@ func (a *Application) CreateComment(ctx context.Context, request *svapi.CreateCo
 	userResp := a.generateCommentUserInfo(userInfo)
 
 	var replyUserResp *svapi.CommentUser
-	if created.ReplyUserId != 0 && &created.ReplyUserId != nil {
+	if created.ReplyUserId != 0 {
 		userInfo, err = a.core.GetUserInfo(ctx, useroptions.GetUserInfoWithUserId(created.ReplyUserId))
 		if err != nil {
 			// 弱依赖
@@ -112,13 +112,13 @@ func (a *Application) assembleCommentListResult(ctx context.Context, data []*v1.
 		var userIdList []int64
 		for _, item := range data {
 			userIdList = append(userIdList, item.UserId)
-			if item.ReplyUserId != 0 && &item.ReplyUserId != nil {
+			if item.ReplyUserId != 0 {
 				userIdList = append(userIdList, item.ReplyUserId)
 			}
 
 			for _, childComments := range item.Comments {
 				userIdList = append(userIdList, childComments.UserId)
-				if childComments.ReplyUserId != 0 && &childComments.ReplyUserId != nil {
+				if childComments.ReplyUserId != 0 {
 					userIdList = append(userIdList, childComments.ReplyUserId)
 				}
 			}
@@ -136,7 +136,7 @@ func (a *Application) assembleCommentListResult(ctx context.Context, data []*v1.
 		}
 
 		var replyUserResp *svapi.CommentUser
-		if item.ReplyUserId != 0 && &item.ReplyUserId != nil {
+		if item.ReplyUserId != 0 {
 			userInfo, ok = userInfoMap[item.ReplyUserId]
 			if ok {
 				replyUserResp = a.generateCommentUserInfo(userInfo)

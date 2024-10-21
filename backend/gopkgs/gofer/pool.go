@@ -1,15 +1,12 @@
 package gofer
 
 import (
-	"sync"
-
 	"github.com/TremblingV5/box/rearer"
 	"github.com/panjf2000/ants/v2"
 )
 
 var (
 	pool         *Pool
-	once         sync.Once
 	panicHandler = ants.WithPanicHandler(func(err any) {
 		rearer.LogRecoverStack(err)
 	})

@@ -45,8 +45,7 @@ func (r *PersistRepository) AddFavorite(ctx context.Context, userId, targetId in
 			return err
 		}
 
-		r.updateFavoriteTx(ctx, userId, targetId, targetType, favoriteType, false)
-		return nil
+		return r.updateFavoriteTx(ctx, userId, targetId, targetType, favoriteType, false)
 	})
 }
 

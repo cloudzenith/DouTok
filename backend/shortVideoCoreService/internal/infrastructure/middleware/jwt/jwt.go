@@ -58,9 +58,9 @@ func GetLoginUser(ctx context.Context) (int64, error) {
 	// 断言 claims 是 jwt.MapClaims 类型
 	var claims *jwt5.MapClaims
 
-	switch claimsAny.(type) {
+	switch claimsAny := claimsAny.(type) {
 	case *jwt5.MapClaims:
-		claims = claimsAny.(*jwt5.MapClaims)
+		claims = claimsAny
 	default:
 		fmt.Println("claims is not of type jwt.MapClaims")
 		return 0, fmt.Errorf("claims is not of type jwt.MapClaims")

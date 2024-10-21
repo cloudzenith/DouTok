@@ -101,7 +101,7 @@ func main() {
 			producerx := rmqproducerx.GetProducer[*TestMessage](context.Background(), "test")
 			for i := 0; i < 10; i++ {
 				msg := &TestMessage{
-					Content: "hello world - " + string(i),
+					Content: "hello world - " + string(rune(i)),
 					Index:   i,
 				}
 

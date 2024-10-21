@@ -41,7 +41,7 @@ func (c *Config) SetDefault() {
 		c.Charset = "utf8mb4"
 	}
 
-	if c.ParseTime == false {
+	if !c.ParseTime {
 		c.ParseTime = true
 	}
 

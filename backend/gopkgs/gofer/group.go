@@ -82,7 +82,8 @@ func (g *Group) Run(f func() error) error {
 
 	Go(func() {
 		defer g.wg.Done()
-		f()
+
+		_ = f()
 	})
 
 	return nil

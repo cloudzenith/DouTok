@@ -140,6 +140,7 @@ func (l *Launcher) newKratosApp() {
 	l.app = kratos.New(options...)
 }
 
+// nolint
 func (l *Launcher) initSnowflake(appConfig *App) {
 	if appConfig.Node == 0 {
 		panic("snowflake node should be set")

@@ -24,7 +24,7 @@ func CreateCommentWithContent(content string) CreateCommentOption {
 
 func CreateCommentWithParentId(parentId int64) CreateCommentOption {
 	return func(request *v1.CreateCommentRequest) {
-		if parentId == 0 || &parentId == nil {
+		if parentId == 0 {
 			return
 		}
 
@@ -34,7 +34,7 @@ func CreateCommentWithParentId(parentId int64) CreateCommentOption {
 
 func CreateCommentWithReplyTo(replyTo int64) CreateCommentOption {
 	return func(request *v1.CreateCommentRequest) {
-		if replyTo == 0 || &replyTo == nil {
+		if replyTo == 0 {
 			return
 		}
 

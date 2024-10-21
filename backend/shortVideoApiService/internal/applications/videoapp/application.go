@@ -230,6 +230,10 @@ func (a *Application) ReportVideoFinishUpload(ctx context.Context, request *svap
 	}
 
 	videoId, err := a.core.SaveVideoInfo(ctx, request.Title, request.VideoUrl, request.CoverUrl, request.Description, userId)
+	if err != nil {
+		log.Context(ctx).Errorf("failed to save video info: %v", err)
+		return nil, errorx.New(1, "failed to save video info")
+	}
 
 	return &svapi.ReportVideoFinishUploadResponse{
 		VideoId: videoId,

@@ -2,7 +2,6 @@ package miniorepo
 
 import (
 	"context"
-	"fmt"
 	"github.com/cloudzenith/DouTok/backend/gopkgs/components/miniox"
 	"github.com/minio/minio-go/v7"
 	"net/http"
@@ -20,10 +19,6 @@ func New() *PersistRepository {
 	return &PersistRepository{
 		core: miniox.GetClient(context.Background()),
 	}
-}
-
-func (r *PersistRepository) formatFileName(bizName, fileName string) string {
-	return fmt.Sprintf("%s/%s", bizName, fileName)
 }
 
 func (r *PersistRepository) PreSignGetUrl(ctx context.Context, bucketName, objectName, fileName string, expireSeconds int64) (string, error) {

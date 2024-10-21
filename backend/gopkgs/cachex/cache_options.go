@@ -25,13 +25,13 @@ func WithUseFallback[T any](useFallback bool) CacheOption[T] {
 	}
 }
 
-func WithLocalTTL[T any](localTTL time.Duration) CacheOption[T] {
+func WithLocalTTL[T any](localTTL *time.Duration) CacheOption[T] {
 	return func(cache *Cache[T]) {
 		cache.localTTL = localTTL
 	}
 }
 
-func WithRedisTTL[T any](redisTTL time.Duration) CacheOption[T] {
+func WithRedisTTL[T any](redisTTL *time.Duration) CacheOption[T] {
 	return func(cache *Cache[T]) {
 		cache.redisTTL = redisTTL
 	}

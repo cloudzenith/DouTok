@@ -79,7 +79,7 @@ func IsHealth() (err error) {
 		client := value.(*minio.Core)
 		_, err = client.ListBuckets(context.Background())
 		if err != nil {
-			log.Error("minio health check failed, client key: %s", key)
+			log.Errorf("minio health check failed, client key: %s", key)
 			return false
 		}
 

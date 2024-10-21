@@ -92,7 +92,7 @@ func (s *Service) AddVideo2Collection(ctx context.Context, userId, collectionId,
 	}()
 
 	// 没传collectionId, 检索默认收藏夹
-	if collectionId == 0 || &collectionId == nil {
+	if collectionId == 0 {
 		var coll *model.Collection
 		coll, err = s.collection.ListFirstCollection4UserId(ctx, userId)
 		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
@@ -160,7 +160,7 @@ func (s *Service) RemoveVideo2Collection(ctx context.Context, userId, collection
 	}()
 
 	// 没传collectionId, 检索默认收藏夹
-	if collectionId == 0 || &collectionId == nil {
+	if collectionId == 0 {
 		coll, err := s.collection.ListFirstCollection4UserId(ctx, userId)
 		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			log.Context(ctx).Errorf("failed to list default collection: %v", err)
