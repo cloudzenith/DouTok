@@ -49,12 +49,14 @@ export function UserPublishedVideoList() {
   }, []);
 
   return (
-    <UserVideosList
-      domId={"published-list"}
-      loadData={loadData}
-      total={total}
-      data={data}
-      loading={loading}
-    />
+    <>
+      <UserVideosList
+        domId={"published-list"}
+        loadData={loadData}
+        total={total}
+        data={data}
+        loading={loading}
+      />
+    </>
   );
 }

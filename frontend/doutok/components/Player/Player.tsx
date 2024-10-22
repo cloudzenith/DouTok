@@ -92,6 +92,8 @@ export interface PlayerProps {
   isCouldFollow?: boolean;
   videoInfo: SvapiVideo;
   displaying: boolean;
+  useExternalCommentDrawer: boolean;
+  onOpenExternalCommentDrawer?: () => void;
 }
 
 // 保留注释，未来会优化播放器组件
@@ -253,6 +255,7 @@ export function Player(props: PlayerProps) {
           setOpenCommentDrawer(false);
         }}
         mask={false}
+        destroyOnClose={true}
       >
         <CommentComponent videoId={props.videoInfo.id} />
       </Drawer>
@@ -352,7 +355,11 @@ export function Player(props: PlayerProps) {
               className={"mask-button"}
               ghost={true}
               onClick={() => {
-                setOpenCommentDrawer(!openCommentDrawer);
+                if (!props.useExternalCommentDrawer) {
+                  setOpenCommentDrawer(!openCommentDrawer);
+                } else {
+                  props.onOpenExternalCommentDrawer?.();
+                }
               }}
             >
               {openCommentDrawer && (

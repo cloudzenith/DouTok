@@ -23,7 +23,7 @@ export function UserVideosList(props: UserVideosListProps) {
         dataLength={props.data.length}
         scrollableTarget={props.domId}
       >
-        <VideoList data={props.data} />
+        <VideoList data={props.data} onNeedLoadData={props.loadData} />
       </InfiniteScroll>
     </div>
   );

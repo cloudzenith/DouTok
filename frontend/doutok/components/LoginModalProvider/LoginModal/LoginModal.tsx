@@ -2,7 +2,7 @@ import { Modal } from "antd";
 
 import "./LoginModal.css";
 import React, { useEffect, useState } from "react";
-import { LoginComponent } from "@/components/LoginModal/LoginComponent/LoginComponent";
+import { LoginComponent } from "@/components/LoginModalProvider/LoginModal/LoginComponent/LoginComponent";
 import { RegisterComponent } from "@/components/RegisterComponent/RegisterComponent";
 
 type ModalType = "login" | "register";

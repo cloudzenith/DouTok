@@ -11,7 +11,16 @@ const useUserStore = create(set => ({
   setCurrentUserId: () =>
     set((state: { currentUserId: string }) => ({
       currentUserId: state.currentUserId
-    }))
+    })),
+  isOpenLoginModal: localStorage.getItem("openLoginModal") || false,
+  openLoginModal: () => {
+    localStorage.setItem("openLoginModal", "true");
+    set({ isOpen: true });
+  },
+  closeLoginModal: () => {
+    localStorage.setItem("openLoginModal", "false");
+    set({ isOpen: false });
+  }
 }));
 
 export default useUserStore;
