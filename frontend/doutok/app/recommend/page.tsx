@@ -1,14 +1,14 @@
 "use client";
 
 import React from "react";
-import { RecommendPageVideo } from "@/components/RecommendPageVideo/RecommendPageVideo";
 import { RequestComponent } from "@/components/RequestComponent/RequestComponent";
+import { RecommendPageWrapper } from "@/components/VideoListWrappers/RecommendPageWrapper/RecommendPageWrapper";
 
 const Recommend = () => {
   return (
     <div>
       <RequestComponent noAuth={true}>
-        <RecommendPageVideo domId={"recommend-page-video"} />
+        <RecommendPageWrapper />
       </RequestComponent>
     </div>
   );

@@ -11,7 +11,7 @@ import {
   useUserServiceUpdateUserInfo
 } from "@/api/svapi/api";
 import "./UserCard.css";
-import { LoginModal } from "@/components/LoginModal/LoginModal";
+import { LoginModal } from "@/components/LoginModalProvider/LoginModal/LoginModal";
 import useUserStore from "@/components/UserStore/useUserStore";
 import { UpdateUserInfoForm } from "@/components/UpdateUserInfoForm/UpdateUserInfoForm";
 import { RcFile } from "antd/es/upload/interface";
@@ -192,7 +192,9 @@ export function UserCard() {
       </Card>
       <LoginModal
         open={openLoginModal}
-        onCancel={() => setOpenLoginModal(false)}
+        onCancel={() => {
+          setOpenLoginModal(false);
+        }}
         type={"login"}
       />
       {oepnEditUserInfoModal && (

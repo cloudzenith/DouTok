@@ -1,8 +1,8 @@
 "use client";
 
 import { RestfulProvider } from "restful-react";
-import { LoginModal } from "@/components/LoginModal/LoginModal";
 import useUserStore from "@/components/UserStore/useUserStore";
+import { LoginModalProvider } from "@/components/LoginModalProvider/LoginModalProvider";
 
 export interface RequestProps {
   children: React.ReactNode;
@@ -23,7 +23,7 @@ export function RequestComponent(props: RequestProps) {
       requestOptions={() => ({ headers: { Authorization: `Bearer ${token}` } })}
     >
       {(token || props.noAuth) && props.children}
-      {!(token || props.noAuth) && <LoginModal open={true} type={"login"} />}
+      {!(token || props.noAuth) && <LoginModalProvider />}
     </RestfulProvider>
   );
 }
