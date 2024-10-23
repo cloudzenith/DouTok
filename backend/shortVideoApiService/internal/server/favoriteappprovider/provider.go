@@ -7,5 +7,7 @@ import (
 )
 
 var FavoriteAppProvider = wire.NewSet(
-	favoriteapp.New, commonprovider.CoreAdapterProvider,
+	favoriteapp.New,
+	commonprovider.CoreAdapterProvider,
+	commonprovider.VideoServiceProvider,
 )

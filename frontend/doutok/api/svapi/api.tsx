@@ -69,21 +69,6 @@ export interface SvapiCollection {
   description?: string;
 }
 
-export interface SvapiCollectionVideo {
-  /**
-   * @gotags: json:"id,omitempty,string"
-   */
-  id?: string;
-  /**
-   * @gotags: json:"videoId,omitempty,string"
-   */
-  videoId?: string;
-  coverUrl?: string;
-  title?: string;
-  description?: string;
-  videoUrl?: string;
-}
-
 export interface SvapiComment {
   /**
    * @gotags: json:"id,omitempty,string"
@@ -275,7 +260,7 @@ export interface SvapiListPublishedVideoResponse {
 }
 
 export interface SvapiListVideo4CollectionResponse {
-  videos?: SvapiCollectionVideo[];
+  videos?: SvapiVideo[];
   pagination?: SvapiPaginationResponse;
 }
 

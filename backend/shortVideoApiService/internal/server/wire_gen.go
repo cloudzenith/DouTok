@@ -16,6 +16,7 @@ import (
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/applications/videoapp"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/adapter/baseadapter"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/adapter/svcoreadapter"
+	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/service/videoservice"
 )
 
 // Injectors from wire.go:
@@ -30,7 +31,8 @@ func initUserApp() *userapp.Application {
 func initVideoApp() *videoapp.Application {
 	adapter := baseadapter.New()
 	svcoreadapterAdapter := svcoreadapter.New()
-	application := videoapp.New(adapter, svcoreadapterAdapter)
+	videoService := videoservice.New(svcoreadapterAdapter)
+	application := videoapp.New(adapter, svcoreadapterAdapter, videoService)
 	return application
 }
 
@@ -42,7 +44,8 @@ func initFileApp() *fileapp.Application {
 
 func initCollectionApp() *collectionapp.Application {
 	adapter := svcoreadapter.New()
-	application := collectionapp.New(adapter)
+	videoService := videoservice.New(adapter)
+	application := collectionapp.New(adapter, videoService)
 	return application
 }
 
@@ -54,7 +57,8 @@ func initCommentApp() *commentapp.Application {
 
 func initFavoriteApp() *favoriteapp.Application {
 	adapter := svcoreadapter.New()
-	application := favoriteapp.New(adapter)
+	videoService := videoservice.New(adapter)
+	application := favoriteapp.New(adapter, videoService)
 	return application
 }
 
