@@ -10,4 +10,5 @@ var VideoAppProviderSet = wire.NewSet(
 	videoapp.New,
 	commonprovider.BaseAdapterProvider,
 	commonprovider.CoreAdapterProvider,
+	commonprovider.VideoServiceProvider,
 )

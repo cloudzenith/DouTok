@@ -65,7 +65,7 @@ export function UserCard() {
       setFollowing(data.user?.followCount ? data.user?.followCount : "0");
       setFans(data.user?.followerCount ? data.user?.followerCount : "0");
       setDouTokId(data.user?.id);
-      setLikes("0");
+      setLikes(data.user?.totalFavorited ? data.user?.totalFavorited : "0");
       setSignature(
         data.user?.signature ? data.user?.signature : "这个人很懒，什么都没写"
       );
@@ -143,11 +143,11 @@ export function UserCard() {
                 </div>
                 <Divider className={"divider"} type={"vertical"} />
                 <div className={"fans-num"}>
-                  <span>粉丝: {fans != undefined ? following : "-"}</span>
+                  <span>粉丝: {fans != undefined ? fans : "-"}</span>
                 </div>
                 <Divider className={"divider"} type={"vertical"} />
                 <div className={"likes-num"}>
-                  <span>获赞: {likes != undefined ? following : "-"}</span>
+                  <span>获赞: {likes != undefined ? likes : "-"}</span>
                 </div>
               </div>
             </>

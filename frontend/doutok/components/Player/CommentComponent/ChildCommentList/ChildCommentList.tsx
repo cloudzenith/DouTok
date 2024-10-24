@@ -5,6 +5,7 @@ import {
 } from "@/api/svapi/api";
 import { List, message } from "antd";
 import React from "react";
+import { DownOutlined } from "@ant-design/icons";
 
 export interface ChildCommentListProps {
   commentId?: string;
@@ -72,10 +73,16 @@ export function ChildCommentList(props: ChildCommentListProps) {
                     setExpanded(true);
                   }}
                 >
+                  <DownOutlined />
                   展开所有子评论
                 </a>
               )}
-            {expanded && !allLoaded && <a onClick={loadData}>加载更多</a>}
+            {expanded && !allLoaded && (
+              <a onClick={loadData}>
+                <DownOutlined />
+                加载更多
+              </a>
+            )}
             {allLoaded && <>没有更多了</>}
           </>
         }

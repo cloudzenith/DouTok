@@ -9,4 +9,5 @@ import (
 var CollectionAppProvider = wire.NewSet(
 	collectionapp.New,
 	commonprovider.CoreAdapterProvider,
+	commonprovider.VideoServiceProvider,
 )

@@ -64,31 +64,6 @@ service ShortVideoCoreVideoService {
     };
 }
 
-message VideoAuthor {
-    // @gotags: json:"id,omitempty,string"
-    int64 id = 1;
-    string name = 2;
-    string avatar = 3;
-    bool isFollowing = 4;
-}
-
-message Video {
-    // @gotags: json:"id,omitempty,string"
-    int64 id = 1; // 视频唯一标识
-    VideoAuthor author = 2; // 视频作者信息
-    string play_url = 3; // 视频播放地址
-    string cover_url = 4; // 视频封面地址
-    // @gotags: json:"favoriteCount,omitempty,string"
-    int64 favoriteCount = 5; // 视频的点赞总数
-    // @gotags: json:"commentCount,omitempty,string"
-    int64 commentCount = 6; // 视频的评论总数
-    bool isFavorite = 7; // true-已点赞，false-未点赞
-    string title = 8; // 视频标题
-    bool isCollected = 9; // 是否已收藏
-    // @gotags: json:"collectedCount,omitempty,string"
-    int64 collectedCount = 10; // 收藏数
-}
-
 // 预注册上传视频请求消息类型
 message PreSign4UploadVideoRequest {
     // md5 hash

@@ -114,8 +114,8 @@ func (r *PersistRepository) countWithGroup(ctx context.Context, targetFiled fiel
 	return result, err
 }
 
-func (r *PersistRepository) CountByVideoId(ctx context.Context, videoId []int64) ([]*commentserviceiface.CountResult, error) {
-	return r.countWithGroup(ctx, query.Q.Comment.VideoID, true, videoId)
+func (r *PersistRepository) CountByVideoId(ctx context.Context, videoId []int64, noChildComments bool) ([]*commentserviceiface.CountResult, error) {
+	return r.countWithGroup(ctx, query.Q.Comment.VideoID, noChildComments, videoId)
 }
 
 func (r *PersistRepository) CountByUserId(ctx context.Context, userId []int64) ([]*commentserviceiface.CountResult, error) {

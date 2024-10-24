@@ -3,28 +3,31 @@ package videoapp
 import (
 	"context"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/api/svapi"
+	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/applications/interface/videoserviceiface"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/adapter/baseadapter"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/adapter/svcoreadapter"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/adapter/svcoreadapter/dto"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/adapter/svcoreadapter/videooptions"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/utils/claims"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/utils/errorx"
-	v1 "github.com/cloudzenith/DouTok/backend/shortVideoCoreService/api/v1"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
 type Application struct {
-	base *baseadapter.Adapter
-	core *svcoreadapter.Adapter
+	base         *baseadapter.Adapter
+	core         *svcoreadapter.Adapter
+	videoService videoserviceiface.VideoService
 }
 
 func New(
 	base *baseadapter.Adapter,
 	core *svcoreadapter.Adapter,
+	videoService videoserviceiface.VideoService,
 ) *Application {
 	return &Application{
-		base: base,
-		core: core,
+		base:         base,
+		core:         core,
+		videoService: videoService,
 	}
 }
 
@@ -47,71 +50,12 @@ func (a *Application) FeedShortVideo(ctx context.Context, request *svapi.FeedSho
 	}
 
 	videos := dto.ToPBVideoList(resp.Videos)
-	a.assembleUserIsFollowing(ctx, videos, userId)
-	a.assembleVideoCountInfo(ctx, videos)
+	a.videoService.AssembleUserIsFollowing(ctx, videos, userId)
+	a.videoService.AssembleVideoCountInfo(ctx, videos)
 
 	return &svapi.FeedShortVideoResponse{
 		Videos: videos,
 	}, nil
-}
-
-func (a *Application) assembleUserIsFollowing(ctx context.Context, list []*svapi.Video, userId int64) {
-	var targetUserId []int64
-	var targetVideoId []int64
-	for _, video := range list {
-		targetUserId = append(targetUserId, video.GetAuthor().GetId())
-		targetVideoId = append(targetVideoId, video.GetId())
-	}
-
-	isFollowingMap, err := a.core.IsFollowing(ctx, userId, targetUserId)
-	if err != nil {
-		log.Context(ctx).Errorf("failed to check is following: %v", err)
-	}
-
-	isCollectedMap, err := a.core.IsCollected(ctx, userId, targetVideoId)
-	if err != nil {
-		log.Context(ctx).Errorf("failed to check is collected: %v", err)
-	}
-
-	isFavoriteMap, err := a.core.IsUserFavoriteVideo(ctx, userId, targetVideoId)
-	if err != nil {
-		log.Context(ctx).Errorf("failed to check is favorite: %v", err)
-	}
-
-	for _, video := range list {
-		author := video.GetAuthor()
-		author.IsFollowing = isFollowingMap[author.GetId()]
-		video.IsCollected = isCollectedMap[video.GetId()]
-		video.IsFavorite = isFavoriteMap[video.GetId()]
-	}
-}
-
-func (a *Application) assembleVideoCountInfo(ctx context.Context, list []*svapi.Video) {
-	var videoIdList []int64
-	for _, video := range list {
-		videoIdList = append(videoIdList, video.GetId())
-	}
-
-	commentCountMap, err := a.core.CountComments4Video(ctx, videoIdList)
-	if err != nil {
-		log.Context(ctx).Errorf("failed to count comments: %v", err)
-	}
-
-	favoriteCountMap, err := a.core.CountFavorite4Video(ctx, videoIdList)
-	if err != nil {
-		log.Context(ctx).Errorf("failed to count favorite: %v", err)
-	}
-
-	collectedCountMap, err := a.core.CountCollected4Video(ctx, videoIdList)
-	if err != nil {
-		log.Context(ctx).Errorf("failed to count collected: %v", err)
-	}
-
-	for _, video := range list {
-		video.CommentCount = commentCountMap[video.GetId()]
-		video.FavoriteCount = favoriteCountMap[video.GetId()]
-		video.CollectedCount = collectedCountMap[video.GetId()]
-	}
 }
 
 func (a *Application) GetVideoById(ctx context.Context, request *svapi.GetVideoByIdRequest) (*svapi.GetVideoByIdResponse, error) {
@@ -126,43 +70,6 @@ func (a *Application) GetVideoById(ctx context.Context, request *svapi.GetVideoB
 	}, nil
 }
 
-func (a *Application) assembleVideoList(ctx context.Context, userId int64, data []*v1.Video) ([]*svapi.Video, error) {
-	var result []*svapi.Video
-
-	var videoIdList []int64
-	for _, video := range data {
-		videoIdList = append(videoIdList, video.GetId())
-	}
-
-	isFavoriteMap, err := a.core.IsUserFavoriteVideo(ctx, userId, videoIdList)
-	if err != nil {
-		// 弱依赖
-		log.Context(ctx).Warnf("failed to check favorite video: %v", err)
-	}
-
-	for _, video := range data {
-		isFavorite, ok := isFavoriteMap[video.GetId()]
-
-		result = append(result, &svapi.Video{
-			Id:            video.GetId(),
-			Title:         video.Title,
-			PlayUrl:       video.PlayUrl,
-			CoverUrl:      video.CoverUrl,
-			FavoriteCount: video.FavoriteCount,
-			CommentCount:  video.CommentCount,
-			IsFavorite:    isFavorite && ok,
-			Author: &svapi.VideoAuthor{
-				Id:          video.Author.Id,
-				Name:        video.Author.Name,
-				Avatar:      video.Author.Avatar,
-				IsFollowing: video.Author.IsFollowing != 0,
-			},
-		})
-	}
-
-	return result, nil
-}
-
 func (a *Application) listPublishedList(ctx context.Context, userId int64, page, size int32) (*svapi.ListPublishedVideoResponse, error) {
 	resp, err := a.core.ListUserPublishedList(ctx, userId, page, size)
 	if err != nil {
@@ -170,11 +77,14 @@ func (a *Application) listPublishedList(ctx context.Context, userId int64, page,
 		return nil, errorx.New(1, "failed to list published video")
 	}
 
-	videoList, err := a.assembleVideoList(ctx, userId, resp.Videos)
+	videoList, err := a.videoService.AssembleVideoList(ctx, userId, resp.Videos)
 	if err != nil {
 		log.Context(ctx).Errorf("failed to assemble video list: %v", err)
 		return nil, errorx.New(1, "failed to assemble video list")
 	}
+
+	a.videoService.AssembleUserIsFollowing(ctx, videoList, userId)
+	a.videoService.AssembleVideoCountInfo(ctx, videoList)
 
 	return &svapi.ListPublishedVideoResponse{
 		VideoList: videoList,

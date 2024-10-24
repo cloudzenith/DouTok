@@ -3,6 +3,7 @@ package favoriteapp
 import (
 	"context"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/api/svapi"
+	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/applications/interface/videoserviceiface"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/adapter/svcoreadapter"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/utils/claims"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/utils/errorx"
@@ -12,12 +13,14 @@ import (
 )
 
 type Application struct {
-	core *svcoreadapter.Adapter
+	core         *svcoreadapter.Adapter
+	videoService videoserviceiface.VideoService
 }
 
-func New(core *svcoreadapter.Adapter) *Application {
+func New(core *svcoreadapter.Adapter, videoService videoserviceiface.VideoService) *Application {
 	return &Application{
-		core: core,
+		core:         core,
+		videoService: videoService,
 	}
 }
 
@@ -81,16 +84,9 @@ func (a *Application) ListFavoriteVideo(ctx context.Context, request *svapi.List
 		return nil, errorx.New(1, "获取喜欢列表失败")
 	}
 
-	var result []*svapi.Video
-	for _, video := range videoList {
-		result = append(result, &svapi.Video{
-			Id:            video.Id,
-			Title:         video.Title,
-			PlayUrl:       video.PlayUrl,
-			CoverUrl:      video.CoverUrl,
-			FavoriteCount: video.FavoriteCount,
-			CommentCount:  video.CommentCount,
-		})
+	result, err := a.videoService.AssembleVideo(ctx, request.UserId, videoList)
+	if err != nil {
+		log.Context(ctx).Warnf("something wrong in assembling videos: %v", err)
 	}
 
 	return &svapi.ListFavoriteVideoResponse{

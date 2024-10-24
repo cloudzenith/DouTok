@@ -977,23 +977,6 @@ components:
                     type: string
                 description:
                     type: string
-        svapi.CollectionVideo:
-            type: object
-            properties:
-                id:
-                    type: string
-                    description: '@gotags: json:"id,omitempty,string"'
-                videoId:
-                    type: string
-                    description: '@gotags: json:"videoId,omitempty,string"'
-                coverUrl:
-                    type: string
-                title:
-                    type: string
-                description:
-                    type: string
-                videoUrl:
-                    type: string
         svapi.Comment:
             type: object
             properties:
@@ -1224,7 +1207,7 @@ components:
                 videos:
                     type: array
                     items:
-                        $ref: '#/components/schemas/svapi.CollectionVideo'
+                        $ref: '#/components/schemas/svapi.Video'
                 pagination:
                     $ref: '#/components/schemas/svapi.PaginationResponse'
         svapi.LoginRequest:

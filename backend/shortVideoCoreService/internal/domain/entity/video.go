@@ -60,6 +60,13 @@ func (v *Video) ToVideoModel() *model.Video {
 }
 
 func (v *Video) ToPB() *v1.Video {
+	author := &v1.Author{}
+	if v.Author != nil {
+		author.Id = v.Author.ID
+		author.Name = v.Author.Name
+		author.Avatar = v.Author.Avatar
+	}
+
 	return &v1.Video{
 		Id:            v.ID,
 		Title:         v.Title,
@@ -69,6 +76,7 @@ func (v *Video) ToPB() *v1.Video {
 		IsFavorite:    v.IsFavorite,
 		FavoriteCount: v.LikeCount,
 		CommentCount:  v.CommentCount,
+		Author:        author,
 	}
 }
 
@@ -85,6 +93,9 @@ func FromVideoModel(video *model.Video) *Video {
 		LikeCount:    video.LikeCount,
 		CommentCount: video.CommentCount,
 		UploadTime:   video.CreatedAt,
+		Author: &Author{
+			ID: video.UserID,
+		},
 	}
 }
 

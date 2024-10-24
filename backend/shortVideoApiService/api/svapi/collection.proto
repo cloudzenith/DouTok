@@ -146,6 +146,6 @@ message ListVideo4CollectionRequest {
 }
 
 message ListVideo4CollectionResponse {
-    repeated CollectionVideo videos = 1;
+    repeated Video videos = 1;
     PaginationResponse pagination = 2;
 }

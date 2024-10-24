@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/api/svapi"
+	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/applications/interface/videoserviceiface"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/adapter/svcoreadapter"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/utils/claims"
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/utils/errorx"
@@ -11,14 +12,17 @@ import (
 )
 
 type Application struct {
-	core *svcoreadapter.Adapter
+	core         *svcoreadapter.Adapter
+	videoService videoserviceiface.VideoService
 }
 
 func New(
 	core *svcoreadapter.Adapter,
+	videoService videoserviceiface.VideoService,
 ) *Application {
 	return &Application{
-		core: core,
+		core:         core,
+		videoService: videoService,
 	}
 }
 
@@ -110,6 +114,11 @@ func (a *Application) ListCollection(ctx context.Context, request *svapi.ListCol
 }
 
 func (a *Application) ListVideo4Collection(ctx context.Context, request *svapi.ListVideo4CollectionRequest) (*svapi.ListVideo4CollectionResponse, error) {
+	userId, err := claims.GetUserId(ctx)
+	if err != nil {
+		return nil, errorx.New(1, "获取用户信息失败")
+	}
+
 	if err := a.checkCollectionBelongUser(ctx, request.CollectionId); err != nil {
 		return nil, errorx.New(1, err.Error())
 	}
@@ -125,15 +134,9 @@ func (a *Application) ListVideo4Collection(ctx context.Context, request *svapi.L
 		return nil, errorx.New(1, "获取视频信息失败")
 	}
 
-	var result []*svapi.CollectionVideo
-	for _, item := range videoInfoList {
-		result = append(result, &svapi.CollectionVideo{
-			VideoId:     item.Id,
-			Title:       item.Title,
-			VideoUrl:    item.PlayUrl,
-			CoverUrl:    item.CoverUrl,
-			Description: item.Description,
-		})
+	result, err := a.videoService.AssembleVideo(ctx, userId, videoInfoList)
+	if err != nil {
+		log.Context(ctx).Warnf("something wrong in assembling videos: %v", err)
 	}
 
 	return &svapi.ListVideo4CollectionResponse{

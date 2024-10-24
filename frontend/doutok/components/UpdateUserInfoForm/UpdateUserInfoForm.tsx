@@ -5,7 +5,6 @@ import {
 } from "@/api/svapi/api";
 import { Form, Modal, notification } from "antd";
 import { useState } from "react";
-import { SimpleUpload } from "@/components/SimpleUpload/SimpleUpload";
 
 export interface UpdateUserInfoFormProps {
   open?: boolean;
@@ -20,10 +19,6 @@ export function UpdateUserInfoForm(props: UpdateUserInfoFormProps) {
   const [open, setOpen] = useState(props.open);
   const [name] = useState(props.name);
   const [signature] = useState(props.signature);
-  const [avatar] = useState(props.avatar ? props.avatar : "no-login.svg");
-  const [backgroundImage] = useState(
-    props.backgroundImage ? props.backgroundImage : "no-login.svg"
-  );
 
   const [formRef] = Form.useForm();
 
@@ -66,17 +61,6 @@ export function UpdateUserInfoForm(props: UpdateUserInfoFormProps) {
           }
         }}
       >
-        <SimpleUpload
-          name={"background"}
-          accept={".jpg,.jpeg,.png"}
-          listType={"picture-card"}
-          className={"avatar-uploader"}
-          showUploadList={false}
-        >
-          {avatar ? (
-            <img src={backgroundImage} alt={"background"} />
-          ) : undefined}
-        </SimpleUpload>
         <ProFormText
           name="name"
           label="用户昵称"
