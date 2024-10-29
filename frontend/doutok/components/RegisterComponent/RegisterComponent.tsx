@@ -4,13 +4,14 @@ import { LoginForm, ProFormCaptcha, ProFormText } from "@ant-design/pro-form";
 import React, { useState } from "react";
 import { LockOutlined, MailOutlined, MobileOutlined } from "@ant-design/icons";
 import {
-  UserServiceGetVerificationCodeResponse,
+  UserServiceGetVerificationCodeResponse, UserServiceLoginResponse,
   UserServiceRegisterResponse,
-  useUserServiceGetVerificationCode,
+  useUserServiceGetVerificationCode, useUserServiceLogin,
   useUserServiceRegister
 } from "@/api/svapi/api";
 
 import "./RegisterComponent.css";
+import useUserStore from "@/components/UserStore/useUserStore";
 
 type RegisterType = "phone" | "email";
 
@@ -45,8 +46,39 @@ export function RegisterComponent(props: RegisterComponentProps) {
               r?.msg === undefined ? "请检查注册信息是否正确" : r?.msg
           });
           return;
+        } else {
+          notification.success({
+              message: "注册成功",
+              description: "自动登录"
+          });
+          submit4Login(formData);
         }
       });
+  };
+
+  const setToken = useUserStore(state => state.setToken);
+  const loginMutate = useUserServiceLogin({});
+  const submit4Login = (formData: Record<string, string>) => {
+    loginMutate
+        .mutate({
+          mobile: formData?.phone,
+          email: formData?.email,
+          password: formData?.password
+        })
+        .then((r: UserServiceLoginResponse) => {
+          if (r?.code !== 0) {
+            notification.error({
+              message: "登录失败",
+              description: "请检查登录信息是否正确"
+            });
+          }
+
+          if (r?.data?.token !== undefined) {
+            window.localStorage.setItem("token", r.data.token);
+            setToken(r.data.token);
+            window.location.reload();
+          }
+        });
   };
 
   const mutate = useUserServiceGetVerificationCode({});
