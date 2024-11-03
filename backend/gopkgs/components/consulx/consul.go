@@ -6,6 +6,7 @@ import (
 	"github.com/cloudzenith/DouTok/backend/gopkgs/components"
 	"github.com/go-kratos/kratos/contrib/registry/consul/v2"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	kratosgrpc "github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/hashicorp/consul/api"
 	"google.golang.org/grpc"
@@ -71,6 +72,9 @@ func GetGrpcConn(ctx context.Context, entryPoint string, keys ...string) (*grpc.
 		ctx,
 		kratosgrpc.WithEndpoint(entryPoint),
 		kratosgrpc.WithDiscovery(consul.New(client)),
+		kratosgrpc.WithMiddleware(
+			tracing.Client(),
+		),
 	)
 }
 

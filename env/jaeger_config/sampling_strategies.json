@@ -1,0 +1,9 @@
+{
+  "service_strategies": [
+    {
+      "service": "*",
+      "type": "probabilistic",
+      "param": 1.0
+    }
+  ]
+}

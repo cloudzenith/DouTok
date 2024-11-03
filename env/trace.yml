@@ -62,6 +62,8 @@ services:
       - "4317"  # otlp grpc
       - "4318"  # otlp http
       - "9411"   # zipkin
+    networks:
+      - total
 
   otel:
     container_name: otel
@@ -76,6 +78,8 @@ services:
       - "13133:13133" # health_check extension
       - "4317:4317"   # OTLP gRPC receiver
       - "55670:55679" # zpages extension
+    networks:
+      - total
 
   prometheus:
     image: prom/prometheus:latest
@@ -89,3 +93,25 @@ services:
       - ./prometheus/prometheus.yaml:/etc/prometheus.yaml
     ports:
       - "9090:9090"
+    networks:
+      - total
+
+  jaeger:
+    container_name: jaeger
+    image: jaegertracing/all-in-one:latest
+    environment:
+      - COLLECTOR_ZIPKIN_HTTP_PORT=9411
+    ports:
+      - "5775:5775/udp"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+      - "16686:16686"
+      - "14268:14268"
+      - "14269:14269"
+      - "9411:9411"
+    volumes:
+      - ./jaeger_data:/var/lib/jaeger
+      - ./jaeger_config:/etc/jaeger
+    networks:
+      - total
