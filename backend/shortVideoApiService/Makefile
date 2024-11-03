@@ -1,6 +1,7 @@
 install:
 	go install github.com/favadi/protoc-go-inject-tag@latest
 	go install github.com/cloudzenith/DouTok/backend/gopkgs/tools/protoc-gen-go-http@latest
+	go install github.com/cloudzenith/DouTok/backend/gopkgs/tools/protoc-gen-openapi@latest
 
 gen-proto:
 	protoc \
