@@ -2,6 +2,8 @@ app:
   name: short-video-core-service
   version: 0.0.1-test
   node: 2
+  trace_endpoint: http://localhost:14268/api/traces # jaeger endpoint
+#  trace_endpoint: http://localhost:4317
 
 server:
   grpc:

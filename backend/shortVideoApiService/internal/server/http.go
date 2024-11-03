@@ -8,6 +8,7 @@ import (
 	"github.com/cloudzenith/DouTok/backend/shortVideoApiService/internal/infrastructure/utils/claims"
 	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
 	"github.com/go-kratos/kratos/v2/middleware/selector"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	jwt5 "github.com/golang-jwt/jwt/v5"
 	"github.com/gorilla/handlers"
@@ -39,6 +40,7 @@ func NewHttpServer() *http.Server {
 		),
 		http.Middleware(
 			middlewares.RequestMonitor(),
+			tracing.Server(),
 			selector.Server(
 				jwt.Server(
 					func(token *jwt5.Token) (interface{}, error) {
