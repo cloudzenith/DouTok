@@ -12,6 +12,7 @@ service PromotionService {
     rpc PromotionQuery(PromotionQueryRequest) returns (PromotionQueryResponse); // 查询促销信息
     rpc PromotionUpdate(PromotionUpdateRequest) returns (PromotionUpdateResponse); // 更新促销信息
     rpc PromotionDelete(PromotionDeleteRequest) returns (PromotionDeleteResponse); // 删除促销信息
+    rpc CreateSpecificPromotion(CreateSpecificPromotionRequest) returns (CreateSpecificPromotionResponse); // 创建特定促销信息
     rpc QuerySpecificPromotion(QuerySpecificPromotionRequest) returns (QuerySpecificPromotionResponse); // 查询特定促销信息
     rpc Calculate(CalculateRequest) returns (CalculateResponse); // 计算优惠结果
 }
@@ -62,6 +63,16 @@ message PromotionDeleteRequest {
 }
 
 message PromotionDeleteResponse {
+    api.Metadata meta = 1;
+}
+
+message CreateSpecificPromotionRequest {
+    int64 promotion_id = 1; // 优惠信息id
+    repeated int64 account_id = 2; // 账户id
+    int64 expire_time = 3; // 过期时间
+}
+
+message CreateSpecificPromotionResponse {
     api.Metadata meta = 1;
 }
 
