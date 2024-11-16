@@ -1,0 +1,47 @@
+syntax = "proto3";
+package api;
+
+option go_package = "github.com/cloudzenith/DouTok/...;api";
+
+import "base.proto";
+import "trade_entities.proto";
+import "buf/validate/validate.proto";
+
+service PromotionService {
+    rpc PromotionCreate(PromotionCreateRequest) returns (PromotionCreateResponse); // 创建促销信息
+    rpc PromotionQuery(PromotionQueryRequest) returns (PromotionQueryResponse); // 查询促销信息
+    rpc PromotionUpdate(PromotionUpdateRequest) returns (PromotionUpdateResponse); // 更新促销信息
+    rpc PromotionDelete(PromotionDeleteRequest) returns (PromotionDeleteResponse); // 删除促销信息
+}
+
+message PromotionCreateRequest {
+
+}
+
+message PromotionCreateResponse {
+
+}
+
+message PromotionQueryRequest {
+
+}
+
+message PromotionQueryResponse {
+
+}
+
+message PromotionUpdateRequest {
+
+}
+
+message PromotionUpdateResponse {
+
+}
+
+message PromotionDeleteRequest {
+
+}
+
+message PromotionDeleteResponse {
+
+}

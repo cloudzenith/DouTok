@@ -1,0 +1,38 @@
+syntax = "proto3";
+package api;
+
+option go_package = "github.com/cloudzenith/DouTok/...;api";
+
+import "base.proto";
+import "trade_entities.proto";
+import "buf/validate/validate.proto";
+
+service RefundService {
+    rpc RefundCreate(RefundCreateRequest) returns (RefundCreateResponse); // 创建退款单
+    rpc RefundQuery(RefundQueryRequest) returns (RefundQueryResponse); // 查询退款单
+    rpc RefundUpdate(RefundUpdateRequest) returns (RefundUpdateResponse); // 更新退款单
+}
+
+message RefundCreateRequest {
+
+}
+
+message RefundCreateResponse {
+
+}
+
+message RefundQueryRequest {
+
+}
+
+message RefundQueryResponse {
+
+}
+
+message RefundUpdateRequest {
+
+}
+
+message RefundUpdateResponse {
+
+}

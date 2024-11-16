@@ -1,0 +1,92 @@
+syntax = "proto3";
+package api;
+
+option go_package = "github.com/cloudzenith/DouTok/...;api";
+
+import "base.proto";
+import "trade_entities.proto";
+import "buf/validate/validate.proto";
+
+service TradeService {
+   rpc QueryTradeOrder(QueryTradeOrderRequest) returns (QueryTradeOrderResponse); // 查询交易单
+   rpc TradeCreate(TradeCreateRequest) returns (TradeCreateResponse); // 创建交易单
+   rpc MergeTrade(MergeTradeRequest) returns (MergeTradeResponse); // 合并交易单
+   rpc MultiTradeCreate(MultiTradeCreateRequest) returns (MultiTradeCreateResponse); // 批量创建交易单
+   rpc UpdateExtendInfo(UpdateExtendInfoRequest) returns (UpdateExtendInfoResponse); // 更新交易单扩展信息
+   rpc UpdateTradeOrderStatus(UpdateTradeOrderStatusRequest) returns (UpdateTradeOrderStatusResponse); // 更新交易单状态
+   rpc ModifyOrderPrice(ModifyOrderPriceRequest) returns (ModifyOrderPriceResponse); // 修改订单价格
+   rpc UpdateDeliveryInfo(UpdateDeliveryInfoRequest) returns (UpdateDeliveryInfoResponse); // 更新交付信息
+   rpc AddSubOrder(AddSubOrderRequest) returns (AddSubOrderResponse); // 添加子订单
+}
+
+message QueryTradeOrderRequest {
+
+}
+
+message QueryTradeOrderResponse {
+
+}
+
+message TradeCreateRequest {
+
+}
+
+message TradeCreateResponse {
+
+}
+
+message MergeTradeRequest {
+
+}
+
+message MergeTradeResponse {
+
+}
+
+message MultiTradeCreateRequest {
+
+}
+
+message MultiTradeCreateResponse {
+
+}
+
+message UpdateExtendInfoRequest {
+
+}
+
+message UpdateExtendInfoResponse {
+
+}
+
+message UpdateTradeOrderStatusRequest {
+
+}
+
+message UpdateTradeOrderStatusResponse {
+
+}
+
+message ModifyOrderPriceRequest {
+
+}
+
+message ModifyOrderPriceResponse {
+
+}
+
+message UpdateDeliveryInfoRequest {
+
+}
+
+message UpdateDeliveryInfoResponse {
+
+}
+
+message AddSubOrderRequest {
+
+}
+
+message AddSubOrderResponse {
+
+}
