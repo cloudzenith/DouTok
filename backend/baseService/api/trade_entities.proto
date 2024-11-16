@@ -63,6 +63,10 @@ message TradePromotion {
     int64 promotion_id = 1; // 优惠id
     string promotion_name = 2; // 优惠名称
     uint64 promotion_amount = 3; // 优惠金额 单位：分
+    string decrption = 4; // 描述
+    TradePromotionType promotion_type = 5; // 优惠类型
+    int64 entry_id = 6; // 优惠总类id
+    int64 account_id = 7; // 所属账户id
 }
 
 enum DeliveryType {
@@ -176,14 +180,15 @@ enum RefundOrderStatus {
 message RefundOrder {
     int64 refund_id = 1; // 退款单id
     int64 order_id = 2; // 交易单id
-    int64 refund_amount = 3; // 退款金额 单位：分
-    int64 refund_time = 4; // 退款时间
-    int64 create_time = 5; // 创建时间
-    int64 update_time = 6; // 更新时间
-    int64 close_time = 7; // 关闭时间
-    string refund_reason = 8; // 退款原因
-    RefundOrderType refund_type = 9; // 退款类型
-    RefundOrderStatus refund_status = 10; // 退款状态
+    int64 payment_id = 3; // 支付信息id
+    int64 refund_amount = 4; // 退款金额 单位：分
+    int64 refund_time = 5; // 退款时间
+    int64 create_time = 6; // 创建时间
+    int64 update_time = 7; // 更新时间
+    int64 close_time = 8; // 关闭时间
+    string refund_reason = 9; // 退款原因
+    RefundOrderType refund_type = 10; // 退款类型
+    RefundOrderStatus refund_status = 11; // 退款状态
 }
 
 // 交易单
