@@ -1,0 +1,105 @@
+syntax = "proto3";
+package api;
+
+option go_package = "github.com/cloudzenith/DouTok/...;api";
+
+import "base.proto";
+import "trade_entities.proto";
+import "buf/validate/validate.proto";
+
+service TradeService {
+    rpc QueryTradeOrder(QueryTradeOrderRequest) returns (QueryTradeOrderResponse); // 查询交易单
+    rpc TradeCreate(TradeCreateRequest) returns (TradeCreateResponse); // 创建交易单
+    rpc MergeTrade(MergeTradeRequest) returns (MergeTradeResponse); // 合并交易单
+    rpc UpdateExtendInfo(UpdateExtendInfoRequest) returns (UpdateExtendInfoResponse); // 更新交易单扩展信息
+    rpc UpdateTradeOrderStatus(UpdateTradeOrderStatusRequest) returns (UpdateTradeOrderStatusResponse); // 更新交易单状态
+    rpc UpdateDeliveryInfo(UpdateDeliveryInfoRequest) returns (UpdateDeliveryInfoResponse); // 更新交付信息
+    rpc AddSubOrder(AddSubOrderRequest) returns (AddSubOrderResponse); // 添加子订单
+}
+
+message QueryTradeOrderRequest {
+    repeated int64 order_id_list = 1;
+    repeated string biz_order_no_list = 2;
+}
+
+message QueryTradeOrderResponse {
+    api.Metadata meta = 1;
+    repeated TradeOrder trade_order_list = 2;
+}
+
+message TradeCreateRequest {
+    TradeBizType biz_type = 1;
+    TradeSaleWay sale_way = 2;
+    TradePaySequence pay_sequence = 3;
+    TradeGoodsType goods_type = 4;
+    int64 biz_status = 5;
+    string biz_order_no = 6;
+    int64 biz_id = 7;
+    TradeParticipant buyer = 8;
+    TradeParticipant seller = 9;
+    PayType pay_type = 10;
+    uint64 payable_amount = 11;
+    repeated int64 promotions = 12;
+    DeliveryInfo delivery_info = 13;
+    int64 delivery_time = 14;
+    TimeoutInfo timeout_info = 15;
+    repeated TradeCreateRequest sub_order_list = 16;
+    map<string, string> extra = 17;
+}
+
+message TradeCreateResponse {
+    api.Metadata meta = 1;
+    TradeOrder trade_order = 2;
+}
+
+message MergeTradeRequest {
+    int64 original_order_id = 1;
+    repeated int64 order_id_list = 2;
+}
+
+message MergeTradeResponse {
+    api.Metadata meta = 1;
+    TradeOrder trade_order = 2;
+}
+
+message UpdateExtendInfoRequest {
+    int64 order_id = 1;
+    map<string, string> extra = 2;
+}
+
+message UpdateExtendInfoResponse {
+    api.Metadata meta = 1;
+    TradeOrder trade_order = 2;
+}
+
+message UpdateTradeOrderStatusRequest {
+    int64 order_id = 1;
+    TradeOrderStatusEnum order_status = 2;
+    CloseType close_type = 3;
+    string close_reason = 4;
+}
+
+message UpdateTradeOrderStatusResponse {
+    api.Metadata meta = 1;
+    TradeOrder trade_order = 2;
+}
+
+message UpdateDeliveryInfoRequest {
+    int64 order_id = 1;
+    DeliveryInfo delivery_info = 2;
+}
+
+message UpdateDeliveryInfoResponse {
+    api.Metadata meta = 1;
+    TradeOrder trade_order = 2;
+}
+
+message AddSubOrderRequest {
+    int64 order_id = 1;
+    repeated TradeCreateRequest sub_order = 2;
+}
+
+message AddSubOrderResponse {
+    api.Metadata meta = 1;
+    TradeOrder trade_order = 2;
+}
