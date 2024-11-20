@@ -67,7 +67,10 @@ func GetClient(ctx context.Context, keys ...string) *clientv3.Client {
 func IsHealth() (err error) {
 	globalClientMap.Range(func(key, value interface{}) bool {
 		client := value.(*clientv3.Client)
-		_, err = client.Get(context.Background(), "health")
+		config := globalConfigMap[key.(string)]
+		timeoutCtx, cancelFunc := context.WithTimeout(context.Background(), config.GetTimeout())
+		defer cancelFunc()
+		_, err = client.Get(timeoutCtx, "health")
 		if err != nil {
 			log.Errorf("etcd health check failed, client key: %s", key)
 			return false
