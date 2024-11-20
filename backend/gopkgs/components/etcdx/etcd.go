@@ -7,7 +7,10 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"sync"
+	"time"
 )
+
+const healthCheckTimeout = 3 * time.Second
 
 var (
 	globalClientMap = sync.Map{}
@@ -67,7 +70,9 @@ func GetClient(ctx context.Context, keys ...string) *clientv3.Client {
 func IsHealth() (err error) {
 	globalClientMap.Range(func(key, value interface{}) bool {
 		client := value.(*clientv3.Client)
-		_, err = client.Get(context.Background(), "health")
+		timeoutCtx, cancelFunc := context.WithTimeout(context.Background(), healthCheckTimeout)
+		defer cancelFunc()
+		_, err = client.Get(timeoutCtx, "health")
 		if err != nil {
 			log.Errorf("etcd health check failed, client key: %s", key)
 			return false
