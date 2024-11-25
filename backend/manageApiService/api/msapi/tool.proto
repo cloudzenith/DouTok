@@ -1,0 +1,95 @@
+syntax = "proto3";
+package api;
+
+option go_package = "github.com/cloudzenith/DouTok/...;msapi";
+
+import "google/api/annotations.proto";
+import "msapi/base.proto";
+import "buf/validate/validate.proto";
+
+// 基础能力相关测试工具
+service Tool4InfraService {
+    // 批量上传图像资源到minio，并返回相关的文件key
+    rpc BatchUploadImages(BatchUploadImagesRequest) returns(BatchUploadImagesResponse) {
+        option (google.api.http) = {
+            post: "/tool/images/bulk",
+            body: "*"
+        };
+    };
+
+    // 批量上传视频资源到minio，并返回相关的文件key
+    rpc BatchUploadVideos(BatchUploadVideosRequest) returns (BatchUploadVideosResponse) {
+        option (google.api.http) = {
+            post: "/tool/videos/bulk",
+            body: "*"
+        };
+    };
+}
+
+message BatchUploadImagesRequest {
+
+}
+
+message BatchUploadImagesResponse {
+
+}
+
+message BatchUploadVideosRequest {
+
+}
+
+message BatchUploadVideosResponse {
+
+}
+
+// 账号相关测试工具
+service Tool4AccountsService {
+    // 批量新增通用账号
+    rpc BatchCreateAccounts(BatchCreateAccountsRequest) returns(BatchCreateAccountsResponse) {
+        option (google.api.http) = {
+            post: "/tool/accounts/bulk",
+            body: "*"
+        };
+    };
+
+    // 为账号增加角色
+    rpc AddRole4Account(AddRole4AccountRequest) returns (AddRole4AccountResponse) {
+        option (google.api.http) = {
+            put: "/tool/accounts/roles",
+            body: "*"
+        };
+    };
+}
+
+message BatchCreateAccountsRequest {
+
+}
+
+message BatchCreateAccountsResponse {
+
+}
+
+message AddRole4AccountRequest {
+
+}
+
+message AddRole4AccountResponse {
+
+}
+
+service Tool4SVCoreService {
+    rpc BatchCreateVideoInfos(BatchCreateVideoInfosRequest) returns (BatchCreateVideoInfosResponse) {
+        option (google.api.http) = {
+            put: "/tool/svvideos/bulk",
+            body: "*"
+        };
+    };
+}
+
+message BatchCreateVideoInfosRequest {
+
+}
+
+message BatchCreateVideoInfosResponse {
+
+}

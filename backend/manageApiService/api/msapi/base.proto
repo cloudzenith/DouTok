@@ -1,0 +1,59 @@
+syntax = "proto3";
+package api;
+
+option go_package = "github.com/cloudzenith/DouTok/...;msapi";
+
+message Metadata {
+  int32 biz_code = 1;
+  string message = 2;
+  string domain = 3;
+  repeated string reason = 4;
+}
+
+enum SortOrder {
+  ASC = 0;
+  DESC = 1;
+}
+
+message SortField {
+  string field = 1; // 用于排序的字段名称
+  SortOrder order = 2; // 排序方式
+}
+
+message PaginationRequest {
+  int32 page = 1; // 页码 [1, +∞)
+  int32 size = 2; // 页面大小
+  repeated SortField sort = 3; // 根据字段进行排序
+}
+
+message PaginationResponse {
+  int32 page = 1; // 当前数据的所属页码
+  int32 total = 2; // 总页数
+  int32 count = 3; // 总条目数
+}
+
+enum SearchOperator {
+  EQ = 0; // 等于
+  NE = 1; // 不等于
+  GT = 2; // 大于
+  GE = 3; // 大于等于
+  LT = 4; // 小于
+  LE = 5; // 小于等于
+  LIKE = 6; // 使用like的模糊匹配
+  WILDCARD = 7; // 使用通配符的模糊匹配
+  IN = 8; // 在指定的集合中
+  NOT_IN = 9; // 不在指定的集合中
+  BETWEEN = 10; // 在指定的范围内
+  RE = 11; // 正则匹配
+}
+
+message SearchField {
+  string field = 1; // 用于搜索的字段名称
+  string value = 2; // 搜索的值
+  repeated string value_list = 3; // 搜索的值列表
+  SearchOperator operator = 4; // 操作符
+}
+
+message SearchRequest {
+  repeated SearchField search = 1; // 搜索条件
+}

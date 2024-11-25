@@ -1,0 +1,19 @@
+server:
+  http_listen_port: 1080
+  grpc_listen_port: 1081
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: manage-api-service
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: manage-api-service
+          container_name: manage-api-service
+          __path__: /app/logs/*.log

@@ -1,0 +1,46 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: ToolService API
+    description: 测试工具服务
+    version: 0.0.1
+paths:
+    /tool/accounts/bulk:
+        post:
+            tags:
+                - ToolService
+            description: 账号
+            operationId: ToolService_BatchCreateAccounts
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.BatchCreateAccountsRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                properties:
+                                    code:
+                                        type: integer
+                                        description: Status code. Zero means success.
+                                    msg:
+                                        type: string
+                                        description: Status message. Could be displayed to user.
+                                    data:
+                                        $ref: '#/components/schemas/api.BatchCreateAccountsResponse'
+components:
+    schemas:
+        api.BatchCreateAccountsRequest:
+            type: object
+            properties: {}
+        api.BatchCreateAccountsResponse:
+            type: object
+            properties: {}
+tags:
+    - name: ToolService
