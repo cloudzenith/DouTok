@@ -19,6 +19,10 @@ func SetUseGlobalPool(value bool) {
 
 func Go(f func()) {
 	if useGlobalPool {
+		if pool == nil {
+			InitGlobalPool()
+		}
+
 		_ = pool.Submit(f)
 		return
 	}

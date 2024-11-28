@@ -1,0 +1,20 @@
+syntax = "proto3";
+package api;
+
+option go_package = "github.com/cloudzenith/DouTok/...;api";
+
+import "base.proto";
+import "trade_entities.proto";
+import "buf/validate/validate.proto";
+
+service PayService {
+    rpc Pay(PayRequest) returns (PayResponse); // 支付
+}
+
+message PayRequest {
+
+}
+
+message PayResponse {
+
+}

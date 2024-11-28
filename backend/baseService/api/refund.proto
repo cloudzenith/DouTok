@@ -1,0 +1,55 @@
+syntax = "proto3";
+package api;
+
+option go_package = "github.com/cloudzenith/DouTok/...;api";
+
+import "base.proto";
+import "trade_entities.proto";
+import "buf/validate/validate.proto";
+
+service RefundService {
+    rpc RefundCreate(RefundCreateRequest) returns (RefundCreateResponse); // 创建退款单
+    rpc RefundQuery(RefundQueryRequest) returns (RefundQueryResponse); // 查询退款单
+    rpc RefundUpdate(RefundUpdateRequest) returns (RefundUpdateResponse); // 更新退款单
+}
+
+enum RefundCreateType {
+    ALL = 0; // 全额退款
+    PART = 1; // 部分退款
+}
+
+message RefundCreateRequest {
+    int64 order_id = 1; // 交易单id
+    RefundCreateType refund_create_type = 2; // 创建退款类型
+    RefundOrderType refund_type = 3; // 退款类型
+    int64 payment_id = 4; // 支付单id
+    uint64 refund_amount = 5; // 退款金额
+    string refund_reason = 6; // 退款原因
+}
+
+message RefundCreateResponse {
+    api.Metadata meta = 1;
+    RefundOrder refund_order = 2;
+}
+
+message RefundQueryRequest {
+    repeated int64 order_id_list = 1;
+    repeated string refund_order_no_list = 2;
+    repeated int64 payment_id_list = 3;
+}
+
+message RefundQueryResponse {
+    api.Metadata meta = 1;
+    repeated RefundOrder refund_order_list = 2;
+}
+
+message RefundUpdateRequest {
+    RefundOrderStatus refund_order_status = 1; // 退款单状态
+    int64 refund_order_id = 2; // 退款单id
+    string refund_reason = 3; // 退款原因
+}
+
+message RefundUpdateResponse {
+    api.Metadata meta = 1;
+    RefundOrder refund_order = 2;
+}

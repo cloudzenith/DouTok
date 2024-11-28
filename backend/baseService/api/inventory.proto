@@ -1,0 +1,104 @@
+syntax = "proto3";
+package api;
+
+option go_package = "github.com/cloudzenith/DouTok/...;api";
+
+import "base.proto";
+import "buf/validate/validate.proto";
+
+enum OccupyType {
+    FOREVER = 0; // 永久占用
+    TEMPORARY = 1; // 临时占用
+}
+
+enum OperateType {
+    PRE = 0; // 预占用
+    OCCUPY = 1; // 占用
+    RELEASE = 2; // 释放
+}
+
+enum InventoryStatus {
+    IDLE = 0; // 空闲
+    PRE_OCCUPIED = 1; // 预占用
+    OCCUPIED = 2; // 已占用
+}
+
+message InventoryGood {
+    int64 id = 1; // 商品id
+    int64 biz_id = 2; // 业务id
+    string name = 3; // 商品名称
+    string description = 4; // 商品描述
+    uint64 quantity = 5; // 库存数量
+}
+
+message Inventory {
+    int64 id = 1; // 库存记录id
+    OccupyType occupy_type = 2; // 占用类型
+    OperateType operate_type = 3; // 操作类型
+    InventoryStatus inventory_status = 4; // 库存状态
+    int64 biz_id = 5; // 业务id
+    int64 create_time = 6; // 创建时间
+    int64 start_time = 7; // 开始时间
+    int64 end_time = 8; // 结束时间
+    int64 buffer = 9; // 库存释放时的缓冲时间
+    int64 actual_release_time = 10; // 实际释放时间
+}
+
+service InventoryService {
+    rpc CreateGoodInventory(CreateGoodRequest) returns (CreateGoodResponse); // 创建商品库存
+    rpc QueryGoodsInventory(QueryGoodsRequest) returns (QueryGoodsResponse); // 查询商品库存
+    rpc UpdateGoodsInventory(UpdateGoodsRequest) returns (UpdateGoodsResponse); // 更新商品库存
+    rpc Operate(OperateRequest) returns (OperateResponse); // 库存操作
+}
+
+message CreateGoodRequest {
+    int64 biz_id = 1; // 商品id
+    uint64 quantity = 2; // 库存数量
+    string name = 3; // 商品名称
+    string description = 4; // 商品描述
+}
+
+message CreateGoodResponse {
+    api.Metadata meta = 1;
+    InventoryGood inventory_good = 2;
+}
+
+message QueryGoodsRequest {
+    repeated int64 biz_id_list = 1; // 业务id列表
+    repeated int64 id_list = 2; // 商品id列表
+}
+
+message QueryGoodsResponse {
+    api.Metadata meta = 1;
+    repeated InventoryGood inventory_good_list = 2;
+}
+
+enum UpdateGoodsType {
+    ADD = 0; // 增加库存
+    SUB = 1; // 减少库存
+}
+
+message UpdateGoodsRequest {
+    int64 id = 1; // 商品库存id
+    uint64 quantity = 2; // 库存数量
+    UpdateGoodsType update_goods_type = 3; // 更新库存类型
+}
+
+message UpdateGoodsResponse {
+    api.Metadata meta = 1;
+    InventoryGood inventory_good = 2;
+}
+
+message OperateRequest {
+    OperateType operate_type = 1; // 操作类型
+    OccupyType occupy_type = 2; // 占用类型
+    int64 inventory_good_id = 3; // 库存商品id
+    int64 biz_id = 4; // 业务id
+    int64 start_time = 5; // 开始时间
+    int64 end_time = 6; // 结束时间
+    int64 buffer = 7; // 库存释放时的缓冲时间
+}
+
+message OperateResponse {
+    api.Metadata meta = 1;
+}

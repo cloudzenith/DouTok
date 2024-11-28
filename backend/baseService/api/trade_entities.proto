@@ -1,0 +1,236 @@
+syntax = "proto3";
+package api;
+
+option go_package = "github.com/cloudzenith/DouTok/...;api";
+
+import "buf/validate/validate.proto";
+
+// 交易单交易类型枚举 表明该笔交易完成了一个怎样的操作
+enum TradeBizType {
+    DEFAULT_BT = 0; // 默认值
+    RECHARGE_BT = 1; // DouTok币充值
+    MALL_ORDERS_BT = 2; // 商城订单
+}
+
+// 销售方式
+enum TradeSaleWay {
+    DEFAULT_SW = 0; // 默认值
+    DIRECT_SW = 1; // 直接销售
+    ADAPTED_SW = 2; // 代理销售
+}
+
+// 支付顺序
+enum TradePaySequence {
+    PAY_FIRST = 0; // 先支付
+    PAY_LAST = 1; // 后支付
+}
+
+// 交易对象的商品类型
+enum TradeGoodsType {
+    DEFAULT_GT = 0; // 默认值
+    NORMAL_GT = 1; // 普通商品
+    VIRTUAL_GT = 2; // 虚拟商品
+    COUPON_GT = 3; // 优惠券
+}
+
+enum TradeOrderStatusEnum {
+    CREATE = 0; // 已创建
+    PAY = 1; // 已支付
+    DELIVERY_STARTED = 2; // 开始交付
+    DELIVERY_FINISHED = 3; // 交付完成
+    CLOSED = 4; // 已关闭
+    SUCCESS = 5; // 交易成功
+    FAIL = 6; // 交易失败
+    EVALUATED = 7; // 已完成交易评价
+}
+
+enum PayType {
+    INTERNAL = 0; // DouTok余额支付
+    ALIPAY = 1; // 支付宝支付
+}
+
+// 交易参与人信息
+message TradeParticipant {
+    int64 account_id = 1; // 账户id
+}
+
+enum TradePromotionType {
+    UNDEFINED_PT = 0; // 未定义
+    COUPON_PT = 1; // 优惠券
+}
+
+message TradePromotion {
+    int64 promotion_id = 1; // 优惠id
+    string promotion_name = 2; // 优惠名称
+    uint64 promotion_amount = 3; // 优惠金额 单位：分
+    string decrption = 4; // 描述
+    TradePromotionType promotion_type = 5; // 优惠类型
+    int64 entry_id = 6; // 优惠总类id
+    int64 account_id = 7; // 所属账户id
+}
+
+enum DeliveryType {
+    UNDEFINED_DT = 0; // 未定义
+    MERCHANT_DT = 1; // 商家发货
+    PLATFORM_DT = 2; // 平台发货
+    BUYER_DT = 3; // 买家自提
+    NONE_DT = 4; // 无需发货
+}
+
+enum DeliveryCompany {
+    UNDEFINED_DC = 0; // 未定义
+    SF_DC = 1; // 顺丰
+    YTO_DC = 2; // 圆通
+    ZTO_DC = 3; // 中通
+    STO_DC = 4; // 申通
+    YD_DC = 5; // 韵达
+    EMS_DC = 6; // EMS
+    JD_DC = 7; // 京东
+    OTHER_DC = 8; // 其他
+}
+
+message DeliveryInfo {
+    DeliveryType delivery_type = 1; // 发货类型
+    DeliveryCompany delivery_company = 2; // 快递公司
+    string delivery_no = 3; // 快递单号
+    int64 id = 4; // 发货信息id
+    string receiver_name = 5; // 收货人姓名
+    string receiver_mobile = 6; // 收货人手机号
+    string receiver_address = 7; // 收货人地址
+    map<string, string> extra = 8; // 额外信息
+}
+
+message TimeoutInfo {
+    int64 expect_time_out = 1; // 预计超时时间
+    int64 actual_time_out = 2; // 实际超时时间
+    bool executed = 3; // 是否已执行超时后操作
+}
+
+enum CloseType {
+    UNDEFINED_CT = 0; // 默认值
+    TIMEOUT_CT = 1; // 超时关闭
+    BUYER_CT = 2; // 买家关闭
+    SELLER_CT = 3; // 卖家关闭
+}
+
+enum PayScene {
+    NORMAL_PS = 0; // 正常支付
+}
+
+// 支付阶段
+enum PayPhase {
+    NONE_PP = 0; // 一口价
+    INITIAL_PP = 1; // 初始化完成
+    PAYING_PP = 2; // 支付中
+    PAID_PP = 3; // 已支付
+}
+
+enum PayChannel {
+    UNDEFINED_PC = 0; // 未定义
+    ALIPAY_PC = 1; // 支付宝
+    WECHAT_PC = 2; // 微信
+    UNION_PC = 3; // 银联
+    APPLE_PC = 4; // 苹果支付
+    GOOGLE_PC = 5; // Google支付
+    DOUTOK_PC = 6; // Dou币支付
+}
+
+enum PayStatus {
+    INITIAL_PS = 0; // 未支付
+    PAYING_PS = 1; // 支付中
+    PAID_PS = 2; // 已支付
+    CLOSED_PS = 3; // 已关闭
+}
+
+message PaymentInfo {
+    int64 id = 1; // 支付信息id
+    int64 order_id = 2; // 所属交易单id
+    string payment_no = 3; // 外部平台支付单号
+    PayScene pay_scene = 4; // 支付场景
+    uint64 paid_amount = 5; // 支付金额 单位：分
+    PayPhase pay_phase = 6; // 支付阶段
+    PayChannel pay_channel = 7; // 支付渠道
+    PayStatus pay_status = 8; // 支付状态
+    int64 create_time = 9; // 创建时间
+    int64 pay_time = 10; // 支付时间
+    int64 close_time = 11; // 关闭时间
+    int64 success_time = 12; // 成功时间
+    int64 update_time = 13; // 更新时间
+}
+
+enum TradeOrderRelation {
+    ORIGIN_TOR = 0; // 原始交易单
+    RENEW_TOR = 1; // 续单
+    TIED_TOR = 2; // 捆绑单
+}
+
+enum RefundOrderType {
+    UNDEFINED_ROT = 0; // 未定义
+    BUYER_CANCEL_ROT = 1; // 买家退款
+    SELLER_CANCEL_ROT = 2; // 卖家退款
+}
+
+enum RefundOrderStatus {
+    CREATE_ROS = 0; // 已创建
+    REFUND_ROS = 1; // 已退款
+    CLOSED_ROS = 2; // 已关闭
+}
+
+// 退款单
+message RefundOrder {
+    int64 refund_id = 1; // 退款单id
+    int64 order_id = 2; // 交易单id
+    int64 payment_id = 3; // 支付信息id
+    int64 refund_amount = 4; // 退款金额 单位：分
+    int64 refund_time = 5; // 退款时间
+    int64 create_time = 6; // 创建时间
+    int64 update_time = 7; // 更新时间
+    int64 close_time = 8; // 关闭时间
+    string refund_reason = 9; // 退款原因
+    RefundOrderType refund_type = 10; // 退款类型
+    RefundOrderStatus refund_status = 11; // 退款状态
+}
+
+// 交易单
+message TradeOrder {
+    int64 order_id = 1; // 交易单id
+    TradeBizType biz_type = 2; // 业务类型
+    TradeSaleWay sale_way = 3; // 销售方式
+    TradePaySequence pay_sequence = 4; // 支付顺序
+    TradeGoodsType goods_type = 5; // 商品类型
+    TradeOrderStatusEnum order_status = 6; // 交易单状态
+
+    int64 biz_status = 7; // 业务状态（具体业务自定义）
+    string biz_order_no = 8; // 业务订单号
+    int64 biz_id = 9; // 业务id
+
+    TradeParticipant buyer = 10; // 买家信息
+    TradeParticipant seller = 11; // 卖家信息
+
+    PayType pay_type = 12; // 支付类型
+    uint64 payable_amount = 13; // 应支付金额 单位：分
+    uint64 paid_amount = 14; // 已支付金额 单位：分
+    uint64 promotion_amount = 15; // 优惠金额 单位：分
+    repeated TradePromotion promotions = 16; // 优惠信息
+    DeliveryInfo delivery_info = 17; // 发货信息
+
+    int64 create_time = 18; // 创建时间
+    int64 pay_time = 19; // 支付时间
+    int64 delivery_time = 20; // 发货时间
+    int64 close_time = 21; // 关闭时间
+
+    TimeoutInfo timeout_info = 22; // 超时信息
+
+    CloseType close_type = 23; // 关闭类型
+    string close_reason = 24; // 关闭原因
+
+    repeated TradeOrder sub_order = 25; // 子订单
+    repeated PaymentInfo payments = 26; // 支付信息
+
+    map<string, string> extra = 27; // 额外信息
+
+    TradeOrderRelation trade_order_relation = 28; // 关系类型; 是sub order才有
+    int64 origin_order_id = 29; // 原始交易单id; 是sub order才有
+
+    repeated RefundOrder refunds = 30; // 退款单
+}

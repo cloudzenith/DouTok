@@ -1,0 +1,108 @@
+syntax = "proto3";
+package api;
+
+option go_package = "github.com/cloudzenith/DouTok/...;api";
+
+import "base.proto";
+import "trade_entities.proto";
+import "buf/validate/validate.proto";
+
+service PromotionService {
+    rpc PromotionCreate(PromotionCreateRequest) returns (PromotionCreateResponse); // 创建促销信息
+    rpc PromotionQuery(PromotionQueryRequest) returns (PromotionQueryResponse); // 查询促销信息
+    rpc PromotionUpdate(PromotionUpdateRequest) returns (PromotionUpdateResponse); // 更新促销信息
+    rpc PromotionDelete(PromotionDeleteRequest) returns (PromotionDeleteResponse); // 删除促销信息
+    rpc CreateSpecificPromotion(CreateSpecificPromotionRequest) returns (CreateSpecificPromotionResponse); // 创建特定促销信息
+    rpc QuerySpecificPromotion(QuerySpecificPromotionRequest) returns (QuerySpecificPromotionResponse); // 查询特定促销信息
+    rpc Calculate(CalculateRequest) returns (CalculateResponse); // 计算优惠结果
+}
+
+message Promotion {
+    int64 id = 1; // 优惠信息id
+    string name = 2; // 优惠信息名称
+    string description = 3; // 优惠信息描述
+    TradePromotionType promotion_type = 4; // 优惠信息类型
+}
+
+message PromotionCreateRequest {
+    string name = 1; // 优惠信息名称
+    string description = 2; // 优惠信息描述
+    TradePromotionType promotion_type = 3; // 优惠信息类型
+}
+
+message PromotionCreateResponse {
+    api.Metadata meta = 1;
+    Promotion promotion = 2;
+}
+
+message PromotionQueryRequest {
+    repeated int64 id_list = 1; // 优惠信息id列表
+    repeated string name_list = 2; // 优惠信息名称列表
+    repeated TradePromotionType promotion_type_list = 3; // 优惠信息类型列表
+}
+
+message PromotionQueryResponse {
+    api.Metadata meta = 1;
+    repeated Promotion promotion_list = 2;
+}
+
+message PromotionUpdateRequest {
+    int64 id = 1; // 优惠信息id
+    string name = 2; // 优惠信息名称
+    string description = 3; // 优惠信息描述
+    TradePromotionType promotion_type = 4; // 优惠信息类型
+}
+
+message PromotionUpdateResponse {
+    api.Metadata meta = 1;
+    Promotion promotion = 2;
+}
+
+message PromotionDeleteRequest {
+    int64 id = 1; // 优惠信息id
+}
+
+message PromotionDeleteResponse {
+    api.Metadata meta = 1;
+}
+
+message CreateSpecificPromotionRequest {
+    int64 promotion_id = 1; // 优惠信息id
+    repeated int64 account_id = 2; // 账户id
+    int64 expire_time = 3; // 过期时间
+}
+
+message CreateSpecificPromotionResponse {
+    api.Metadata meta = 1;
+}
+
+message QuerySpecificPromotionItem {
+    int64 id = 1; // 优惠信息id
+    int64 account_id = 2; // 账户id
+}
+
+message QuerySpecificPromotionRequest {
+    repeated QuerySpecificPromotionItem query_specific_promotion_item = 1;
+}
+
+message QuerySpecificPromotionResult {
+    int64 id = 1; // 优惠信息id
+    int64 account_id = 2; // 账户id
+    int64 entry_id = 3; // 具体优惠id
+    Promotion promotion = 4;
+}
+
+message QuerySpecificPromotionResponse {
+    api.Metadata meta = 1;
+    repeated QuerySpecificPromotionResult promotion_list = 2;
+}
+
+message CalculateRequest {
+    uint64 total_amount = 1; // 总金额
+    repeated int64 promotion_entry_id_list = 2; // 具体优惠信息id列表
+}
+
+message CalculateResponse {
+    api.Metadata meta = 1;
+    uint64 calculated_amount = 2; // 计算后的金额
+}

@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
+	"github.com/jellydator/ttlcache/v3"
 	"time"
 
 	"github.com/cloudzenith/DouTok/backend/gopkgs/gofer"
@@ -29,6 +29,7 @@ type Cache[T any] struct {
 	localTTL    *time.Duration
 	redisTTL    *time.Duration
 	client      *redis.Client
+	localCache  *ttlcache.Cache[string, []byte]
 }
 
 func NewCache[T any](options ...CacheOption[T]) *Cache[T] {
@@ -48,6 +49,10 @@ func NewCache[T any](options ...CacheOption[T]) *Cache[T] {
 
 	if cache.redisTTL == nil {
 		cache.redisTTL = &DefaultTTL
+	}
+
+	if cache.useLocal {
+		cache.localCache = ttlcache.New[string, []byte]()
 	}
 
 	return cache
@@ -79,8 +84,7 @@ func (c *Cache[T]) fetchSet(ctx context.Context, key string, fetch func(ctx cont
 			ttl = c.localTTL
 		}
 
-		// TODO: set local cache
-		fmt.Println("when use local will todo something", ttl)
+		c.localCache.Set(key, val, *ttl)
 	}
 
 	return value, nil
@@ -88,8 +92,10 @@ func (c *Cache[T]) fetchSet(ctx context.Context, key string, fetch func(ctx cont
 
 func (c *Cache[T]) getCache(ctx context.Context, key string) ([]byte, error) {
 	if c.useLocal {
-		// TODO: 读本地缓存并返回
-		fmt.Println("when use local will todo something")
+		item := c.localCache.Get(key)
+		if item != nil {
+			return item.Value(), nil
+		}
 	}
 
 	result, err := c.client.Get(ctx, key).Result()
@@ -109,7 +115,7 @@ func (c *Cache[T]) Fetch(
 	key string,
 	fetch func(ctx context.Context) (T, error),
 ) (t T, err error) {
-	value, err, _ := gofer.SingleFlightDo(key, func() (interface{}, error) {
+	value, err, _ := gofer.SingleFlightDo(key, func() (any, error) {
 		if c.useFallback {
 			val, err := c.fetchSet(ctx, key, fetch)
 			if err == nil {
