@@ -81,3 +81,9 @@ func WithLogger(logger log.Logger) Option {
 		l.logger = logger
 	}
 }
+
+func WithoutServiceDiscovery() Option {
+	return func(l *Launcher) {
+		l.notNeedServiceDiscovery = true
+	}
+}
