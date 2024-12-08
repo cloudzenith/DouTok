@@ -19,7 +19,8 @@ import (
 )
 
 type Launcher struct {
-	app *kratos.App
+	app                     *kratos.App
+	notNeedServiceDiscovery bool
 
 	configOptions  []config.Option
 	configWatchMap map[string]config.Observer
@@ -132,9 +133,11 @@ func (l *Launcher) newKratosApp() {
 		options = append(options, l.kratosOptions...)
 	}
 
-	consulClient := consulx.GetClient(context.Background())
-	consulReg := consul.New(consulClient)
-	options = append(options, kratos.Registrar(consulReg))
+	if !l.notNeedServiceDiscovery {
+		consulClient := consulx.GetClient(context.Background())
+		consulReg := consul.New(consulClient)
+		options = append(options, kratos.Registrar(consulReg))
+	}
 
 	value := l.config.Value("app")
 	appConfig := &App{}
