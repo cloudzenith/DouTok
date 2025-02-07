@@ -3,9 +3,13 @@ package accountservice
 import (
 	"context"
 	"errors"
+	"github.com/TremblingV5/box/dbtx"
+	"github.com/cloudzenith/DouTok/backend/baseService/api"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/entity/account"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/repoiface"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/dal/models"
+	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/dal/query"
+	"gorm.io/gen/field"
 )
 
 type Service struct {
@@ -138,4 +142,27 @@ func (s *Service) ModifyPassword(ctx context.Context, id int64, oldPassword, new
 	}
 
 	return nil
+}
+
+func (s *Service) Unbind(ctx context.Context, id int64, voucherType api.VoucherType) (err error) {
+	ctx, persist := dbtx.WithTXPersist(ctx)
+	defer func() {
+		persist(err)
+	}()
+
+	if id == 0 {
+		return errors.New("账户id不能为空")
+	}
+
+	var column field.Expr
+	switch voucherType {
+	case api.VoucherType_VOUCHER_EMAIL:
+		column = query.Q.Account.Email
+	case api.VoucherType_VOUCHER_PHONE:
+		column = query.Q.Account.Mobile
+	default:
+		return errors.New("不支持的类型")
+	}
+
+	return s.account.ClearColumn(ctx, column)
 }

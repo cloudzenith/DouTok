@@ -2,8 +2,10 @@ package accountrepo
 
 import (
 	"context"
+	"github.com/TremblingV5/box/dbtx"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/dal/query"
 	"gorm.io/gen"
+	"gorm.io/gen/field"
 
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/infrastructure/dal/models"
 )
@@ -69,4 +71,11 @@ func (r *PersistRepository) IsMobileExist(ctx context.Context, mobile string) (b
 
 func (r *PersistRepository) IsEmailExist(ctx context.Context, email string) (bool, error) {
 	return r.isExist(ctx, query.Q.Account.Email.Eq(email))
+}
+
+func (r *PersistRepository) ClearColumn(ctx context.Context, column field.Expr) error {
+	return dbtx.TxDo(ctx, func(tx *query.QueryTx) error {
+		_, err := tx.WithContext(ctx).Account.Update(column, nil)
+		return err
+	})
 }
