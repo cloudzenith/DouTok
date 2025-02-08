@@ -2,6 +2,7 @@ package accountserviceiface
 
 import (
 	"context"
+	"github.com/cloudzenith/DouTok/backend/baseService/api"
 	"github.com/cloudzenith/DouTok/backend/baseService/internal/domain/service/accountservice"
 )
 
@@ -12,6 +13,7 @@ type AccountService interface {
 	CheckPasswordByMobile(ctx context.Context, mobile, password string) (int64, error)
 	CheckPasswordByEmail(ctx context.Context, email, password string) (int64, error)
 	ModifyPassword(ctx context.Context, id int64, oldPassword, newPassword string) error
+	Unbind(ctx context.Context, id int64, voucherType api.VoucherType) error
 }
 
 var _ AccountService = (*accountservice.Service)(nil)
