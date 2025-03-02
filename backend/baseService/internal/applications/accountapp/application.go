@@ -79,8 +79,16 @@ func (a *AccountApplication) Bind(ctx context.Context, request *api.BindRequest)
 }
 
 func (a *AccountApplication) Unbind(ctx context.Context, request *api.UnbindRequest) (*api.UnbindResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	if err := a.accountService.Unbind(ctx, request.GetAccountId(), request.GetVoucherType()); err != nil {
+		log.Context(ctx).Errorf("unbind voucher failed: %v", err)
+		return &api.UnbindResponse{
+			Meta: utils.GetMetaWithError(err),
+		}, nil
+	}
+
+	return &api.UnbindResponse{
+		Meta: utils.GetSuccessMeta(),
+	}, nil
 }
 
 var _ api.AccountServiceServer = (*AccountApplication)(nil)
