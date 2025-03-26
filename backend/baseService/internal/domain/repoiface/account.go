@@ -16,4 +16,5 @@ type AccountRepository interface {
 	IsMobileExist(ctx context.Context, mobile string) (bool, error)
 	IsEmailExist(ctx context.Context, email string) (bool, error)
 	ClearColumn(ctx context.Context, column field.Expr) error
+	UpdateColumn(ctx context.Context, column field.Expr, value interface{}) error
 }

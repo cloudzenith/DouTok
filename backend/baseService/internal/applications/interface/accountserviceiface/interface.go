@@ -14,6 +14,7 @@ type AccountService interface {
 	CheckPasswordByEmail(ctx context.Context, email, password string) (int64, error)
 	ModifyPassword(ctx context.Context, id int64, oldPassword, newPassword string) error
 	Unbind(ctx context.Context, id int64, voucherType api.VoucherType) error
+	Bind(ctx context.Context, id int64, voucherType api.VoucherType, voucher string) error
 }
 
 var _ AccountService = (*accountservice.Service)(nil)

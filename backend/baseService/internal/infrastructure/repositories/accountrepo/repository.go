@@ -79,3 +79,10 @@ func (r *PersistRepository) ClearColumn(ctx context.Context, column field.Expr) 
 		return err
 	})
 }
+
+func (r *PersistRepository) UpdateColumn(ctx context.Context, column field.Expr, voucher interface{}) error {
+	return dbtx.TxDo(ctx, func(tx *query.QueryTx) error {
+		_, err := tx.WithContext(ctx).Account.Update(column, voucher)
+		return err
+	})
+}
