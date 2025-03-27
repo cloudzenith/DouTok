@@ -166,3 +166,26 @@ func (s *Service) Unbind(ctx context.Context, id int64, voucherType api.VoucherT
 
 	return s.account.ClearColumn(ctx, column)
 }
+
+func (s *Service) Bind(ctx context.Context, id int64, voucherType api.VoucherType, voucher string) (err error) {
+	ctx, persist := dbtx.WithTXPersist(ctx)
+	defer func() {
+		persist(err)
+	}()
+
+	if id == 0 {
+		return errors.New("账户id不能为空")
+	}
+
+	var column field.Expr
+	switch voucherType {
+	case api.VoucherType_VOUCHER_EMAIL:
+		column = query.Q.Account.Email
+	case api.VoucherType_VOUCHER_PHONE:
+		column = query.Q.Account.Mobile
+	default:
+		return errors.New("不支持的类型")
+	}
+
+	return s.account.UpdateColumn(ctx, column, voucher)
+}
