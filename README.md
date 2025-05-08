@@ -7,7 +7,7 @@
 
 🔥 如何参与贡献：https://cloudzenith.github.io/DouTok/community
 
-🐧 QQ群: 622383022
+🐧 交流群2群: 446397231
 
 📺 B站讲解：[白泽talk](https://space.bilibili.com/10399934)
 
